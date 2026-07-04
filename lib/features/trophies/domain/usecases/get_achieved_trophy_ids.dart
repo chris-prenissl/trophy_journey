@@ -5,5 +5,6 @@ class GetAchievedTrophyIds {
 
   final TrophyProgressRepository _repository;
 
-  Future<Set<String>> call() => _repository.getAchievedIds();
+  Future<Set<String>> call(String gameId) =>
+      _repository.getAchievedIds(gameId);
 }

@@ -7,12 +7,13 @@ import '../models/trophy_model.dart';
 class TrophyAssetDataSource {
   const TrophyAssetDataSource(this._bundle);
 
-  static const assetPath = 'assets/data/ffx_trophies.json';
-
   final AssetBundle _bundle;
 
-  Future<List<TrophyModel>> loadTrophies() async {
-    final raw = await _bundle.loadString(assetPath);
+  static String assetPathFor(String gameId) =>
+      'assets/data/trophies/$gameId.json';
+
+  Future<List<TrophyModel>> loadTrophies(String gameId) async {
+    final raw = await _bundle.loadString(assetPathFor(gameId));
     final list = json.decode(raw) as List<dynamic>;
     return list
         .map((e) => TrophyModel.fromJson(e as Map<String, dynamic>))

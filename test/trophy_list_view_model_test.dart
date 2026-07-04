@@ -7,6 +7,8 @@ import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy
 import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+const _gameId = 'test-game';
+
 Trophy _trophy(String id, int order, {bool missable = false}) => Trophy(
       id: id,
       title: id,
@@ -14,7 +16,7 @@ Trophy _trophy(String id, int order, {bool missable = false}) => Trophy(
       description: 'desc $id',
       guide: 'guide $id',
       missable: missable,
-      iconAsset: 'assets/icons/ffx/$id.jpg',
+      iconAsset: 'assets/icons/$_gameId/$id.jpg',
       order: order,
     );
 
@@ -24,18 +26,27 @@ class _FakeTrophyRepository implements TrophyRepository {
   final List<Trophy> trophies;
 
   @override
-  Future<List<Trophy>> getTrophies() async => trophies;
+  Future<List<Trophy>> getTrophies(String gameId) async =>
+      gameId == _gameId ? trophies : [];
 }
 
 class _FakeProgressRepository implements TrophyProgressRepository {
-  final Set<String> achieved = {};
+  final Map<String, Set<String>> achieved = {};
 
   @override
-  Future<Set<String>> getAchievedIds() async => {...achieved};
+  Future<Set<String>> getAchievedIds(String gameId) async =>
+      {...?achieved[gameId]};
 
   @override
-  Future<void> setAchieved(String trophyId, bool value) async {
-    value ? achieved.add(trophyId) : achieved.remove(trophyId);
+  Future<Map<String, Set<String>>> getAllAchievedIds() async => {
+        for (final e in achieved.entries)
+          if (e.value.isNotEmpty) e.key: {...e.value},
+      };
+
+  @override
+  Future<void> setAchieved(String gameId, String trophyId, bool value) async {
+    final ids = achieved.putIfAbsent(gameId, () => {});
+    value ? ids.add(trophyId) : ids.remove(trophyId);
   }
 }
 
@@ -49,13 +60,16 @@ void main() {
   late _FakeProgressRepository progressRepository;
   late TrophyListViewModel viewModel;
 
+  TrophyListViewModel build() => TrophyListViewModel(
+        _gameId,
+        GetTrophies(_FakeTrophyRepository(trophies)),
+        GetAchievedTrophyIds(progressRepository),
+        SetTrophyAchieved(progressRepository),
+      );
+
   setUp(() async {
     progressRepository = _FakeProgressRepository();
-    viewModel = TrophyListViewModel(
-      GetTrophies(_FakeTrophyRepository(trophies)),
-      GetAchievedTrophyIds(progressRepository),
-      SetTrophyAchieved(progressRepository),
-    );
+    viewModel = build();
     await viewModel.load();
   });
 
@@ -64,9 +78,11 @@ void main() {
     expect(viewModel.visibleTrophies.map((t) => t.id), ['a', 'b', 'c']);
     expect(viewModel.totalCount, 3);
     expect(viewModel.achievedCount, 0);
+    expect(viewModel.hasMissables, isTrue);
   });
 
-  test('toggling a trophy moves it to the bottom and updates progress', () async {
+  test('toggling a trophy moves it to the bottom and updates progress',
+      () async {
     await viewModel.toggleAchieved('a');
 
     expect(viewModel.visibleTrophies.map((t) => t.id), ['b', 'c', 'a']);
@@ -96,19 +112,15 @@ void main() {
     expect(viewModel.visibleTrophies.map((t) => t.id), ['a', 'c']);
   });
 
-  test('persists achieved state through the repository', () async {
+  test('persists achieved state under its game id', () async {
     await viewModel.toggleAchieved('c');
 
-    expect(progressRepository.achieved, {'c'});
+    expect(progressRepository.achieved[_gameId], {'c'});
 
-    final reloaded = TrophyListViewModel(
-      GetTrophies(_FakeTrophyRepository(trophies)),
-      GetAchievedTrophyIds(progressRepository),
-      SetTrophyAchieved(progressRepository),
-    );
+    final reloaded = build();
     await reloaded.load();
 
     expect(reloaded.isAchieved('c'), isTrue);
-    expect(reloaded.visibleTrophies.map((t) => t.id), ['a', 'b', 'c'].where((id) => id != 'c').followedBy(['c']));
+    expect(reloaded.visibleTrophies.map((t) => t.id), ['a', 'b', 'c']);
   });
 }

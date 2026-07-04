@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/di/app_scope.dart';
+import '../viewmodels/trophy_list_view_model.dart';
 
 class TrophyFilterChips extends StatelessWidget {
-  const TrophyFilterChips({super.key});
+  const TrophyFilterChips({super.key, required this.viewModel});
+
+  final TrophyListViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = AppScope.of(context);
     return Wrap(
       spacing: 8,
       children: [
-        FilterChip(
-          label: const Text('Missables'),
-          avatar: viewModel.missablesOnly
-              ? null
-              : const Icon(Icons.warning_amber_rounded, size: 18),
-          selected: viewModel.missablesOnly,
-          onSelected: viewModel.setMissablesOnly,
-        ),
+        if (viewModel.hasMissables)
+          FilterChip(
+            label: const Text('Missables'),
+            avatar: viewModel.missablesOnly
+                ? null
+                : const Icon(Icons.warning_amber_rounded, size: 18),
+            selected: viewModel.missablesOnly,
+            onSelected: viewModel.setMissablesOnly,
+          ),
         FilterChip(
           label: const Text('Hide achieved'),
           avatar: viewModel.hideAchieved

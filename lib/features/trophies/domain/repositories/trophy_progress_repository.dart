@@ -1,5 +1,8 @@
 abstract interface class TrophyProgressRepository {
-  Future<Set<String>> getAchievedIds();
+  Future<Set<String>> getAchievedIds(String gameId);
 
-  Future<void> setAchieved(String trophyId, bool achieved);
+  /// Achieved trophy ids per game, for every game with progress.
+  Future<Map<String, Set<String>>> getAllAchievedIds();
+
+  Future<void> setAchieved(String gameId, String trophyId, bool achieved);
 }

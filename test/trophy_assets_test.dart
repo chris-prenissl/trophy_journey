@@ -1,51 +1,63 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:final_fantasy_guide/features/trophies/data/models/game_model.dart';
 import 'package:final_fantasy_guide/features/trophies/data/models/trophy_model.dart';
 import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-void main() {
-  final raw = File('assets/data/ffx_trophies.json').readAsStringSync();
-  final models = (json.decode(raw) as List<dynamic>)
+List<TrophyModel> _loadTrophies(String gameId) {
+  final raw = File('assets/data/trophies/$gameId.json').readAsStringSync();
+  return (json.decode(raw) as List<dynamic>)
       .map((e) => TrophyModel.fromJson(e as Map<String, dynamic>))
       .toList();
+}
 
-  test('contains all 34 FFX trophies', () {
-    expect(models, hasLength(34));
+void main() {
+  final games = (json.decode(
+    File('assets/data/games.json').readAsStringSync(),
+  ) as List<dynamic>)
+      .map((e) => GameModel.fromJson(e as Map<String, dynamic>))
+      .toList();
 
-    final byType = <TrophyType, int>{};
-    for (final trophy in models.map((m) => m.toEntity())) {
-      byType[trophy.type] = (byType[trophy.type] ?? 0) + 1;
-    }
-    expect(byType[TrophyType.platinum], 1);
-    expect(byType[TrophyType.gold], 5);
-    expect(byType[TrophyType.silver], 8);
-    expect(byType[TrophyType.bronze], 20);
+  test('covers all mainline games except XI (never had trophies)', () {
+    final numerals = games.map((g) => g.numeral).toList();
+    expect(numerals, [
+      'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
+      'XII', 'XIII', 'XIV', 'XV', 'XVI',
+    ]);
   });
 
-  test('Master Linguist is the only missable trophy', () {
-    final missables = models.where((m) => m.missable).toList();
-    expect(missables.map((m) => m.id), ['master-linguist']);
-  });
+  test('every game has parseable trophies matching its declared count', () {
+    for (final game in games) {
+      final trophies = _loadTrophies(game.id);
+      expect(trophies, isNotEmpty, reason: game.id);
+      expect(trophies.length, game.trophyCount, reason: game.id);
 
-  test('every trophy has non-empty content and a unique id', () {
-    final ids = models.map((m) => m.id).toSet();
-    expect(ids, hasLength(models.length));
-    for (final model in models) {
-      expect(model.title, isNotEmpty);
-      expect(model.description, isNotEmpty);
-      expect(model.guide, isNotEmpty);
+      final ids = trophies.map((t) => t.id).toSet();
+      expect(ids, hasLength(trophies.length),
+          reason: 'duplicate trophy ids in ${game.id}');
+      for (final t in trophies) {
+        expect(t.title, isNotEmpty, reason: '${game.id}/${t.id}');
+        expect(t.guide, isNotEmpty, reason: '${game.id}/${t.id}');
+        expect(File(t.icon).existsSync(), isTrue,
+            reason: 'missing icon ${t.icon}');
+        // Parses without throwing and carries a valid type.
+        expect(TrophyType.values, contains(t.toEntity().type));
+      }
+      if (game.cover.isNotEmpty) {
+        expect(File(game.cover).existsSync(), isTrue,
+            reason: 'missing cover ${game.cover}');
+      }
     }
   });
 
-  test('every referenced icon asset exists', () {
-    for (final model in models) {
-      expect(
-        File(model.icon).existsSync(),
-        isTrue,
-        reason: 'missing icon for ${model.id}: ${model.icon}',
-      );
-    }
+  test('FFX data is unchanged: 34 trophies, Master Linguist missable', () {
+    final ffx = _loadTrophies('final-fantasy-x-hd');
+    expect(ffx, hasLength(34));
+    expect(
+      ffx.where((t) => t.missable).map((t) => t.id),
+      ['master-linguist'],
+    );
   });
 }

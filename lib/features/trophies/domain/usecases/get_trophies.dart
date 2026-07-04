@@ -6,5 +6,5 @@ class GetTrophies {
 
   final TrophyRepository _repository;
 
-  Future<List<Trophy>> call() => _repository.getTrophies();
+  Future<List<Trophy>> call(String gameId) => _repository.getTrophies(gameId);
 }
