@@ -4,6 +4,7 @@ import 'package:final_fantasy_guide/features/journey/domain/repositories/journey
 import 'package:final_fantasy_guide/features/journey/domain/usecases/get_checked_task_ids.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/get_journey.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/get_journey_bookmark.dart';
+import 'package:final_fantasy_guide/features/journey/domain/usecases/has_journey.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/set_journey_bookmark.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/set_task_checked.dart';
 import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
@@ -125,6 +126,23 @@ void main() {
     expect(viewModel.checkedTaskCount, 1);
     expect(viewModel.progress, closeTo(1 / 3, 1e-9));
     expect(journeyProgress.checked[_gameId], {'step-1-a'});
+  });
+
+  test('toggling a checked task again clears it from state and storage',
+      () async {
+    await viewModel.toggleTask('step-1-a');
+    await viewModel.toggleTask('step-1-a');
+
+    expect(viewModel.isTaskChecked('step-1-a'), isFalse);
+    expect(viewModel.checkedTaskCount, 0);
+    expect(journeyProgress.checked[_gameId], isEmpty);
+  });
+
+  test('HasJourney reports availability via the repository', () async {
+    final hasJourney = HasJourney(_FakeJourneyRepository());
+
+    expect(await hasJourney(_gameId), isTrue);
+    expect(await hasJourney('other-game'), isFalse);
   });
 
   test('step progress and completion are derived from checked tasks',

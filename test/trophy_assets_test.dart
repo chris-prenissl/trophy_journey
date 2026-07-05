@@ -52,6 +52,17 @@ void main() {
     }
   });
 
+  test('GameModel maps every field onto its domain entity', () {
+    final game = games.firstWhere((g) => g.id == 'final-fantasy-x-hd');
+    final entity = game.toEntity();
+
+    expect(entity.id, game.id);
+    expect(entity.title, game.title);
+    expect(entity.numeral, game.numeral);
+    expect(entity.coverAsset, game.cover);
+    expect(entity.trophyCount, game.trophyCount);
+  });
+
   test('FFX data is unchanged: 34 trophies, Master Linguist missable', () {
     final ffx = _loadTrophies('final-fantasy-x-hd');
     expect(ffx, hasLength(34));

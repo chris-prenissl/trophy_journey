@@ -112,6 +112,18 @@ void main() {
     expect(viewModel.visibleTrophies.map((t) => t.id), ['a', 'c']);
   });
 
+  test('refreshProgress picks up externally achieved trophies', () async {
+    expect(viewModel.achievedCount, 0);
+
+    // Trophy achieved elsewhere (e.g. the detail screen) then returning here.
+    await progressRepository.setAchieved(_gameId, 'a', true);
+    await viewModel.refreshProgress();
+
+    expect(viewModel.isAchieved('a'), isTrue);
+    expect(viewModel.achievedCount, 1);
+    expect(viewModel.visibleTrophies.map((t) => t.id), ['b', 'c', 'a']);
+  });
+
   test('persists achieved state under its game id', () async {
     await viewModel.toggleAchieved('c');
 

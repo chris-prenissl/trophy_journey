@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:final_fantasy_guide/features/journey/data/models/journey_model.dart';
+import 'package:final_fantasy_guide/features/journey/domain/entities/journey.dart';
 import 'package:final_fantasy_guide/features/trophies/data/models/trophy_model.dart';
 import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -79,5 +80,18 @@ void main() {
     expect(recommendedTaskIds.intersection(
         journey.allTasks.where((t) => t.isMissable).map((t) => t.id).toSet()),
         isEmpty);
+  });
+
+  test('step-level flags aggregate their tasks', () {
+    JourneyStep step(String id) => journey.steps.firstWhere((s) => s.id == id);
+
+    expect(step('bikanel-home').hasMissable, isTrue);
+    expect(step('bikanel-home').hasRecommended, isFalse);
+
+    expect(step('besaid').hasRecommended, isTrue);
+    expect(step('besaid').hasMissable, isFalse);
+
+    expect(step('mi-ihen-highroad').hasMissable, isFalse);
+    expect(step('mi-ihen-highroad').hasRecommended, isFalse);
   });
 }
