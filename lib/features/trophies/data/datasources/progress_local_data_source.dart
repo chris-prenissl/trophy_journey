@@ -6,9 +6,6 @@ class ProgressLocalDataSource {
     : _factory = factory ?? databaseFactory;
 
   static const _table = 'progress';
-
-  /// Game id assigned to rows written before the schema tracked games
-  /// (schema v1 shipped when the app was FFX-only).
   static const _legacyGameId = 'final-fantasy-x-hd';
 
   final DatabaseFactory _factory;
@@ -28,8 +25,6 @@ class ProgressLocalDataSource {
         onCreate: (db, version) => _createV2(db),
         onUpgrade: (db, oldVersion, newVersion) async {
           if (oldVersion < 2) {
-            // v1 had no game_id and trophy_id as primary key; sqlite cannot
-            // alter a primary key, so rebuild the table.
             await db.execute('ALTER TABLE $_table RENAME TO ${_table}_v1');
             await _createV2(db);
             await db.execute('''

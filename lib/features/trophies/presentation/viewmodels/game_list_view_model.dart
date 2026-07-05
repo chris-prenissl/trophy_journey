@@ -31,7 +31,6 @@ class GameListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Called when returning from a game's trophy list.
   Future<void> refreshProgress() async {
     _achievedByGame = await _getAllAchievedTrophyIds();
     notifyListeners();

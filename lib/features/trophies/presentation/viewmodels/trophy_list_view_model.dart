@@ -36,20 +36,12 @@ class TrophyListViewModel extends ChangeNotifier {
 
   bool isAchieved(String trophyId) => _achievedIds.contains(trophyId);
 
-  /// Filtered view: unachieved trophies in guide order first,
-  /// achieved ones at the bottom.
   List<Trophy> get visibleTrophies {
-    final filtered = _trophies.where((t) {
+    return _trophies.where((t) {
       if (_missablesOnly && !t.missable) return false;
       if (_hideAchieved && isAchieved(t.id)) return false;
       return true;
-    });
-    final pending = <Trophy>[];
-    final achieved = <Trophy>[];
-    for (final trophy in filtered) {
-      (isAchieved(trophy.id) ? achieved : pending).add(trophy);
-    }
-    return [...pending, ...achieved];
+    }).toList();
   }
 
   Future<void> load() async {
@@ -58,6 +50,11 @@ class TrophyListViewModel extends ChangeNotifier {
     _trophies = await _getTrophies(_gameId);
     _achievedIds = await _getAchievedTrophyIds(_gameId);
     _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> refreshProgress() async {
+    _achievedIds = await _getAchievedTrophyIds(_gameId);
     notifyListeners();
   }
 

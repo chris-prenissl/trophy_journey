@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/app_scope.dart';
+import '../../../journey/presentation/screens/journey_screen.dart';
 import '../../domain/entities/game.dart';
 import '../viewmodels/trophy_list_view_model.dart';
 import '../widgets/progress_circle.dart';
@@ -19,12 +20,28 @@ class TrophyListScreen extends StatefulWidget {
 
 class _TrophyListScreenState extends State<TrophyListScreen> {
   TrophyListViewModel? _viewModel;
+  bool _hasJourney = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _viewModel ??=
-        AppScope.trophyListFactoryOf(context)(widget.game.id)..load();
+    if (_viewModel == null) {
+      _viewModel = AppScope.trophyListFactoryOf(context)(widget.game.id)
+        ..load();
+      AppScope.hasJourneyOf(context)(widget.game.id).then((hasJourney) {
+        if (mounted && hasJourney) setState(() => _hasJourney = true);
+      });
+    }
+  }
+
+  void _openJourney() {
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => JourneyScreen(game: widget.game),
+          ),
+        )
+        .then((_) => _viewModel?.refreshProgress());
   }
 
   @override
@@ -38,6 +55,13 @@ class _TrophyListScreenState extends State<TrophyListScreen> {
     final viewModel = _viewModel!;
     return Scaffold(
       appBar: AppBar(title: Text(widget.game.title)),
+      floatingActionButton: _hasJourney
+          ? FloatingActionButton.extended(
+              onPressed: _openJourney,
+              icon: const Icon(Icons.map_outlined),
+              label: const Text('Journey'),
+            )
+          : null,
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {
@@ -59,7 +83,9 @@ class _TrophyListScreenState extends State<TrophyListScreen> {
                 child: viewModel.visibleTrophies.isEmpty
                     ? const Center(child: Text('No trophies match filters'))
                     : ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 16),
+                        // Keep the last tile's checkbox clear of the FAB.
+                        padding:
+                            EdgeInsets.only(bottom: _hasJourney ? 88 : 16),
                         itemCount: viewModel.visibleTrophies.length,
                         itemBuilder: (context, index) {
                           final trophy = viewModel.visibleTrophies[index];

@@ -15,15 +15,9 @@ class Trophy {
   final String id;
   final String title;
   final TrophyType type;
-
-  /// The official trophy description ("Find all 26 Al Bhed Primers").
   final String description;
-
-  /// The full how-to-achieve text from the trophy guide.
   final String guide;
   final bool missable;
   final String iconAsset;
-
-  /// Position in the guide's original trophy order.
   final int order;
 }

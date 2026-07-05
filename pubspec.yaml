@@ -25,6 +25,7 @@ flutter:
   assets:
     - assets/data/
     - assets/data/trophies/
+    - assets/data/journeys/
     - assets/covers/
     - assets/icons/final-fantasy-1-pixel-remaster/
     - assets/icons/final-fantasy-ii/
