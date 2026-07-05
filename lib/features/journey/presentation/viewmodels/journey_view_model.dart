@@ -8,7 +8,6 @@ import '../../domain/usecases/get_journey.dart';
 import '../../domain/usecases/get_journey_bookmark.dart';
 import '../../domain/usecases/set_journey_bookmark.dart';
 import '../../domain/usecases/set_task_checked.dart';
-import '../../domain/usecases/sync_trophies_with_journey.dart';
 
 class JourneyViewModel extends ChangeNotifier {
   JourneyViewModel(
@@ -19,7 +18,6 @@ class JourneyViewModel extends ChangeNotifier {
     this._setTaskChecked,
     this._getJourneyBookmark,
     this._setJourneyBookmark,
-    this._syncTrophiesWithJourney,
   );
 
   final String _gameId;
@@ -29,7 +27,6 @@ class JourneyViewModel extends ChangeNotifier {
   final SetTaskChecked _setTaskChecked;
   final GetJourneyBookmark _getJourneyBookmark;
   final SetJourneyBookmark _setJourneyBookmark;
-  final SyncTrophiesWithJourney _syncTrophiesWithJourney;
 
   Journey? _journey;
   Map<String, Trophy> _trophyById = const {};
@@ -85,8 +82,6 @@ class JourneyViewModel extends ChangeNotifier {
   Future<void> toggleTask(String taskId) async {
     final journey = _journey;
     if (journey == null) return;
-    final task = journey.allTasks.firstWhere((t) => t.id == taskId);
-    final checkedBefore = {..._checkedTaskIds};
     final checked = !_checkedTaskIds.contains(taskId);
     if (checked) {
       _checkedTaskIds.add(taskId);
@@ -95,13 +90,6 @@ class JourneyViewModel extends ChangeNotifier {
     }
     notifyListeners();
     await _setTaskChecked(_gameId, taskId, checked);
-    await _syncTrophiesWithJourney(
-      gameId: _gameId,
-      journey: journey,
-      trophyIds: task.trophyIds,
-      checkedBefore: checkedBefore,
-      checkedAfter: _checkedTaskIds,
-    );
   }
 
   Future<void> toggleBookmark(String stepId) async {

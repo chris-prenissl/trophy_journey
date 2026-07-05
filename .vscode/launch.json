@@ -5,18 +5,18 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "final_fantasy_guide",
+			"name": "final_fantasy_trophy_guide",
 			"request": "launch",
 			"type": "dart"
 		},
 		{
-			"name": "final_fantasy_guide (profile mode)",
+			"name": "final_fantasy_trophy_guide (profile mode)",
 			"request": "launch",
 			"type": "dart",
 			"flutterMode": "profile"
 		},
 		{
-			"name": "final_fantasy_guide (release mode)",
+			"name": "final_fantasy_trophy_guide (release mode)",
 			"request": "launch",
 			"type": "dart",
 			"flutterMode": "release"

@@ -14,7 +14,6 @@ import 'features/journey/domain/usecases/get_journey_bookmark.dart';
 import 'features/journey/domain/usecases/has_journey.dart';
 import 'features/journey/domain/usecases/set_journey_bookmark.dart';
 import 'features/journey/domain/usecases/set_task_checked.dart';
-import 'features/journey/domain/usecases/sync_trophies_with_journey.dart';
 import 'features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'features/trophies/data/datasources/game_asset_data_source.dart';
 import 'features/trophies/data/datasources/progress_local_data_source.dart';
@@ -69,7 +68,6 @@ void main() {
         SetTaskChecked(journeyProgressRepository),
         GetJourneyBookmark(journeyProgressRepository),
         SetJourneyBookmark(journeyProgressRepository),
-        SyncTrophiesWithJourney(SetTrophyAchieved(trophyProgressRepository)),
       );
 
   runApp(

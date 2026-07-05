@@ -6,7 +6,6 @@ import 'package:final_fantasy_guide/features/journey/domain/usecases/get_journey
 import 'package:final_fantasy_guide/features/journey/domain/usecases/get_journey_bookmark.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/set_journey_bookmark.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/set_task_checked.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/sync_trophies_with_journey.dart';
 import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
 import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
@@ -125,7 +124,6 @@ void main() {
         SetTaskChecked(journeyProgress),
         GetJourneyBookmark(journeyProgress),
         SetJourneyBookmark(journeyProgress),
-        SyncTrophiesWithJourney(SetTrophyAchieved(trophyProgress)),
       );
 
   setUp(() async {
