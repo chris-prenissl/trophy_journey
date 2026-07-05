@@ -37,11 +37,16 @@ class TrophyListViewModel extends ChangeNotifier {
   bool isAchieved(String trophyId) => _achievedIds.contains(trophyId);
 
   List<Trophy> get visibleTrophies {
-    return _trophies.where((t) {
+    final filtered = _trophies.where((t) {
       if (_missablesOnly && !t.missable) return false;
       if (_hideAchieved && isAchieved(t.id)) return false;
       return true;
-    }).toList();
+    });
+    
+    return [
+      for (final t in filtered) if (!isAchieved(t.id)) t,
+      for (final t in filtered) if (isAchieved(t.id)) t,
+    ];
   }
 
   Future<void> load() async {

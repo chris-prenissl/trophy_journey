@@ -8,10 +8,8 @@ import 'package:final_fantasy_guide/features/journey/domain/usecases/set_journey
 import 'package:final_fantasy_guide/features/journey/domain/usecases/set_task_checked.dart';
 import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
 import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_repository.dart';
 import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_trophies.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy_achieved.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _gameId = 'test-game';
@@ -91,29 +89,8 @@ class _FakeTrophyRepository implements TrophyRepository {
       [_trophy('single', 0), _trophy('multi', 1)];
 }
 
-class _FakeTrophyProgressRepository implements TrophyProgressRepository {
-  final Map<String, Set<String>> achieved = {};
-
-  @override
-  Future<Set<String>> getAchievedIds(String gameId) async =>
-      {...?achieved[gameId]};
-
-  @override
-  Future<Map<String, Set<String>>> getAllAchievedIds() async => {
-        for (final e in achieved.entries)
-          if (e.value.isNotEmpty) e.key: {...e.value},
-      };
-
-  @override
-  Future<void> setAchieved(String gameId, String trophyId, bool value) async {
-    final ids = achieved.putIfAbsent(gameId, () => {});
-    value ? ids.add(trophyId) : ids.remove(trophyId);
-  }
-}
-
 void main() {
   late _FakeJourneyProgressRepository journeyProgress;
-  late _FakeTrophyProgressRepository trophyProgress;
   late JourneyViewModel viewModel;
 
   JourneyViewModel build() => JourneyViewModel(
@@ -128,7 +105,6 @@ void main() {
 
   setUp(() async {
     journeyProgress = _FakeJourneyProgressRepository();
-    trophyProgress = _FakeTrophyProgressRepository();
     viewModel = build();
     await viewModel.load();
   });
@@ -142,27 +118,13 @@ void main() {
     expect(viewModel.trophyById('single')?.id, 'single');
   });
 
-  test('toggling a task updates state, persists and syncs its trophy',
-      () async {
+  test('toggling a task updates state and persists it', () async {
     await viewModel.toggleTask('step-1-a');
 
     expect(viewModel.isTaskChecked('step-1-a'), isTrue);
     expect(viewModel.checkedTaskCount, 1);
     expect(viewModel.progress, closeTo(1 / 3, 1e-9));
     expect(journeyProgress.checked[_gameId], {'step-1-a'});
-    expect(trophyProgress.achieved[_gameId], {'single'});
-  });
-
-  test('multi-task trophy only syncs once all its tasks are checked',
-      () async {
-    await viewModel.toggleTask('step-1-b');
-    expect(trophyProgress.achieved[_gameId], isNull);
-
-    await viewModel.toggleTask('step-2-c');
-    expect(trophyProgress.achieved[_gameId], {'multi'});
-
-    await viewModel.toggleTask('step-2-c');
-    expect(trophyProgress.achieved[_gameId], isEmpty);
   });
 
   test('step progress and completion are derived from checked tasks',

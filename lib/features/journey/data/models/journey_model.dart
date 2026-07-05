@@ -63,7 +63,7 @@ class JourneyTaskModel {
     required this.title,
     required this.note,
     required this.trophyIds,
-    required this.missable,
+    required this.flag,
   });
 
   factory JourneyTaskModel.fromJson(Map<String, dynamic> json) {
@@ -72,15 +72,21 @@ class JourneyTaskModel {
       title: json['title'] as String,
       note: json['note'] as String? ?? '',
       trophyIds: (json['trophyIds'] as List<dynamic>).cast<String>(),
-      missable: json['missable'] as bool? ?? false,
+      flag: _parseFlag(json),
     );
+  }
+
+  static TaskFlag _parseFlag(Map<String, dynamic> json) {
+    final raw = json['flag'];
+    if (raw is String) return TaskFlag.fromJson(raw);
+    return TaskFlag.none;
   }
 
   final String id;
   final String title;
   final String note;
   final List<String> trophyIds;
-  final bool missable;
+  final TaskFlag flag;
 
   JourneyTask toEntity() {
     return JourneyTask(
@@ -88,7 +94,7 @@ class JourneyTaskModel {
       title: title,
       note: note,
       trophyIds: trophyIds,
-      missable: missable,
+      flag: flag,
     );
   }
 }

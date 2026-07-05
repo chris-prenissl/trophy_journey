@@ -1,17 +1,32 @@
+enum TaskFlag {
+  none,
+  recommended,
+  missable;
+
+  static TaskFlag fromJson(String? value) => switch (value) {
+        'missable' => TaskFlag.missable,
+        'recommended' => TaskFlag.recommended,
+        _ => TaskFlag.none,
+      };
+}
+
 class JourneyTask {
   const JourneyTask({
     required this.id,
     required this.title,
     this.note = '',
     required this.trophyIds,
-    this.missable = false,
+    this.flag = TaskFlag.none,
   });
 
   final String id;
   final String title;
   final String note;
   final List<String> trophyIds;
-  final bool missable;
+  final TaskFlag flag;
+
+  bool get isMissable => flag == TaskFlag.missable;
+  bool get isRecommended => flag == TaskFlag.recommended;
 }
 
 class JourneyStep {
@@ -27,7 +42,8 @@ class JourneyStep {
   final String instructions;
   final List<JourneyTask> tasks;
 
-  bool get hasMissable => tasks.any((t) => t.missable);
+  bool get hasMissable => tasks.any((t) => t.isMissable);
+  bool get hasRecommended => tasks.any((t) => t.isRecommended);
 }
 
 class Journey {

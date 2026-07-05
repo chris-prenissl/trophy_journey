@@ -38,6 +38,19 @@ class MissableBadge extends StatelessWidget {
   }
 }
 
+class RecommendedBadge extends StatelessWidget {
+  const RecommendedBadge({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const _Badge(
+      label: 'DO EARLY',
+      color: Color(0xFFE0A32E),
+      icon: Icons.bolt,
+    );
+  }
+}
+
 class _Badge extends StatelessWidget {
   const _Badge({required this.label, required this.color, required this.icon});
 

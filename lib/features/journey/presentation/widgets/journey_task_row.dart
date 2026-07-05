@@ -1,3 +1,4 @@
+import 'package:final_fantasy_guide/features/journey/presentation/widgets/trophy_chip.dart';
 import 'package:flutter/material.dart';
 
 import '../../../trophies/domain/entities/trophy.dart';
@@ -55,15 +56,17 @@ class JourneyTaskRow extends StatelessWidget {
                           ),
                         ),
                       ],
-                      if (trophies.isNotEmpty || task.missable) ...[
+                      if (trophies.isNotEmpty ||
+                          task.flag != TaskFlag.none) ...[
                         const SizedBox(height: 6),
                         Wrap(
                           spacing: 4,
                           runSpacing: 4,
                           children: [
-                            if (task.missable) const MissableBadge(),
+                            if (task.isMissable) const MissableBadge(),
+                            if (task.isRecommended) const RecommendedBadge(),
                             for (final trophy in trophies)
-                              _TrophyChip(trophy: trophy),
+                              TrophyChip(trophy: trophy),
                           ],
                         ),
                       ],
@@ -74,41 +77,6 @@ class JourneyTaskRow extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _TrophyChip extends StatelessWidget {
-  const _TrophyChip({required this.trophy});
-
-  final Trophy trophy;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = trophyTypeColors[trophy.type]!;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        border: Border.all(color: color.withValues(alpha: 0.6)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.emoji_events, size: 12, color: color),
-          const SizedBox(width: 3),
-          Text(
-            trophy.title,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: color,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -52,6 +52,7 @@ class JourneyStepCard extends StatelessWidget {
         ),
         title: Text(step.title, style: theme.textTheme.titleSmall),
         subtitle: Row(
+          spacing: 6,
           children: [
             Text(
               '$checkedCount / ${step.tasks.length}',
@@ -60,8 +61,10 @@ class JourneyStepCard extends StatelessWidget {
               ),
             ),
             if (step.hasMissable) ...[
-              const SizedBox(width: 6),
               const MissableBadge(),
+            ],
+            if (step.hasRecommended) ...[
+              const RecommendedBadge(),
             ],
           ],
         ),
