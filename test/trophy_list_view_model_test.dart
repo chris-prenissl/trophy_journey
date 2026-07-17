@@ -115,7 +115,6 @@ void main() {
   test('refreshProgress picks up externally achieved trophies', () async {
     expect(viewModel.achievedCount, 0);
 
-    // Trophy achieved elsewhere (e.g. the detail screen) then returning here.
     await progressRepository.setAchieved(_gameId, 'a', true);
     await viewModel.refreshProgress();
 

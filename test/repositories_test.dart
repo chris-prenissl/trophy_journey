@@ -15,8 +15,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite/sqflite.dart';
 
-/// Satisfies the local data source constructors without touching a real DB;
-/// every method is overridden in the stubs below, so this is never called.
 class _NoopDatabaseFactory implements DatabaseFactory {
   const _NoopDatabaseFactory();
   @override
@@ -34,8 +32,6 @@ TrophyModel _trophyModel(String id, int order) => TrophyModel(
       order: order,
     );
 
-// Asset data sources are concrete; stub the network-facing method and hand the
-// (unused) real rootBundle to the super constructor.
 class _StubTrophyAssetDataSource extends TrophyAssetDataSource {
   _StubTrophyAssetDataSource(this._models) : super(rootBundle);
   final List<TrophyModel> _models;

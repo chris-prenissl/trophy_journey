@@ -83,7 +83,6 @@ class _TrophyListScreenState extends State<TrophyListScreen> {
                 child: viewModel.visibleTrophies.isEmpty
                     ? const Center(child: Text('No trophies match filters'))
                     : ListView.builder(
-                        // Keep the last tile's checkbox clear of the FAB.
                         padding:
                             EdgeInsets.only(bottom: _hasJourney ? 88 : 16),
                         itemCount: viewModel.visibleTrophies.length,

@@ -178,14 +178,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Final Fantasy X'), findsOneWidget);
-    expect(find.text('1 / 2'), findsOneWidget); // one achieved of two total
+    expect(find.text('1 / 2'), findsOneWidget);
   });
 
   testWidgets('GameListScreen shows a spinner while loading', (tester) async {
     final gameVm = GameListViewModel(
       GetGames(_FakeGameRepo()),
       GetAllAchievedTrophyIds(_FakeTrophyProgressRepo()),
-    ); // not loaded yet
+    );
     await tester.pumpWidget(_app(home: const GameListScreen(), gameVm: gameVm));
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -234,7 +234,6 @@ void main() {
   testWidgets('JourneyScreen renders the roadmap and step cards',
       (tester) async {
     final gameVm = await _loadedGameVm();
-    // Bookmark the second step so the auto-scroll path runs.
     await tester.pumpWidget(_app(
       home: const JourneyScreen(game: _game),
       gameVm: gameVm,

@@ -5,9 +5,10 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "final_fantasy_trophy_guide",
+			"name": "final_fantasy_trophy_guide (debug mode)",
 			"request": "launch",
-			"type": "dart"
+			"type": "dart",
+			"flutterMode": "debug"
 		},
 		{
 			"name": "final_fantasy_trophy_guide (profile mode)",

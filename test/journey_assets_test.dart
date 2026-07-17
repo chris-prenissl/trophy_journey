@@ -72,11 +72,11 @@ void main() {
   test('do-early-but-not-lost tasks are flagged recommended', () {
     final recommendedTaskIds =
         journey.allTasks.where((t) => t.isRecommended).map((t) => t.id).toSet();
+        
     expect(recommendedTaskIds, containsAll(['ss-winno-jecht-shot',
         'besaid-destruction-sphere', 'kilika-destruction-sphere',
         'djose-destruction-sphere', 'macalania-destruction-sphere',
         'zanarkand-destruction-sphere']));
-    // A recommended task is never also missable.
     expect(recommendedTaskIds.intersection(
         journey.allTasks.where((t) => t.isMissable).map((t) => t.id).toSet()),
         isEmpty);

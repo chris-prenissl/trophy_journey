@@ -23,8 +23,6 @@ final _pngBytes = base64Decode(
   '+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
 );
 
-/// Serves a valid 1x1 PNG for any asset so `Image.asset` never fails to load,
-/// plus an empty asset manifest (AssetImage resolves variants through it).
 class _ImageBundle extends CachingAssetBundle {
   final ByteData _emptyManifest =
       const StandardMessageCodec().encodeMessage(<String, Object>{})!;

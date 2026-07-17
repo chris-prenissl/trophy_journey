@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Serves canned strings by key, plus an optional encoded AssetManifest.bin.
 class _FakeAssetBundle extends CachingAssetBundle {
   _FakeAssetBundle(this._strings, {List<String> manifestAssets = const []})
       : _manifest = const StandardMessageCodec()

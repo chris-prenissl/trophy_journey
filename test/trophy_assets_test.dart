@@ -42,7 +42,6 @@ void main() {
         expect(t.guide, isNotEmpty, reason: '${game.id}/${t.id}');
         expect(File(t.icon).existsSync(), isTrue,
             reason: 'missing icon ${t.icon}');
-        // Parses without throwing and carries a valid type.
         expect(TrophyType.values, contains(t.toEntity().type));
       }
       if (game.cover.isNotEmpty) {

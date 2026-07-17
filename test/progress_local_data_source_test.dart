@@ -45,7 +45,6 @@ void main() {
   });
 
   test('migrates v1 rows to v2 under the FFX game id', () async {
-    // Build a v1 database the way the FFX-only release did.
     final path =
         '${await databaseFactoryFfi.getDatabasesPath()}/migration_test.db';
     await databaseFactoryFfi.deleteDatabase(path);
@@ -81,8 +80,9 @@ void main() {
     expect(await migrated.loadAllAchievedIds(), {
       'final-fantasy-x-hd': {'completion'},
     });
-    // New writes coexist with migrated rows.
+
     await migrated.saveAchieved('final-fantasy-xvi', 'the-rising-tide', true);
+    
     expect(
       await migrated.loadAchievedIds('final-fantasy-xvi'),
       {'the-rising-tide'},

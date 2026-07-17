@@ -112,10 +112,8 @@ void main() {
 
     expect(find.text('Besaid'), findsOneWidget);
     expect(find.text('0 / 3'), findsOneWidget);
-    // A recommended and a missable task in the step surface both badges.
     expect(find.byType(MissableBadge), findsWidgets);
     expect(find.byType(RecommendedBadge), findsWidgets);
-    // Expanded body shows the instructions and every task title.
     expect(find.text('Grab everything here.'), findsOneWidget);
     expect(find.text('Destruction Sphere'), findsOneWidget);
     expect(find.text('One-time pickup'), findsOneWidget);
@@ -123,7 +121,6 @@ void main() {
 
   testWidgets('bookmark button toggles the step bookmark', (tester) async {
     final vm = await _loadedVm();
-    // The card is stateless; mirror the app by rebuilding it on notify.
     await tester.pumpWidget(_host(AnimatedBuilder(
       animation: vm,
       builder: (context, _) => JourneyStepCard(
