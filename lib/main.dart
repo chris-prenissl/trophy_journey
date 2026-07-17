@@ -102,7 +102,7 @@ class TrophyGuideApp extends StatelessWidget {
       journeyViewModelFactory: journeyViewModelFactory,
       hasJourney: hasJourney,
       child: MaterialApp(
-        title: 'FF Trophy Guide',
+        title: 'Final Fantasy Guide',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

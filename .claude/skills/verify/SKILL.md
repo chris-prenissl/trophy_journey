@@ -3,7 +3,7 @@ name: verify
 description: Build, launch and drive this Flutter app on macOS to verify changes at the UI surface, using the marionette CLI against the debug VM service.
 ---
 
-# Verifying changes in the FF Trophy Guide app
+# Verifying changes in the FF Guide app
 
 The app embeds `marionette_flutter` (initialized in debug builds in `main.dart`),
 so a running debug build can be driven from the shell with the `marionette` CLI.

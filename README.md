@@ -1,9 +1,9 @@
-# Final Fantasy Trophy Guide
+# Final Fantasy Guide
 
 A Flutter app for tracking PlayStation trophies across all mainline Final
 Fantasy games (I–XVI). Trophy descriptions, how-to-achieve guide text, icons,
 and cover art are sourced from
-[playstationtrophies.org](https://www.playstationtrophies.org) and bundled as
+Trophie pages and bundled as
 assets, so the app works fully offline.
 
 ## Features
