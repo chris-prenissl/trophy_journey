@@ -1,25 +1,36 @@
-# Final Fantasy Guide
+# Trophy Journey
 
-A Flutter app for tracking PlayStation trophies across all mainline Final
-Fantasy games (I–XVI). Trophy descriptions, how-to-achieve guide text, icons,
-and cover art are sourced from
-Trophie pages and bundled as
-assets, so the app works fully offline.
+A Flutter app for tracking your PlayStation trophies. Sign in with your PSN
+account and the app shows your trophy library with earned progress synced
+straight from Sony's servers. Games are enriched with bundled guide content —
+trophy guide text, missable flags — and *journeys*: hand-written step-by-step
+platinum walkthroughs with checkable tasks.
 
 ## Features
 
-- **All mainline games I–XVI** — 15 games, 606 trophies. (FF XI is absent:
-  it never had a PlayStation trophy release.)
-- **Game overview** with cover art, per-game progress bars, and an overall
-  trophy count.
-- **Per-game trophy list** with icons, bronze/silver/gold/platinum badges,
-  and a red **MISSABLE** badge on trophies the guide flags as missable.
-- **Check off trophies** — achieved trophies dim and sort to the bottom;
-  an animated progress circle shows completion.
-- **Filters** for missables-only and hiding achieved trophies.
-- **Detail screen** per trophy with the full guide text.
-- **Progress persists locally** in SQLite (sqflite) and survives app
-  updates via schema migrations.
+- **Sign in with PSN** — an in-app web view opens Sony's sign-in page and
+  intercepts the OAuth authorization code from the redirect (the flow
+  impersonates the official PlayStation app, the only client Sony issues
+  mobile tokens to). Tokens are kept in secure storage and refreshed
+  automatically.
+- **Your PSN library** — the game list is your actual trophy library,
+  sorted by last played, with cover art, per-game progress bars, and an
+  overall trophy count.
+- **PSN-synced progress** — earned trophies come from PSN and are
+  read-only in the app; an animated progress circle shows completion per
+  game.
+- **Trophy lists** with icons, bronze/silver/gold/platinum badges, a red
+  **MISSABLE** badge, filters for missables-only and hiding earned
+  trophies, and a detail screen with the full guide text.
+- **Guide content** — bundled guides (currently the mainline Final Fantasy
+  games I–XVI) are matched to PSN titles by name, adding guide text and
+  missable detection on top of the official trophy descriptions.
+- **Journeys** — a step-by-step walkthrough per game. Each step has
+  instructions and tasks; tasks link to the trophies they unlock and can be
+  flagged *missable* or *recommended*. Tasks are checkable, and a bookmark
+  remembers where you are. (Currently available for Final Fantasy X HD.)
+- **Offline-friendly** — PSN responses are cached in SQLite, so the
+  library and trophy lists keep working without a connection.
 
 ## Getting started
 
@@ -39,26 +50,38 @@ flutter test
 Clean Architecture, feature-first, with strict inward-pointing dependencies
 (presentation → domain ← data). State management is plain `ChangeNotifier`
 view models exposed through an `InheritedNotifier` (`AppScope`) — no
-third-party state packages.
+third-party state packages. Everything is wired up manually in
+[main.dart](lib/main.dart).
 
 ```
 lib/
-  core/di/app_scope.dart            # composition root / InheritedWidget DI
-  features/trophies/
-    domain/                         # pure Dart: entities, repository
-                                    # interfaces, use cases
-    data/                           # DTOs, asset + sqflite data sources,
-                                    # repository implementations
-    presentation/                   # view models, screens, widgets
+  core/
+    auth_store.dart                 # session state + token refresh
+    di/                             # composition root / InheritedWidget DI
+  features/
+    auth/                           # PSN OAuth: web view login, token
+                                    # exchange/refresh, secure storage
+    trophies/                       # PSN library + trophy lists; merges
+                                    # PSN data with bundled guide assets
+    journey/                        # step/task walkthroughs, bookmarks
 ```
 
-Trophy progress lives in a single `progress` table keyed by
-`(game_id, trophy_id)`. Trophy/game content is read from JSON assets under
-`assets/data/`.
+Each feature follows the same layout: `domain/` (pure Dart entities,
+repository interfaces, use cases), `data/` (DTOs, data sources, repository
+implementations), `presentation/` (view models, screens, widgets).
+
+Local storage is SQLite (sqflite) across three databases:
+
+- `psn_cache.db` — cached PSN trophy titles, trophy definitions, and earned
+  trophies.
+- `trophy_progress.db` — earned trophy ids per game, mirrored from PSN.
+- `journey_progress.db` — checked journey tasks and the step bookmark.
+
+Guide and journey content is read from JSON assets under `assets/data/`.
 
 ## Data pipeline
 
-All game content is generated by [`tool/fetch_trophy_data.py`](tool/fetch_trophy_data.py):
+Guide content is generated by [`tool/fetch_trophy_data.py`](tool/fetch_trophy_data.py):
 
 ```sh
 python3 tool/fetch_trophy_data.py                     # all games
@@ -72,16 +95,14 @@ with the most guide text. Pages the archive lacks can be saved manually into
 downloaded from `img.playstationtrophies.org` and committed under
 `assets/icons/` and `assets/covers/`.
 
-Notes on the data:
+Journeys are hand-written JSON files in `assets/data/journeys/`, one per
+game id.
 
-- FF II–V (Pixel Remasters) have no written guides on the site, so their
-  trophies carry the official descriptions only.
-- Missables are detected from the guide's road map plus `(Missable)` markers
-  in the per-trophy text.
 
 ## Disclaimer
 
 Trophy names, descriptions, guide text, icons, and cover art are the property
-of Square Enix and playstationtrophies.org's guide authors. This is a
-personal, non-commercial project; the bundled content is not licensed for
+of Square Enix and playstationtrophies.org's guide authors. The PSN
+integration uses Sony's undocumented mobile API. This is a personal,
+non-commercial project; the bundled content is not licensed for
 redistribution.
