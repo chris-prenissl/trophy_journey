@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:final_fantasy_guide/features/auth/domain/entities/auth_session.dart';
-import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthStore extends ChangeNotifier {
   AuthStore({required this._repository});

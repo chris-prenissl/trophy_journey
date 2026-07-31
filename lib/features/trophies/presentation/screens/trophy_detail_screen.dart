@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/di/app_scope.dart';
 import '../../domain/entities/trophy.dart';
 import '../state/trophy_progress_store.dart';
+import '../widgets/artwork.dart';
 import '../widgets/trophy_badges.dart';
 
 class TrophyDetailScreen extends StatefulWidget {
@@ -42,12 +43,7 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  trophy.iconAsset,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                ),
+                child: TrophyIcon(trophy: trophy, size: 80),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -79,21 +75,31 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
           const SizedBox(height: 16),
           ListenableBuilder(
             listenable: _progress,
-            builder: (context, _) => SwitchListTile(
-              title: const Text('Achieved'),
-              value: _progress.isAchieved(widget.gameId, trophy.id),
-              onChanged: (_) => _progress.toggle(widget.gameId, trophy.id),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            builder: (context, _) {
+              final achieved = _progress.isAchieved(widget.gameId, trophy.id);
+              return ListTile(
+                leading: Icon(
+                  achieved ? Icons.check_circle : Icons.circle_outlined,
+                  color: achieved
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
+                ),
+                title: Text(achieved ? 'Earned' : 'Not earned yet'),
+                subtitle: const Text('Synced from PlayStation Network'),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              );
+            },
+          ),
+          if (trophy.hasGuide) ...[
+            const Divider(),
+            const SizedBox(height: 8),
+            Text('How to achieve', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text(
+              trophy.guide,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
             ),
-          ),
-          const Divider(),
-          const SizedBox(height: 8),
-          Text('How to achieve', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          Text(
-            trophy.guide,
-            style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
-          ),
+          ],
         ],
       ),
     );

@@ -1,17 +1,24 @@
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/trophy.dart';
+import '../../domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
 import '../../domain/usecases/get_trophies_use_case.dart';
 import '../state/trophy_progress_store.dart';
 
 class TrophyListViewModel extends ChangeNotifier {
-  TrophyListViewModel(this._gameId, this._getTrophies, this._progress) {
+  TrophyListViewModel(
+    this._gameId,
+    this._getTrophies,
+    this._progress, {
+    this._getPsnEarnedTrophyIds,
+  }) {
     _progress.addListener(_onProgressChanged);
   }
 
   final String _gameId;
   final GetTrophiesUseCase _getTrophies;
   final TrophyProgressStore _progress;
+  final GetPsnEarnedTrophyIdsUseCase? _getPsnEarnedTrophyIds;
 
   List<Trophy> _trophies = const [];
   List<Trophy>? _visibleTrophies;
@@ -46,10 +53,20 @@ class TrophyListViewModel extends ChangeNotifier {
     _trophies = await _getTrophies(_gameId);
     _loading = false;
     _invalidate();
+
+    await _syncPsnEarned();
   }
 
-  Future<void> toggleAchieved(String trophyId) =>
-      _progress.toggle(_gameId, trophyId);
+  Future<void> _syncPsnEarned() async {
+    final getEarned = _getPsnEarnedTrophyIds;
+    if (getEarned == null) return;
+
+    try {
+      await _progress.applyEarned(_gameId, await getEarned(_gameId));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 
   void setMissablesOnly(bool value) {
     if (_missablesOnly == value) return;
@@ -60,7 +77,7 @@ class TrophyListViewModel extends ChangeNotifier {
 
   void setHideAchieved(bool value) {
     if (_hideAchieved == value) return;
-    
+
     _hideAchieved = value;
     _invalidate();
   }

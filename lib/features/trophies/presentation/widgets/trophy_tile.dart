@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/trophy.dart';
+import 'artwork.dart';
 import 'trophy_badges.dart';
 
 class TrophyTile extends StatelessWidget {
@@ -8,13 +9,11 @@ class TrophyTile extends StatelessWidget {
     super.key,
     required this.trophy,
     required this.achieved,
-    required this.onToggle,
     required this.onTap,
   });
 
   final Trophy trophy;
   final bool achieved;
-  final VoidCallback onToggle;
   final VoidCallback onTap;
 
   @override
@@ -25,58 +24,56 @@ class TrophyTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
-        child: Opacity(
-          opacity: achieved ? 0.55 : 1,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.asset(
-                    trophy.iconAsset,
-                    width: 56,
-                    height: 56,
-                    fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: TrophyIcon(trophy: trophy),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(trophy.title, style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 2),
+                    Text(
+                      trophy.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        TrophyTypeBadge(type: trophy.type),
+                        if (trophy.missable) const MissableBadge(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (achieved)
+                Icon(
+                  Icons.check_circle,
+                  size: 24,
+                  color: theme.colorScheme.primary,
+                )
+              else
+                Icon(
+                  Icons.circle_outlined,
+                  size: 24,
+                  color: theme.colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.4,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        trophy.title,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          decoration: achieved
-                              ? TextDecoration.lineThrough
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        trophy.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: [
-                          TrophyTypeBadge(type: trophy.type),
-                          if (trophy.missable) const MissableBadge(),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Checkbox(value: achieved, onChanged: (_) => onToggle()),
-              ],
-            ),
+            ],
           ),
         ),
       ),

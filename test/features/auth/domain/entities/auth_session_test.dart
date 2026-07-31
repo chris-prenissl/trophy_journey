@@ -1,4 +1,4 @@
-import 'package:final_fantasy_guide/features/auth/domain/entities/auth_session.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 AuthSession sessionExpiring(Duration fromNow) => AuthSession(

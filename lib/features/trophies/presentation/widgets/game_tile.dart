@@ -1,6 +1,8 @@
-import 'package:final_fantasy_guide/features/trophies/domain/entities/game.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
+
+import 'artwork.dart';
 
 class GameTile extends StatelessWidget {
   const GameTile({
@@ -32,19 +34,7 @@ class GameTile extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(6),
-                child: game.coverAsset.isEmpty
-                    ? Container(
-                        width: 56,
-                        height: 56,
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        child: const Icon(Icons.videogame_asset),
-                      )
-                    : Image.asset(
-                        game.coverAsset,
-                        width: 56,
-                        height: 56,
-                        fit: BoxFit.cover,
-                      ),
+                child: GameCover(game: game),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -90,7 +80,6 @@ Widget gameTileNoProgress() => GameTile(
     id: 'ff7',
     title: 'Final Fantasy VII',
     numeral: 'VII',
-    coverAsset: '',
     trophyCount: 50,
   ),
   achievedCount: 0,
@@ -103,7 +92,6 @@ Widget gameTilePartial() => GameTile(
     id: 'ff8',
     title: 'Final Fantasy VIII',
     numeral: 'VIII',
-    coverAsset: '',
     trophyCount: 50,
   ),
   achievedCount: 20,
@@ -116,7 +104,6 @@ Widget gameTileComplete() => GameTile(
     id: 'ff9',
     title: 'Final Fantasy IX',
     numeral: 'IX',
-    coverAsset: '',
     trophyCount: 50,
   ),
   achievedCount: 50,

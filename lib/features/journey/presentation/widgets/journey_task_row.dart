@@ -1,4 +1,4 @@
-import 'package:final_fantasy_guide/features/journey/presentation/widgets/trophy_chip.dart';
+import 'package:trophy_journey/features/journey/presentation/widgets/trophy_chip.dart';
 import 'package:flutter/material.dart';
 
 import '../../../trophies/domain/entities/trophy.dart';

@@ -1,6 +1,6 @@
-import 'package:final_fantasy_guide/core/auth_store.dart';
-import 'package:final_fantasy_guide/features/auth/domain/entities/auth_session.dart';
-import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/core/auth_store.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

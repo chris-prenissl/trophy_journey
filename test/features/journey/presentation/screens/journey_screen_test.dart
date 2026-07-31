@@ -1,29 +1,29 @@
-import 'package:final_fantasy_guide/core/auth_store.dart';
-import 'package:final_fantasy_guide/core/di/app_dependencies.dart';
-import 'package:final_fantasy_guide/core/di/app_scope.dart';
-import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
-import 'package:final_fantasy_guide/features/auth/presentation/viewmodels/auth_view_model.dart';
-import 'package:final_fantasy_guide/features/journey/domain/entities/journey.dart';
-import 'package:final_fantasy_guide/features/journey/domain/repositories/journey_progress_repository.dart';
-import 'package:final_fantasy_guide/features/journey/domain/repositories/journey_repository.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/get_checked_task_ids_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/get_journey_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/get_journey_bookmark_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/has_journey_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/set_journey_bookmark_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/set_task_checked_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/presentation/screens/journey_screen.dart';
-import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
-import 'package:final_fantasy_guide/features/journey/presentation/widgets/journey_step_card.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/entities/game.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_all_achieved_trophy_ids_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy_achieved_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/state/trophy_progress_store.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/game_list_view_model.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
+import 'package:trophy_journey/core/auth_store.dart';
+import 'package:trophy_journey/core/di/app_dependencies.dart';
+import 'package:trophy_journey/core/di/app_scope.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
+import 'package:trophy_journey/features/journey/domain/repositories/journey_progress_repository.dart';
+import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/get_checked_task_ids_use_case.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/get_journey_use_case.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/get_journey_bookmark_use_case.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/set_journey_bookmark_use_case.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/set_task_checked_use_case.dart';
+import 'package:trophy_journey/features/journey/presentation/screens/journey_screen.dart';
+import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
+import 'package:trophy_journey/features/journey/presentation/widgets/journey_step_card.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -104,11 +104,11 @@ void main() {
         .thenAnswer((_) => Future.value());
     when(journeyProgressRepository.setBookmark(any, any))
         .thenAnswer((_) => Future.value());
-    when(progressRepository.getAllAchievedIds()).thenAnswer((_) async => {});
+    when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
     store = TrophyProgressStore(
-      GetAllAchievedTrophyIdsUseCase(progressRepository),
-      SetTrophyAchievedUseCase(progressRepository),
+      GetAllEarnedTrophyIdsUseCase(progressRepository),
+      ReplaceEarnedTrophiesUseCase(progressRepository),
     );
   });
 

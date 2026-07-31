@@ -43,4 +43,19 @@ class TrophyModel {
       order: order,
     );
   }
+
+  Trophy enrichFromPsn(Trophy psnTrophy) {
+    return Trophy(
+      id: id,
+      title: psnTrophy.title,
+      type: psnTrophy.type,
+      description: psnTrophy.description,
+      order: psnTrophy.order,
+      guide: guide,
+      missable: missable,
+      hidden: psnTrophy.hidden,
+      iconAsset: icon,
+      iconUrl: psnTrophy.iconUrl,
+    );
+  }
 }

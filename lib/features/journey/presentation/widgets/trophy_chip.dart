@@ -1,5 +1,5 @@
-import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/trophy_badges.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 

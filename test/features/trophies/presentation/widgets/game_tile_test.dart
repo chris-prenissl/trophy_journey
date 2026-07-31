@@ -1,5 +1,5 @@
-import 'package:final_fantasy_guide/features/trophies/domain/entities/game.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/game_tile.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/game_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

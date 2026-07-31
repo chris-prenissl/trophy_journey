@@ -1,5 +1,5 @@
-import 'package:final_fantasy_guide/features/journey/data/models/journey_model.dart';
-import 'package:final_fantasy_guide/features/journey/domain/entities/journey.dart';
+import 'package:trophy_journey/features/journey/data/models/journey_model.dart';
+import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const taskJson = <String, dynamic>{

@@ -1,8 +1,8 @@
-import 'package:final_fantasy_guide/features/journey/domain/entities/journey.dart';
-import 'package:final_fantasy_guide/features/journey/presentation/widgets/journey_task_row.dart';
-import 'package:final_fantasy_guide/features/journey/presentation/widgets/trophy_chip.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/trophy_badges.dart';
+import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
+import 'package:trophy_journey/features/journey/presentation/widgets/journey_task_row.dart';
+import 'package:trophy_journey/features/journey/presentation/widgets/trophy_chip.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

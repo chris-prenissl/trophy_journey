@@ -12,6 +12,7 @@ class GameModel {
     required this.numeral,
     required this.cover,
     required this.trophyCount,
+    this.psnNames = const [],
   });
 
   factory GameModel.fromJson(Map<String, dynamic> json) =>
@@ -22,6 +23,7 @@ class GameModel {
   final String numeral;
   final String cover;
   final int trophyCount;
+  final List<String> psnNames;
 
   Map<String, dynamic> toJson() => _$GameModelToJson(this);
 
@@ -32,6 +34,7 @@ class GameModel {
       numeral: numeral,
       coverAsset: cover,
       trophyCount: trophyCount,
+      guideSlug: id,
     );
   }
 }

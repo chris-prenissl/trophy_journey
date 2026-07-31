@@ -28,14 +28,18 @@ import 'features/journey/domain/usecases/set_task_checked_use_case.dart';
 import 'features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'features/trophies/data/datasources/game_asset_data_source.dart';
 import 'features/trophies/data/datasources/progress_local_data_source.dart';
+import 'features/trophies/data/datasources/psn_cache_data_source.dart';
+import 'features/trophies/data/datasources/psn_trophy_data_source.dart';
 import 'features/trophies/data/datasources/trophy_asset_data_source.dart';
+import 'features/trophies/data/psn_library.dart';
 import 'features/trophies/data/repositories/game_repository_impl.dart';
 import 'features/trophies/data/repositories/trophy_progress_repository_impl.dart';
 import 'features/trophies/data/repositories/trophy_repository_impl.dart';
-import 'features/trophies/domain/usecases/get_all_achieved_trophy_ids_use_case.dart';
+import 'features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
 import 'features/trophies/domain/usecases/get_games_use_case.dart';
+import 'features/trophies/domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
 import 'features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'features/trophies/domain/usecases/set_trophy_achieved_use_case.dart';
+import 'features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'features/trophies/presentation/screens/game_list_screen.dart';
 import 'features/trophies/presentation/state/trophy_progress_store.dart';
 import 'features/trophies/presentation/viewmodels/game_list_view_model.dart';
@@ -59,9 +63,28 @@ void main() {
   );
   final authStore = AuthStore(repository: authRepository);
 
-  final gameRepository = GameRepositoryImpl(GameAssetDataSource(rootBundle));
+  final psnTrophyDataSource = PsnTrophyDataSource(
+    accessToken: () async {
+      await authStore.refreshTokenIfNeeded();
+      return authStore.currentSession?.accessToken;
+    },
+  );
+  final psnCache = PsnCacheDataSource();
+  final gameGuides = GameAssetDataSource(rootBundle);
+  final trophyGuides = TrophyAssetDataSource(rootBundle);
+
+  final psnLibrary = PsnLibrary(
+    psn: psnTrophyDataSource,
+    cache: psnCache,
+    guides: gameGuides,
+  );
+
+  final gameRepository = GameRepositoryImpl(psnLibrary);
   final trophyRepository = TrophyRepositoryImpl(
-    TrophyAssetDataSource(rootBundle),
+    library: psnLibrary,
+    psn: psnTrophyDataSource,
+    cache: psnCache,
+    guides: trophyGuides,
   );
   final trophyProgressRepository = TrophyProgressRepositoryImpl(
     ProgressLocalDataSource(),
@@ -74,12 +97,12 @@ void main() {
   );
 
   final trophyProgressStore = TrophyProgressStore(
-    GetAllAchievedTrophyIdsUseCase(trophyProgressRepository),
-    SetTrophyAchievedUseCase(trophyProgressRepository),
+    GetAllEarnedTrophyIdsUseCase(trophyProgressRepository),
+    ReplaceEarnedTrophiesUseCase(trophyProgressRepository),
   )..load();
 
   runApp(
-    TrophyGuideApp(
+    TrophyJourneyApp(
       authStore: authStore,
       dependencies: AppDependencies(
         authStore: authStore,
@@ -100,6 +123,7 @@ void main() {
           gameId,
           GetTrophiesUseCase(trophyRepository),
           trophyProgressStore,
+          getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(trophyRepository),
         ),
         createJourneyViewModel: (gameId) => JourneyViewModel(
           gameId,
@@ -115,8 +139,8 @@ void main() {
   );
 }
 
-class TrophyGuideApp extends StatefulWidget {
-  const TrophyGuideApp({
+class TrophyJourneyApp extends StatefulWidget {
+  const TrophyJourneyApp({
     super.key,
     required this.authStore,
     required this.dependencies,
@@ -126,10 +150,10 @@ class TrophyGuideApp extends StatefulWidget {
   final AppDependencies dependencies;
 
   @override
-  State<TrophyGuideApp> createState() => _TrophyGuideAppState();
+  State<TrophyJourneyApp> createState() => _TrophyJourneyAppState();
 }
 
-class _TrophyGuideAppState extends State<TrophyGuideApp> {
+class _TrophyJourneyAppState extends State<TrophyJourneyApp> {
   late final Future<void> _authInitFuture;
   late final AuthViewModel _authViewModel;
 
@@ -154,7 +178,7 @@ class _TrophyGuideAppState extends State<TrophyGuideApp> {
         future: _authInitFuture,
         builder: (context, snapshot) {
           return MaterialApp(
-            title: 'Final Fantasy Guide',
+            title: 'Trophy Journey',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(

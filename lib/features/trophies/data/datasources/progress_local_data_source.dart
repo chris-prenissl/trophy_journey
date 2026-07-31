@@ -5,8 +5,7 @@ class ProgressLocalDataSource {
   ProgressLocalDataSource({DatabaseFactory? factory, this._path})
     : _factory = factory ?? databaseFactory;
 
-  static const _table = 'progress';
-  static const _legacyGameId = 'final-fantasy-x-hd';
+  static const _table = 'earned';
 
   final DatabaseFactory _factory;
   final String? _path;
@@ -20,53 +19,21 @@ class ProgressLocalDataSource {
         p.join(await _factory.getDatabasesPath(), 'trophy_progress.db');
     return _db = await _factory.openDatabase(
       path,
-      options: OpenDatabaseOptions(
-        version: 2,
-        onCreate: (db, version) => _createV2(db),
-        onUpgrade: (db, oldVersion, newVersion) async {
-          if (oldVersion < 2) {
-            await db.execute('ALTER TABLE $_table RENAME TO ${_table}_v1');
-            await _createV2(db);
-            await db.execute('''
-              INSERT INTO $_table (game_id, trophy_id, achieved, achieved_at)
-              SELECT '$_legacyGameId', trophy_id, achieved, achieved_at
-              FROM ${_table}_v1
-            ''');
-            await db.execute('DROP TABLE ${_table}_v1');
-          }
-        },
-      ),
+      options: OpenDatabaseOptions(version: 1, onCreate: _create),
     );
   }
 
-  static Future<void> _createV2(Database db) => db.execute('''
+  static Future<void> _create(Database db, int version) => db.execute('''
         CREATE TABLE $_table (
           game_id TEXT NOT NULL,
           trophy_id TEXT NOT NULL,
-          achieved INTEGER NOT NULL,
-          achieved_at TEXT,
           PRIMARY KEY (game_id, trophy_id)
         )
       ''');
 
-  Future<Set<String>> loadAchievedIds(String gameId) async {
+  Future<Map<String, Set<String>>> loadAllEarnedIds() async {
     final db = await _database();
-    final rows = await db.query(
-      _table,
-      columns: ['trophy_id'],
-      where: 'achieved = 1 AND game_id = ?',
-      whereArgs: [gameId],
-    );
-    return rows.map((r) => r['trophy_id'] as String).toSet();
-  }
-
-  Future<Map<String, Set<String>>> loadAllAchievedIds() async {
-    final db = await _database();
-    final rows = await db.query(
-      _table,
-      columns: ['game_id', 'trophy_id'],
-      where: 'achieved = 1',
-    );
+    final rows = await db.query(_table, columns: ['game_id', 'trophy_id']);
     final result = <String, Set<String>>{};
     for (final row in rows) {
       result
@@ -76,18 +43,16 @@ class ProgressLocalDataSource {
     return result;
   }
 
-  Future<void> saveAchieved(
-    String gameId,
-    String trophyId,
-    bool achieved,
-  ) async {
+  Future<void> replaceEarned(String gameId, Set<String> trophyIds) async {
     final db = await _database();
-    await db.insert(_table, {
-      'game_id': gameId,
-      'trophy_id': trophyId,
-      'achieved': achieved ? 1 : 0,
-      'achieved_at': achieved ? DateTime.now().toIso8601String() : null,
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.transaction((txn) async {
+      await txn.delete(_table, where: 'game_id = ?', whereArgs: [gameId]);
+      final batch = txn.batch();
+      for (final trophyId in trophyIds) {
+        batch.insert(_table, {'game_id': gameId, 'trophy_id': trophyId});
+      }
+      await batch.commit(noResult: true);
+    });
   }
 
   Future<void> close() async {

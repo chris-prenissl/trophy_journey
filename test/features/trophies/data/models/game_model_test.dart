@@ -1,4 +1,4 @@
-import 'package:final_fantasy_guide/features/trophies/data/models/game_model.dart';
+import 'package:trophy_journey/features/trophies/data/models/game_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const gameJson = <String, dynamic>{

@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:final_fantasy_guide/features/auth/domain/entities/auth_session.dart';
-import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
-import 'package:final_fantasy_guide/features/auth/domain/usecases/get_current_session.dart';
-import 'package:final_fantasy_guide/features/auth/domain/usecases/login_with_authorization_code.dart';
-import 'package:final_fantasy_guide/features/auth/domain/usecases/logout.dart';
-import 'package:final_fantasy_guide/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/get_current_session.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/login_with_authorization_code.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/logout.dart';
+import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

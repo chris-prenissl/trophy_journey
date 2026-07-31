@@ -23,7 +23,18 @@ class GameListViewModel extends ChangeNotifier {
   int get totalAchievedCount =>
       _games.fold(0, (sum, g) => sum + achievedCountFor(g.id));
 
-  int achievedCountFor(String gameId) => _progress.countFor(gameId);
+  int achievedCountFor(String gameId) {
+    final stored = _progress.countFor(gameId);
+    final reported = _psnEarnedCountFor(gameId);
+    return stored > reported ? stored : reported;
+  }
+
+  int _psnEarnedCountFor(String gameId) {
+    for (final game in _games) {
+      if (game.id == gameId) return game.psnEarnedCount;
+    }
+    return 0;
+  }
 
   Future<void> load() async {
     _games = await _getGames();

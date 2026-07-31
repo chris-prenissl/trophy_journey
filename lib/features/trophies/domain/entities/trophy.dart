@@ -6,18 +6,24 @@ class Trophy {
     required this.title,
     required this.type,
     required this.description,
-    required this.guide,
-    required this.missable,
-    required this.iconAsset,
     required this.order,
+    this.guide = '',
+    this.missable = false,
+    this.hidden = false,
+    this.iconAsset,
+    this.iconUrl,
   });
 
   final String id;
   final String title;
   final TrophyType type;
   final String description;
+  final int order;
   final String guide;
   final bool missable;
-  final String iconAsset;
-  final int order;
+  final bool hidden;
+  final String? iconAsset;
+  final String? iconUrl;
+
+  bool get hasGuide => guide.isNotEmpty;
 }

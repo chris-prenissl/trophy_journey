@@ -1,4 +1,4 @@
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/game_tile.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/game_tile.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/app_scope.dart';
@@ -42,7 +42,7 @@ class _GameListScreenState extends State<GameListScreen> {
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Final Fantasy Trophy Guide'),
+            title: const Text('Trophy Journey'),
             actions: [
               if (!_viewModel.loading)
                 Padding(

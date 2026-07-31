@@ -1,11 +1,12 @@
-import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_all_achieved_trophy_ids_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy_achieved_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/state/trophy_progress_store.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -60,13 +61,11 @@ void main() {
     progressRepository = MockTrophyProgressRepository();
     when(trophyRepository.getTrophies('ffx'))
         .thenAnswer((_) async => [first, missable, last]);
-    when(progressRepository.getAllAchievedIds()).thenAnswer((_) async => {});
-    when(progressRepository.setAchieved(any, any, any))
-        .thenAnswer((_) => Future<void>.value());
+    when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
     store = TrophyProgressStore(
-      GetAllAchievedTrophyIdsUseCase(progressRepository),
-      SetTrophyAchievedUseCase(progressRepository),
+      GetAllEarnedTrophyIdsUseCase(progressRepository),
+      ReplaceEarnedTrophiesUseCase(progressRepository),
     );
     await store.load();
     viewModel = TrophyListViewModel(
@@ -109,7 +108,7 @@ void main() {
 
   group('progress', () {
     test('derives counts from the shared store', () async {
-      when(progressRepository.getAllAchievedIds()).thenAnswer(
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
         (_) async => {
           'ffx': {'t1'},
         },
@@ -125,7 +124,7 @@ void main() {
     });
 
     test('ignores progress belonging to another game', () async {
-      when(progressRepository.getAllAchievedIds()).thenAnswer(
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
         (_) async => {
           'ffvii': {'t1'},
         },
@@ -147,7 +146,7 @@ void main() {
 
   group('visibleTrophies', () {
     test('sorts unachieved before achieved, keeping source order', () async {
-      when(progressRepository.getAllAchievedIds()).thenAnswer(
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
         (_) async => {
           'ffx': {'t1'},
         },
@@ -167,7 +166,7 @@ void main() {
     });
 
     test('hides achieved trophies', () async {
-      when(progressRepository.getAllAchievedIds()).thenAnswer(
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
         (_) async => {
           'ffx': {'t1'},
         },
@@ -181,7 +180,7 @@ void main() {
     });
 
     test('combines both filters', () async {
-      when(progressRepository.getAllAchievedIds()).thenAnswer(
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
         (_) async => {
           'ffx': {'t2'},
         },
@@ -219,7 +218,7 @@ void main() {
       viewModel.setHideAchieved(true);
       final before = viewModel.visibleTrophies;
 
-      await store.setAchieved('ffx', 't1', true);
+      await store.applyEarned('ffx', {'t1'});
 
       expect(identical(before, viewModel.visibleTrophies), isFalse);
       expect(viewModel.visibleTrophies.map((t) => t.id), ['t2', 't3']);
@@ -241,14 +240,40 @@ void main() {
     });
   });
 
-  group('shared progress', () {
-    test('toggleAchieved writes through the store', () async {
+  group('psn earned', () {
+    test('folds in what PSN reports as earned on load', () async {
+      when(trophyRepository.getPsnEarnedTrophyIds('ffx'))
+          .thenAnswer((_) async => {'t1'});
+      viewModel = TrophyListViewModel(
+        'ffx',
+        GetTrophiesUseCase(trophyRepository),
+        store,
+        getPsnEarnedTrophyIds:
+            GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+      );
+
       await viewModel.load();
 
-      await viewModel.toggleAchieved('t1');
+      expect(viewModel.isAchieved('t1'), isTrue);
+      expect(viewModel.isAchieved('t2'), isFalse);
+      expect(viewModel.achievedCount, 1);
+    });
 
-      expect(store.isAchieved('ffx', 't1'), isTrue);
-      verify(progressRepository.setAchieved('ffx', 't1', true)).called(1);
+    test('keeps the list when the earned lookup fails', () async {
+      when(trophyRepository.getPsnEarnedTrophyIds('ffx'))
+          .thenThrow(Exception('offline'));
+      viewModel = TrophyListViewModel(
+        'ffx',
+        GetTrophiesUseCase(trophyRepository),
+        store,
+        getPsnEarnedTrophyIds:
+            GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+      );
+
+      await viewModel.load();
+
+      expect(viewModel.loading, isFalse);
+      expect(viewModel.totalCount, 3);
     });
 
     test('re-emits when the store changes elsewhere', () async {
@@ -256,7 +281,7 @@ void main() {
       var notifications = 0;
       viewModel.addListener(() => notifications++);
 
-      await store.setAchieved('ffx', 't1', true);
+      await store.applyEarned('ffx', {'t1'});
 
       expect(notifications, 1);
       expect(viewModel.achievedCount, 1);
@@ -268,7 +293,7 @@ void main() {
       viewModel.addListener(() => notifications++);
 
       viewModel.dispose();
-      await store.setAchieved('ffx', 't1', true);
+      await store.applyEarned('ffx', {'t1'});
 
       expect(notifications, 0);
 

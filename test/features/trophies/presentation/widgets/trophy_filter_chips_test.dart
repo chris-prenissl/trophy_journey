@@ -1,12 +1,12 @@
-import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_all_achieved_trophy_ids_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy_achieved_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/state/trophy_progress_store.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/trophy_filter_chips.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_filter_chips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -49,12 +49,10 @@ void main() {
   setUp(() {
     trophyRepository = MockTrophyRepository();
     progressRepository = MockTrophyProgressRepository();
-    when(progressRepository.getAllAchievedIds()).thenAnswer((_) async => {});
-    when(progressRepository.setAchieved(any, any, any))
-        .thenAnswer((_) => Future<void>.value());
+    when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
     store = TrophyProgressStore(
-      GetAllAchievedTrophyIdsUseCase(progressRepository),
-      SetTrophyAchievedUseCase(progressRepository),
+      GetAllEarnedTrophyIdsUseCase(progressRepository),
+      ReplaceEarnedTrophiesUseCase(progressRepository),
     );
   });
 

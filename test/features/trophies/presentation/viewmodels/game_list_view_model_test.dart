@@ -1,11 +1,11 @@
-import 'package:final_fantasy_guide/features/trophies/domain/entities/game.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/game_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_all_achieved_trophy_ids_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_games_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy_achieved_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/state/trophy_progress_store.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/game_list_view_model.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/game_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_games_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -42,13 +42,11 @@ void main() {
     gameRepository = MockGameRepository();
     progressRepository = MockTrophyProgressRepository();
     when(gameRepository.getGames()).thenAnswer((_) async => [ffx, ffvii]);
-    when(progressRepository.getAllAchievedIds()).thenAnswer((_) async => {});
-    when(progressRepository.setAchieved(any, any, any))
-        .thenAnswer((_) => Future<void>.value());
+    when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
     store = TrophyProgressStore(
-      GetAllAchievedTrophyIdsUseCase(progressRepository),
-      SetTrophyAchievedUseCase(progressRepository),
+      GetAllEarnedTrophyIdsUseCase(progressRepository),
+      ReplaceEarnedTrophiesUseCase(progressRepository),
     );
     await store.load();
     viewModel = GameListViewModel(GetGamesUseCase(gameRepository), store);
@@ -76,7 +74,7 @@ void main() {
 
   group('counts', () {
     test('reads achieved counts from the shared store', () async {
-      when(progressRepository.getAllAchievedIds()).thenAnswer(
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
         (_) async => {
           'ffx': {'t1', 't2'},
           'ffvii': {'t9'},
@@ -92,7 +90,7 @@ void main() {
     });
 
     test('ignores stored progress for games that are not listed', () async {
-      when(progressRepository.getAllAchievedIds()).thenAnswer(
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
         (_) async => {
           'ffx': {'t1'},
           'ff-unknown': {'t1', 't2'},
@@ -118,7 +116,7 @@ void main() {
       var notifications = 0;
       viewModel.addListener(() => notifications++);
 
-      await store.setAchieved('ffx', 't1', true);
+      await store.applyEarned('ffx', {'t1'});
 
       expect(notifications, 1);
       expect(viewModel.achievedCountFor('ffx'), 1);
@@ -131,7 +129,7 @@ void main() {
       viewModel.addListener(() => notifications++);
 
       viewModel.dispose();
-      await store.setAchieved('ffx', 't1', true);
+      await store.applyEarned('ffx', {'t1'});
 
       expect(notifications, 0);
 

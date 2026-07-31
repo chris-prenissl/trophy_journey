@@ -1,8 +1,8 @@
-import 'package:final_fantasy_guide/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:final_fantasy_guide/features/auth/data/datasources/psn_remote_data_source.dart';
-import 'package:final_fantasy_guide/features/auth/data/models/auth_session_model.dart';
-import 'package:final_fantasy_guide/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:final_fantasy_guide/features/auth/domain/entities/auth_session.dart';
+import 'package:trophy_journey/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:trophy_journey/features/auth/data/datasources/psn_remote_data_source.dart';
+import 'package:trophy_journey/features/auth/data/models/auth_session_model.dart';
+import 'package:trophy_journey/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

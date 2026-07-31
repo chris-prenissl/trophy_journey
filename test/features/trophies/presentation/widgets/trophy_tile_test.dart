@@ -1,6 +1,6 @@
-import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/trophy_badges.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/trophy_tile.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -30,7 +30,6 @@ Future<void> pumpTile(
   WidgetTester tester, {
   Trophy trophy = ordinary,
   bool achieved = false,
-  VoidCallback? onToggle,
   VoidCallback? onTap,
 }) => tester.pumpWidget(
   MaterialApp(
@@ -38,7 +37,6 @@ Future<void> pumpTile(
       body: TrophyTile(
         trophy: trophy,
         achieved: achieved,
-        onToggle: onToggle ?? () {},
         onTap: onTap ?? () {},
       ),
     ),
@@ -62,28 +60,31 @@ void main() {
     expect(find.text('GOLD'), findsOneWidget);
   });
 
-  testWidgets('checkbox follows the achieved flag', (tester) async {
+  testWidgets('marks earned trophies with a filled check', (tester) async {
     await pumpTile(tester, achieved: true);
 
-    final checkbox = tester.widget<Checkbox>(find.byType(Checkbox));
-    expect(checkbox.value, isTrue);
+    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    expect(find.byIcon(Icons.circle_outlined), findsNothing);
   });
 
-  testWidgets('strikes through the title once achieved', (tester) async {
+  testWidgets('shows an empty marker for unearned trophies', (tester) async {
+    await pumpTile(tester, achieved: false);
+
+    expect(find.byIcon(Icons.circle_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle), findsNothing);
+  });
+
+  testWidgets('does not strike through the title', (tester) async {
     await pumpTile(tester, achieved: true);
 
     final title = tester.widget<Text>(find.text('Ordinary'));
-    expect(title.style?.decoration, TextDecoration.lineThrough);
+    expect(title.style?.decoration, isNot(TextDecoration.lineThrough));
   });
 
-  testWidgets('calls onToggle when the checkbox is tapped', (tester) async {
-    var toggles = 0;
-    await pumpTile(tester, onToggle: () => toggles++);
+  testWidgets('offers no way to tick the trophy off', (tester) async {
+    await pumpTile(tester, achieved: false);
 
-    await tester.tap(find.byType(Checkbox));
-    await tester.pumpAndSettle();
-
-    expect(toggles, 1);
+    expect(find.byType(Checkbox), findsNothing);
   });
 
   testWidgets('calls onTap when the tile is tapped', (tester) async {

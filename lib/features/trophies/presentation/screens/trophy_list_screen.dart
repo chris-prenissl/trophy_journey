@@ -96,8 +96,6 @@ class _TrophyListScreenState extends State<TrophyListScreen> {
                             key: ValueKey(trophy.id),
                             trophy: trophy,
                             achieved: _viewModel.isAchieved(trophy.id),
-                            onToggle: () =>
-                                _viewModel.toggleAchieved(trophy.id),
                             onTap: () => _openTrophyDetail(trophy),
                           );
                         },

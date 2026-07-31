@@ -1,17 +1,17 @@
-import 'package:final_fantasy_guide/core/auth_store.dart';
-import 'package:final_fantasy_guide/core/di/app_dependencies.dart';
-import 'package:final_fantasy_guide/core/di/app_scope.dart';
-import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
-import 'package:final_fantasy_guide/features/auth/presentation/viewmodels/auth_view_model.dart';
-import 'package:final_fantasy_guide/features/journey/domain/repositories/journey_repository.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/has_journey_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_all_achieved_trophy_ids_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy_achieved_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/state/trophy_progress_store.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/game_list_view_model.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
+import 'package:trophy_journey/core/auth_store.dart';
+import 'package:trophy_journey/core/di/app_dependencies.dart';
+import 'package:trophy_journey/core/di/app_scope.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
+import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -37,9 +37,7 @@ void main() {
 
   setUp(() {
     progressRepository = MockTrophyProgressRepository();
-    when(progressRepository.getAllAchievedIds()).thenAnswer((_) async => {});
-    when(progressRepository.setAchieved(any, any, any))
-        .thenAnswer((_) => Future.value());
+    when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
     authRepository = MockAuthRepository();
     when(authRepository.getStoredSession()).thenAnswer((_) async => null);
@@ -47,8 +45,8 @@ void main() {
     authStore = AuthStore(repository: authRepository);
 
     store = TrophyProgressStore(
-      GetAllAchievedTrophyIdsUseCase(progressRepository),
-      SetTrophyAchievedUseCase(progressRepository),
+      GetAllEarnedTrophyIdsUseCase(progressRepository),
+      ReplaceEarnedTrophiesUseCase(progressRepository),
     );
     dependencies = AppDependencies(
       authStore: authStore,
@@ -114,7 +112,7 @@ void main() {
     );
     expect(builds, 1);
 
-    await store.setAchieved('ffx', 't1', true);
+    await store.applyEarned('ffx', {'t1'});
     await tester.pump();
 
     expect(
@@ -135,6 +133,29 @@ void main() {
     );
 
     expect(tester.takeException(), isAssertionError);
+  });
+
+  test('updateShouldNotify compares dependencies by identity', () {
+    final other = AppDependencies(
+      authStore: authStore,
+      trophyProgressStore: store,
+      hasJourneyUseCase: HasJourneyUseCase(MockJourneyRepository()),
+      createAuthViewModel: MockAuthViewModel.new,
+      createGameListViewModel: MockGameListViewModel.new,
+      createTrophyListViewModel: (_) => MockTrophyListViewModel(),
+      createJourneyViewModel: (_) => MockJourneyViewModel(),
+    );
+
+    final widget = AppScope(dependencies: dependencies, child: const SizedBox());
+
+    expect(
+      widget.updateShouldNotify(AppScope(dependencies: other, child: const SizedBox())),
+      isTrue,
+    );
+    expect(
+      widget.updateShouldNotify(AppScope(dependencies: dependencies, child: const SizedBox())),
+      isFalse,
+    );
   });
 }
 

@@ -7,14 +7,10 @@ class TrophyProgressRepositoryImpl implements TrophyProgressRepository {
   final ProgressLocalDataSource _dataSource;
 
   @override
-  Future<Set<String>> getAchievedIds(String gameId) =>
-      _dataSource.loadAchievedIds(gameId);
+  Future<Map<String, Set<String>>> getAllEarnedIds() =>
+      _dataSource.loadAllEarnedIds();
 
   @override
-  Future<Map<String, Set<String>>> getAllAchievedIds() =>
-      _dataSource.loadAllAchievedIds();
-
-  @override
-  Future<void> setAchieved(String gameId, String trophyId, bool achieved) =>
-      _dataSource.saveAchieved(gameId, trophyId, achieved);
+  Future<void> replaceEarned(String gameId, Set<String> trophyIds) =>
+      _dataSource.replaceEarned(gameId, trophyIds);
 }

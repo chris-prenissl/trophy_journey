@@ -1,25 +1,26 @@
-import 'package:final_fantasy_guide/core/auth_store.dart';
-import 'package:final_fantasy_guide/core/di/app_dependencies.dart';
-import 'package:final_fantasy_guide/core/di/app_scope.dart';
-import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
-import 'package:final_fantasy_guide/features/auth/presentation/viewmodels/auth_view_model.dart';
-import 'package:final_fantasy_guide/features/journey/domain/repositories/journey_repository.dart';
-import 'package:final_fantasy_guide/features/journey/domain/usecases/has_journey_use_case.dart';
-import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/entities/game.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/entities/trophy.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_all_achieved_trophy_ids_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/domain/usecases/set_trophy_achieved_use_case.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/screens/trophy_detail_screen.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/screens/trophy_list_screen.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/state/trophy_progress_store.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/game_list_view_model.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/progress_circle.dart';
-import 'package:final_fantasy_guide/features/trophies/presentation/widgets/trophy_tile.dart';
+import 'package:trophy_journey/core/auth_store.dart';
+import 'package:trophy_journey/core/di/app_dependencies.dart';
+import 'package:trophy_journey/core/di/app_scope.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
+import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
+import 'package:trophy_journey/features/trophies/presentation/screens/trophy_detail_screen.dart';
+import 'package:trophy_journey/features/trophies/presentation/screens/trophy_list_screen.dart';
+import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
+import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/progress_circle.dart';
+import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -96,14 +97,16 @@ void main() {
 
     when(trophyRepository.getTrophies('ffx'))
         .thenAnswer((_) async => [ordinary, missable, another]);
-    when(progressRepository.getAllAchievedIds()).thenAnswer((_) async => {});
-    when(progressRepository.setAchieved(any, any, any))
+    when(trophyRepository.getPsnEarnedTrophyIds('ffx'))
+        .thenAnswer((_) async => <String>{});
+    when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
+    when(progressRepository.replaceEarned(any, any))
         .thenAnswer((_) => Future.value());
     when(journeyRepository.hasJourney('ffx')).thenAnswer((_) async => false);
 
     store = TrophyProgressStore(
-      GetAllAchievedTrophyIdsUseCase(progressRepository),
-      SetTrophyAchievedUseCase(progressRepository),
+      GetAllEarnedTrophyIdsUseCase(progressRepository),
+      ReplaceEarnedTrophiesUseCase(progressRepository),
     );
   });
 
@@ -123,6 +126,8 @@ void main() {
             gameId,
             GetTrophiesUseCase(trophyRepository),
             store,
+            getPsnEarnedTrophyIds:
+                GetPsnEarnedTrophyIdsUseCase(trophyRepository),
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),
@@ -156,6 +161,8 @@ void main() {
             gameId,
             GetTrophiesUseCase(trophyRepository),
             store,
+            getPsnEarnedTrophyIds:
+                GetPsnEarnedTrophyIdsUseCase(trophyRepository),
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),
@@ -182,11 +189,11 @@ void main() {
     expect(find.text('Missable'), findsWidgets);
   });
 
-  testWidgets('hides achieved trophies', (tester) async {
+  testWidgets('hides trophies earned on PSN when asked', (tester) async {
+    when(trophyRepository.getPsnEarnedTrophyIds('ffx'))
+        .thenAnswer((_) async => {'t1'});
     await pumpScreen(tester);
 
-    await tester.tap(find.byType(Checkbox).first);
-    await tester.pumpAndSettle();
     await tester.tap(find.text('Hide achieved'));
     await tester.pumpAndSettle();
 
@@ -201,26 +208,27 @@ void main() {
   ) async {
     when(trophyRepository.getTrophies('ffx'))
         .thenAnswer((_) async => [missable]);
+    when(trophyRepository.getPsnEarnedTrophyIds('ffx'))
+        .thenAnswer((_) async => {'t2'});
     await pumpScreen(tester);
 
-    await tester.tap(find.byType(Checkbox).first);
-    await tester.pumpAndSettle();
     await tester.tap(find.text('Hide achieved'));
     await tester.pumpAndSettle();
 
     expect(find.text('No trophies match filters'), findsOneWidget);
   });
 
-  testWidgets('toggling a trophy writes through the shared store', (
+  testWidgets('reflects PSN earned trophies without offering a tick', (
     tester,
   ) async {
+    when(trophyRepository.getPsnEarnedTrophyIds('ffx'))
+        .thenAnswer((_) async => {'t1'});
     await pumpScreen(tester);
 
-    await tester.tap(find.byType(Checkbox).first);
-    await tester.pumpAndSettle();
-
-    expect(store.isAchieved('ffx', 't1'), isTrue);
-    verify(progressRepository.setAchieved('ffx', 't1', true)).called(1);
+    expect(find.byType(Checkbox), findsNothing);
+    // One earned, two still to go.
+    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    expect(find.byIcon(Icons.circle_outlined), findsNWidgets(2));
   });
 
   testWidgets('hides the journey button when the game has no journey', (
@@ -244,29 +252,17 @@ void main() {
     );
   });
 
-  testWidgets('opens the detail screen and stays in sync with it', (
+  testWidgets('opens the detail screen with the trophy guide', (
     tester,
   ) async {
     await pumpScreen(tester);
 
     await tester.tap(find.text('Ordinary'));
     await tester.pumpAndSettle();
+
     expect(find.byType(TrophyDetailScreen), findsOneWidget);
     expect(find.text('guide text'), findsOneWidget);
-
-    await tester.tap(find.byType(Switch));
-    await tester.pumpAndSettle();
-
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-
-    expect(store.isAchieved('ffx', 't1'), isTrue);
-    final checkbox = tester.widget<Checkbox>(
-      find.descendant(
-        of: find.widgetWithText(TrophyTile, 'Ordinary'),
-        matching: find.byType(Checkbox),
-      ),
-    );
-    expect(checkbox.value, isTrue);
+    // The detail screen only reflects PSN state, it never offers a toggle.
+    expect(find.byType(Switch), findsNothing);
   });
 }
