@@ -8,7 +8,7 @@
 PRODUCT_NAME = final_fantasy_guide
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.finalFantasyGuide
+PRODUCT_BUNDLE_IDENTIFIER = com.christophprenissl.finalFantasyGuide
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 com.christophprenissl. All rights reserved.
