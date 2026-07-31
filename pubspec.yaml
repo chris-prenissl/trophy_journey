@@ -1,7 +1,7 @@
 name: trophy_journey
 description: "A PlayStation trophy tracker with hand-written guides and journeys."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: ^3.13.0-228.0.dev
