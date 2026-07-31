@@ -1,5 +1,8 @@
+import 'package:final_fantasy_guide/core/auth_store.dart';
 import 'package:final_fantasy_guide/core/di/app_dependencies.dart';
 import 'package:final_fantasy_guide/core/di/app_scope.dart';
+import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
+import 'package:final_fantasy_guide/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:final_fantasy_guide/features/journey/domain/repositories/journey_repository.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/has_journey_use_case.dart';
 import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
@@ -17,14 +20,18 @@ import 'package:mockito/mockito.dart';
 import 'app_scope_test.mocks.dart';
 
 @GenerateNiceMocks([
+  MockSpec<AuthRepository>(),
   MockSpec<TrophyProgressRepository>(),
   MockSpec<JourneyRepository>(),
   MockSpec<GameListViewModel>(),
   MockSpec<TrophyListViewModel>(),
   MockSpec<JourneyViewModel>(),
+  MockSpec<AuthViewModel>(),
 ])
 void main() {
   late MockTrophyProgressRepository progressRepository;
+  late MockAuthRepository authRepository;
+  late AuthStore authStore;
   late TrophyProgressStore store;
   late AppDependencies dependencies;
 
@@ -34,13 +41,20 @@ void main() {
     when(progressRepository.setAchieved(any, any, any))
         .thenAnswer((_) => Future.value());
 
+    authRepository = MockAuthRepository();
+    when(authRepository.getStoredSession()).thenAnswer((_) async => null);
+
+    authStore = AuthStore(repository: authRepository);
+
     store = TrophyProgressStore(
       GetAllAchievedTrophyIdsUseCase(progressRepository),
       SetTrophyAchievedUseCase(progressRepository),
     );
     dependencies = AppDependencies(
+      authStore: authStore,
       trophyProgressStore: store,
       hasJourneyUseCase: HasJourneyUseCase(MockJourneyRepository()),
+      createAuthViewModel: MockAuthViewModel.new,
       createGameListViewModel: MockGameListViewModel.new,
       createTrophyListViewModel: (_) => MockTrophyListViewModel(),
       createJourneyViewModel: (_) => MockJourneyViewModel(),

@@ -1,5 +1,8 @@
+import 'package:final_fantasy_guide/core/auth_store.dart';
 import 'package:final_fantasy_guide/core/di/app_dependencies.dart';
 import 'package:final_fantasy_guide/core/di/app_scope.dart';
+import 'package:final_fantasy_guide/features/auth/domain/repositories/auth_repository.dart';
+import 'package:final_fantasy_guide/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:final_fantasy_guide/features/journey/domain/repositories/journey_repository.dart';
 import 'package:final_fantasy_guide/features/journey/domain/usecases/has_journey_use_case.dart';
 import 'package:final_fantasy_guide/features/journey/presentation/viewmodels/journey_view_model.dart';
@@ -64,20 +67,28 @@ const blitzball = Trophy(
 );
 
 @GenerateNiceMocks([
+  MockSpec<AuthRepository>(),
   MockSpec<GameRepository>(),
   MockSpec<TrophyRepository>(),
   MockSpec<TrophyProgressRepository>(),
   MockSpec<JourneyRepository>(),
   MockSpec<JourneyViewModel>(),
+  MockSpec<AuthViewModel>(),
 ])
 void main() {
+  late MockAuthRepository authRepository;
   late MockGameRepository gameRepository;
   late MockTrophyRepository trophyRepository;
   late MockTrophyProgressRepository progressRepository;
   late MockJourneyRepository journeyRepository;
+  late AuthStore authStore;
   late TrophyProgressStore store;
 
   setUp(() {
+    authRepository = MockAuthRepository();
+    when(authRepository.getStoredSession()).thenAnswer((_) async => null);
+    authStore = AuthStore(repository: authRepository);
+
     gameRepository = MockGameRepository();
     trophyRepository = MockTrophyRepository();
     progressRepository = MockTrophyProgressRepository();
@@ -104,8 +115,10 @@ void main() {
     await tester.pumpWidget(
       AppScope(
         dependencies: AppDependencies(
+          authStore: authStore,
           trophyProgressStore: store,
           hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
+          createAuthViewModel: MockAuthViewModel.new,
           createGameListViewModel: () =>
               GameListViewModel(GetGamesUseCase(gameRepository), store),
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
@@ -134,8 +147,10 @@ void main() {
     await tester.pumpWidget(
       AppScope(
         dependencies: AppDependencies(
+          authStore: authStore,
           trophyProgressStore: store,
           hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
+          createAuthViewModel: MockAuthViewModel.new,
           createGameListViewModel: () =>
               GameListViewModel(GetGamesUseCase(gameRepository), store),
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
