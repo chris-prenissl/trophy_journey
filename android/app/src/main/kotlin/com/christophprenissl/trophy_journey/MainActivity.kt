@@ -1,4 +1,4 @@
-package com.christophprenissl.final_fantasy_guide
+package com.christophprenissl.trophy_journey
 
 import io.flutter.embedding.android.FlutterActivity
 

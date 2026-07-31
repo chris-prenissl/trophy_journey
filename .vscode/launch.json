@@ -2,19 +2,19 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "final_fantasy_guide (debug mode)",
+			"name": "trophy_journey (debug mode)",
 			"request": "launch",
 			"type": "dart",
 			"flutterMode": "debug"
 		},
 		{
-			"name": "final_fantasy_guide (profile mode)",
+			"name": "trophy_journey (profile mode)",
 			"request": "launch",
 			"type": "dart",
 			"flutterMode": "profile"
 		},
 		{
-			"name": "final_fantasy_guide (release mode)",
+			"name": "trophy_journey (release mode)",
 			"request": "launch",
 			"type": "dart",
 			"flutterMode": "release"
