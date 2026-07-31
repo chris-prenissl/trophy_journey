@@ -22,7 +22,8 @@ abstract interface class PSNRemoteDataSource {
 }
 
 class PSNRemoteDataSourceImpl implements PSNRemoteDataSource {
-  const PSNRemoteDataSourceImpl({this.tokenUrl = _tokenUrl});
+  PSNRemoteDataSourceImpl({http.Client? client, this.tokenUrl = _tokenUrl})
+    : _client = client ?? http.Client();
 
   /// Credentials of the official PlayStation app. Sony only issues mobile
   /// tokens to this client id, so the sign in has to impersonate it.
@@ -51,6 +52,7 @@ class PSNRemoteDataSourceImpl implements PSNRemoteDataSource {
     },
   );
 
+  final http.Client _client;
   final String tokenUrl;
 
   @override
@@ -71,7 +73,7 @@ class PSNRemoteDataSourceImpl implements PSNRemoteDataSource {
 
   Future<PsnTokens> _requestTokens(Map<String, String> body) async {
     final credentials = base64Encode(utf8.encode('$clientId:$clientSecret'));
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse(tokenUrl),
       headers: {
         'Authorization': 'Basic $credentials',
