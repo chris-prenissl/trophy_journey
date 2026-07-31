@@ -1,0 +1,20 @@
+default_platform(:android)
+
+FIREBASE_APP_ID = "1:397460335709:android:c11a3af3030deb70c471b4"
+
+platform :android do
+  desc "Build a debug APK and upload it to Firebase App Distribution"
+  lane :distribute do |options|
+    Dir.chdir("../..") do
+      sh("flutter", "build", "apk", "--debug")
+    end
+
+    firebase_app_distribution(
+      app: FIREBASE_APP_ID,
+      android_artifact_type: "APK",
+      android_artifact_path: "../build/app/outputs/flutter-apk/app-debug.apk",
+      groups: options[:groups] || "testers",
+      release_notes: options[:notes] || last_git_commit[:message]
+    )
+  end
+end

@@ -45,6 +45,22 @@ Run the tests with:
 flutter test
 ```
 
+## Distribution
+
+Android builds are distributed to testers with Firebase App Distribution via
+fastlane (config in `android/fastlane/`):
+
+```sh
+cd android
+bundle install                # once
+bundle exec fastlane android distribute
+```
+
+The `distribute` lane builds a debug APK
+and uploads it to the `testers` group. Pass `groups:`/`notes:` to override:
+`bundle exec fastlane android distribute groups:friends notes:"new build"`.
+Requires a logged-in Firebase CLI (`firebase login`).
+
 ## Architecture
 
 Clean Architecture, feature-first, with strict inward-pointing dependencies
