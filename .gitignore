@@ -33,6 +33,7 @@ migrate_working_dir/
 /build/
 /coverage/
 *.mocks.dart
+*.g.dart
 
 # Symbolication related
 app.*.symbols

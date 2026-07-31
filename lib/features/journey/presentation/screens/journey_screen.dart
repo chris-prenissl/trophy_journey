@@ -15,33 +15,39 @@ class JourneyScreen extends StatefulWidget {
 }
 
 class _JourneyScreenState extends State<JourneyScreen> {
-  JourneyViewModel? _viewModel;
+  late final JourneyViewModel _viewModel;
   final _stepKeys = <String, GlobalKey>{};
   bool _didAutoScroll = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _viewModel ??= AppScope.journeyFactoryOf(context)(widget.game.id)..load();
+  void initState() {
+    super.initState();
+    _viewModel = AppScope.of(context).createJourneyViewModel(widget.game.id);
+    _viewModel.addListener(_scrollToInitialStep);
+    _viewModel.load();
   }
 
   @override
   void dispose() {
-    _viewModel?.dispose();
+    _viewModel.removeListener(_scrollToInitialStep);
+    _viewModel.dispose();
     super.dispose();
   }
 
-  void _scrollToInitialStep(JourneyViewModel viewModel) {
-    if (_didAutoScroll) return;
+  void _scrollToInitialStep() {
+    if (_didAutoScroll || _viewModel.loading) return;
+
+    final steps = _viewModel.steps;
+    final index = _viewModel.initialStepIndex;
     _didAutoScroll = true;
-    final steps = viewModel.steps;
-    final index = viewModel.initialStepIndex;
     if (index <= 0 || index >= steps.length) return;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = _stepKeys[steps[index].id]?.currentContext;
-      if (context == null) return;
+      final stepContext = _stepKeys[steps[index].id]?.currentContext;
+      if (stepContext == null) return;
+      
       Scrollable.ensureVisible(
-        context,
+        stepContext,
         alignment: 0.1,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -51,18 +57,16 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = _viewModel!;
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: Text('Journey — ${widget.game.title}')),
       body: ListenableBuilder(
-        listenable: viewModel,
+        listenable: _viewModel,
         builder: (context, _) {
-          if (viewModel.loading) {
+          if (_viewModel.loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          _scrollToInitialStep(viewModel);
-          final steps = viewModel.steps;
+          final steps = _viewModel.steps;
           return ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
@@ -81,14 +85,14 @@ class _JourneyScreenState extends State<JourneyScreen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(2),
                         child: LinearProgressIndicator(
-                          value: viewModel.progress,
+                          value: _viewModel.progress,
                           minHeight: 4,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '${viewModel.checkedTaskCount} / '
-                        '${viewModel.totalTaskCount} tasks done',
+                        '${_viewModel.checkedTaskCount} / '
+                        '${_viewModel.totalTaskCount} tasks done',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -103,8 +107,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
                   child: JourneyStepCard(
                     step: step,
                     stepNumber: index + 1,
-                    viewModel: viewModel,
-                    initiallyExpanded: index == viewModel.initialStepIndex,
+                    viewModel: _viewModel,
+                    initiallyExpanded: index == _viewModel.initialStepIndex,
                   ),
                 ),
             ],

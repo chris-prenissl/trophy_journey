@@ -1,8 +1,8 @@
 import '../entities/game.dart';
 import '../repositories/game_repository.dart';
 
-class GetGames {
-  const GetGames(this._repository);
+class GetGamesUseCase {
+  const GetGamesUseCase(this._repository);
 
   final GameRepository _repository;
 

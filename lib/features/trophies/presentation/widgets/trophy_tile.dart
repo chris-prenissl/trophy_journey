@@ -48,8 +48,9 @@ class TrophyTile extends StatelessWidget {
                       Text(
                         trophy.title,
                         style: theme.textTheme.titleSmall?.copyWith(
-                          decoration:
-                              achieved ? TextDecoration.lineThrough : null,
+                          decoration: achieved
+                              ? TextDecoration.lineThrough
+                              : null,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -73,10 +74,7 @@ class TrophyTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                Checkbox(
-                  value: achieved,
-                  onChanged: (_) => onToggle(),
-                ),
+                Checkbox(value: achieved, onChanged: (_) => onToggle()),
               ],
             ),
           ),

@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../trophies/domain/entities/trophy.dart';
-import '../../../trophies/domain/usecases/get_trophies.dart';
+import '../../../trophies/domain/usecases/get_trophies_use_case.dart';
 import '../../domain/entities/journey.dart';
-import '../../domain/usecases/get_checked_task_ids.dart';
-import '../../domain/usecases/get_journey.dart';
-import '../../domain/usecases/get_journey_bookmark.dart';
-import '../../domain/usecases/set_journey_bookmark.dart';
-import '../../domain/usecases/set_task_checked.dart';
+import '../../domain/usecases/get_checked_task_ids_use_case.dart';
+import '../../domain/usecases/get_journey_use_case.dart';
+import '../../domain/usecases/get_journey_bookmark_use_case.dart';
+import '../../domain/usecases/set_journey_bookmark_use_case.dart';
+import '../../domain/usecases/set_task_checked_use_case.dart';
 
 class JourneyViewModel extends ChangeNotifier {
   JourneyViewModel(
@@ -21,12 +21,12 @@ class JourneyViewModel extends ChangeNotifier {
   );
 
   final String _gameId;
-  final GetJourney _getJourney;
-  final GetTrophies _getTrophies;
-  final GetCheckedTaskIds _getCheckedTaskIds;
-  final SetTaskChecked _setTaskChecked;
-  final GetJourneyBookmark _getJourneyBookmark;
-  final SetJourneyBookmark _setJourneyBookmark;
+  final GetJourneyUseCase _getJourney;
+  final GetTrophiesUseCase _getTrophies;
+  final GetCheckedTaskIdsUseCase _getCheckedTaskIds;
+  final SetTaskCheckedUseCase _setTaskChecked;
+  final GetJourneyBookmarkUseCase _getJourneyBookmark;
+  final SetJourneyBookmarkUseCase _setJourneyBookmark;
 
   Journey? _journey;
   Map<String, Trophy> _trophyById = const {};
@@ -35,16 +35,19 @@ class JourneyViewModel extends ChangeNotifier {
   bool _loading = true;
 
   String get gameId => _gameId;
+
   bool get loading => _loading;
+
   List<JourneyStep> get steps => _journey?.steps ?? const [];
+
   String? get bookmarkedStepId => _bookmarkedStepId;
+
   int get totalTaskCount => _journey?.totalTaskCount ?? 0;
-  int get checkedTaskCount =>
-      _journey == null
-          ? 0
-          : _journey!.allTasks
-                .where((t) => _checkedTaskIds.contains(t.id))
-                .length;
+
+  int get checkedTaskCount => _journey == null
+      ? 0
+      : _journey!.allTasks.where((t) => _checkedTaskIds.contains(t.id)).length;
+
   double get progress =>
       totalTaskCount == 0 ? 0 : checkedTaskCount / totalTaskCount;
 
@@ -63,6 +66,7 @@ class JourneyViewModel extends ChangeNotifier {
   int get initialStepIndex {
     final bookmarked = steps.indexWhere((s) => s.id == _bookmarkedStepId);
     if (bookmarked != -1) return bookmarked;
+
     final firstIncomplete = steps.indexWhere((s) => !isStepComplete(s));
     return firstIncomplete == -1 ? 0 : firstIncomplete;
   }
@@ -70,31 +74,53 @@ class JourneyViewModel extends ChangeNotifier {
   Future<void> load() async {
     _loading = true;
     notifyListeners();
+
     _journey = await _getJourney(_gameId);
+
     final trophies = await _getTrophies(_gameId);
-    _trophyById = {for (final trophy in trophies) trophy.id: trophy};
+    _trophyById = Map.fromEntries(trophies.map((trophy) => MapEntry(trophy.id, trophy)));
     _checkedTaskIds = await _getCheckedTaskIds(_gameId);
     _bookmarkedStepId = await _getJourneyBookmark(_gameId);
     _loading = false;
+
     notifyListeners();
   }
 
   Future<void> toggleTask(String taskId) async {
-    final journey = _journey;
-    if (journey == null) return;
-    final checked = !_checkedTaskIds.contains(taskId);
-    if (checked) {
-      _checkedTaskIds.add(taskId);
+    if (_journey == null) return;
+    final previous = _checkedTaskIds;
+    final checkedTaskIds = !previous.contains(taskId);
+    final updated = {...previous};
+    if (checkedTaskIds) {
+      updated.add(taskId);
     } else {
-      _checkedTaskIds.remove(taskId);
+      updated.remove(taskId);
     }
+    _checkedTaskIds = updated;
+
     notifyListeners();
-    await _setTaskChecked(_gameId, taskId, checked);
+
+    try {
+      await _setTaskChecked(_gameId, taskId, checkedTaskIds);
+    } catch (_) {
+      _checkedTaskIds = previous;
+
+      notifyListeners();
+      rethrow;
+    }
   }
 
   Future<void> toggleBookmark(String stepId) async {
-    _bookmarkedStepId = _bookmarkedStepId == stepId ? null : stepId;
+    final previous = _bookmarkedStepId;
+    _bookmarkedStepId = previous == stepId ? null : stepId;
     notifyListeners();
-    await _setJourneyBookmark(_gameId, _bookmarkedStepId);
+    
+    try {
+      await _setJourneyBookmark(_gameId, _bookmarkedStepId);
+    } catch (_) {
+      _bookmarkedStepId = previous;
+      notifyListeners();
+      rethrow;
+    }
   }
 }

@@ -1,8 +1,8 @@
 import '../entities/journey.dart';
 import '../repositories/journey_repository.dart';
 
-class GetJourney {
-  const GetJourney(this._repository);
+class GetJourneyUseCase {
+  const GetJourneyUseCase(this._repository);
 
   final JourneyRepository _repository;
 

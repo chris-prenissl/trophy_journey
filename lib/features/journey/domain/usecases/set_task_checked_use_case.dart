@@ -1,7 +1,7 @@
 import '../repositories/journey_progress_repository.dart';
 
-class SetTaskChecked {
-  const SetTaskChecked(this._repository);
+class SetTaskCheckedUseCase {
+  const SetTaskCheckedUseCase(this._repository);
 
   final JourneyProgressRepository _repository;
 

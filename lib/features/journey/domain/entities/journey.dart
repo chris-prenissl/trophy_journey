@@ -4,10 +4,10 @@ enum TaskFlag {
   missable;
 
   static TaskFlag fromJson(String? value) => switch (value) {
-        'missable' => TaskFlag.missable,
-        'recommended' => TaskFlag.recommended,
-        _ => TaskFlag.none,
-      };
+    'missable' => TaskFlag.missable,
+    'recommended' => TaskFlag.recommended,
+    _ => TaskFlag.none,
+  };
 }
 
 class JourneyTask {

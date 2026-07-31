@@ -1,7 +1,7 @@
 import '../repositories/trophy_progress_repository.dart';
 
-class SetTrophyAchieved {
-  const SetTrophyAchieved(this._repository);
+class SetTrophyAchievedUseCase {
+  const SetTrophyAchievedUseCase(this._repository);
 
   final TrophyProgressRepository _repository;
 

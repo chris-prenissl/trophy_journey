@@ -1,7 +1,7 @@
 import '../repositories/journey_progress_repository.dart';
 
-class SetJourneyBookmark {
-  const SetJourneyBookmark(this._repository);
+class SetJourneyBookmarkUseCase {
+  const SetJourneyBookmarkUseCase(this._repository);
 
   final JourneyProgressRepository _repository;
 

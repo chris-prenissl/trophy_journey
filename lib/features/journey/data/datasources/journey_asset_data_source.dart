@@ -19,10 +19,9 @@ class JourneyAssetDataSource {
   }
 
   Future<bool> hasJourney(String gameId) async {
-    final keys = _manifestKeys ??=
-        (await AssetManifest.loadFromAssetBundle(_bundle))
-            .listAssets()
-            .toSet();
+    final keys = _manifestKeys ??= (await AssetManifest.loadFromAssetBundle(
+      _bundle,
+    )).listAssets().toSet();
     return keys.contains(assetPathFor(gameId));
   }
 }

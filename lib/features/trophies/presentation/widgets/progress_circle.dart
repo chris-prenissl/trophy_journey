@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 class ProgressCircle extends StatelessWidget {
   const ProgressCircle({
@@ -30,16 +31,18 @@ class ProgressCircle extends StatelessWidget {
                 value: value,
                 strokeWidth: 8,
                 strokeCap: StrokeCap.round,
-                backgroundColor:
-                    theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                backgroundColor: theme.colorScheme.onSurface.withValues(
+                  alpha: 0.1,
+                ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '$achieved / $total',
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     '${(value * 100).round()}%',
@@ -56,3 +59,12 @@ class ProgressCircle extends StatelessWidget {
     );
   }
 }
+
+@Preview(name: 'Partial Progress', group: 'Progress Circle')
+Widget progressCirclePartial() => const ProgressCircle(achieved: 15, total: 50);
+
+@Preview(name: 'Complete', group: 'Progress Circle')
+Widget progressCircleComplete() => const ProgressCircle(achieved: 50, total: 50);
+
+@Preview(name: 'Empty', group: 'Progress Circle')
+Widget progressCircleEmpty() => const ProgressCircle(achieved: 0, total: 50);

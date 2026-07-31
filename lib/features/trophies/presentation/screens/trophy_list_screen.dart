@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/di/app_scope.dart';
 import '../../../journey/presentation/screens/journey_screen.dart';
 import '../../domain/entities/game.dart';
+import '../../domain/entities/trophy.dart';
 import '../viewmodels/trophy_list_view_model.dart';
 import '../widgets/progress_circle.dart';
 import '../widgets/trophy_filter_chips.dart';
@@ -19,40 +20,43 @@ class TrophyListScreen extends StatefulWidget {
 }
 
 class _TrophyListScreenState extends State<TrophyListScreen> {
-  TrophyListViewModel? _viewModel;
+  late final TrophyListViewModel _viewModel;
   bool _hasJourney = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_viewModel == null) {
-      _viewModel = AppScope.trophyListFactoryOf(context)(widget.game.id)
-        ..load();
-      AppScope.hasJourneyOf(context)(widget.game.id).then((hasJourney) {
-        if (mounted && hasJourney) setState(() => _hasJourney = true);
-      });
-    }
-  }
-
-  void _openJourney() {
-    Navigator.of(context)
-        .push(
-          MaterialPageRoute<void>(
-            builder: (_) => JourneyScreen(game: widget.game),
-          ),
-        )
-        .then((_) => _viewModel?.refreshProgress());
+  void initState() {
+    super.initState();
+    final dependencies = AppScope.of(context);
+    _viewModel = dependencies.createTrophyListViewModel(widget.game.id);
+    _viewModel.load();
+    dependencies.hasJourneyUseCase(widget.game.id).then((hasJourney) {
+      if (mounted && hasJourney) setState(() => _hasJourney = true);
+    });
   }
 
   @override
   void dispose() {
-    _viewModel?.dispose();
+    _viewModel.dispose();
     super.dispose();
+  }
+
+  void _openJourney() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => JourneyScreen(game: widget.game)),
+    );
+  }
+
+  void _openTrophyDetail(Trophy trophy) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            TrophyDetailScreen(gameId: widget.game.id, trophy: trophy),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = _viewModel!;
     return Scaffold(
       appBar: AppBar(title: Text(widget.game.title)),
       floatingActionButton: _hasJourney
@@ -63,45 +67,38 @@ class _TrophyListScreenState extends State<TrophyListScreen> {
             )
           : null,
       body: ListenableBuilder(
-        listenable: viewModel,
+        listenable: _viewModel,
         builder: (context, _) {
-          if (viewModel.loading) {
+          if (_viewModel.loading) {
             return const Center(child: CircularProgressIndicator());
           }
+          final trophies = _viewModel.visibleTrophies;
           return Column(
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: ProgressCircle(
-                  achieved: viewModel.achievedCount,
-                  total: viewModel.totalCount,
+                  achieved: _viewModel.achievedCount,
+                  total: _viewModel.totalCount,
                 ),
               ),
-              TrophyFilterChips(viewModel: viewModel),
+              TrophyFilterChips(viewModel: _viewModel),
               const SizedBox(height: 8),
               Expanded(
-                child: viewModel.visibleTrophies.isEmpty
+                child: trophies.isEmpty
                     ? const Center(child: Text('No trophies match filters'))
                     : ListView.builder(
-                        padding:
-                            EdgeInsets.only(bottom: _hasJourney ? 88 : 16),
-                        itemCount: viewModel.visibleTrophies.length,
+                        padding: EdgeInsets.only(bottom: _hasJourney ? 88 : 16),
+                        itemCount: trophies.length,
                         itemBuilder: (context, index) {
-                          final trophy = viewModel.visibleTrophies[index];
+                          final trophy = trophies[index];
                           return TrophyTile(
                             key: ValueKey(trophy.id),
                             trophy: trophy,
-                            achieved: viewModel.isAchieved(trophy.id),
+                            achieved: _viewModel.isAchieved(trophy.id),
                             onToggle: () =>
-                                viewModel.toggleAchieved(trophy.id),
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => TrophyDetailScreen(
-                                  trophy: trophy,
-                                  viewModel: viewModel,
-                                ),
-                              ),
-                            ),
+                                _viewModel.toggleAchieved(trophy.id),
+                            onTap: () => _openTrophyDetail(trophy),
                           );
                         },
                       ),

@@ -1,19 +1,20 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import '../../domain/entities/journey.dart';
 
+part 'journey_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class JourneyModel {
   const JourneyModel({required this.gameId, required this.steps});
 
-  factory JourneyModel.fromJson(Map<String, dynamic> json) {
-    return JourneyModel(
-      gameId: json['gameId'] as String,
-      steps: (json['steps'] as List<dynamic>)
-          .map((e) => JourneyStepModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-  }
+  factory JourneyModel.fromJson(Map<String, dynamic> json) =>
+      _$JourneyModelFromJson(json);
 
   final String gameId;
   final List<JourneyStepModel> steps;
+
+  Map<String, dynamic> toJson() => _$JourneyModelToJson(this);
 
   Journey toEntity() {
     return Journey(
@@ -23,6 +24,7 @@ class JourneyModel {
   }
 }
 
+@JsonSerializable(explicitToJson: true)
 class JourneyStepModel {
   const JourneyStepModel({
     required this.id,
@@ -31,21 +33,15 @@ class JourneyStepModel {
     required this.tasks,
   });
 
-  factory JourneyStepModel.fromJson(Map<String, dynamic> json) {
-    return JourneyStepModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      instructions: json['instructions'] as String,
-      tasks: (json['tasks'] as List<dynamic>)
-          .map((e) => JourneyTaskModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-  }
+  factory JourneyStepModel.fromJson(Map<String, dynamic> json) =>
+      _$JourneyStepModelFromJson(json);
 
   final String id;
   final String title;
   final String instructions;
   final List<JourneyTaskModel> tasks;
+
+  Map<String, dynamic> toJson() => _$JourneyStepModelToJson(this);
 
   JourneyStep toEntity() {
     return JourneyStep(
@@ -57,6 +53,7 @@ class JourneyStepModel {
   }
 }
 
+@JsonSerializable()
 class JourneyTaskModel {
   const JourneyTaskModel({
     required this.id,
@@ -66,27 +63,21 @@ class JourneyTaskModel {
     required this.flag,
   });
 
-  factory JourneyTaskModel.fromJson(Map<String, dynamic> json) {
-    return JourneyTaskModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      note: json['note'] as String? ?? '',
-      trophyIds: (json['trophyIds'] as List<dynamic>).cast<String>(),
-      flag: _parseFlag(json),
-    );
-  }
-
-  static TaskFlag _parseFlag(Map<String, dynamic> json) {
-    final raw = json['flag'];
-    if (raw is String) return TaskFlag.fromJson(raw);
-    return TaskFlag.none;
-  }
+  factory JourneyTaskModel.fromJson(Map<String, dynamic> json) =>
+      _$JourneyTaskModelFromJson(json);
 
   final String id;
   final String title;
+
+  @JsonKey(defaultValue: '')
   final String note;
+
   final List<String> trophyIds;
+
+  @JsonKey(defaultValue: TaskFlag.none, unknownEnumValue: TaskFlag.none)
   final TaskFlag flag;
+
+  Map<String, dynamic> toJson() => _$JourneyTaskModelToJson(this);
 
   JourneyTask toEntity() {
     return JourneyTask(

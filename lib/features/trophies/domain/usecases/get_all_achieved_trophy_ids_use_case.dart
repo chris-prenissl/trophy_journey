@@ -1,7 +1,7 @@
 import '../repositories/trophy_progress_repository.dart';
 
-class GetAllAchievedTrophyIds {
-  const GetAllAchievedTrophyIds(this._repository);
+class GetAllAchievedTrophyIdsUseCase {
+  const GetAllAchievedTrophyIdsUseCase(this._repository);
 
   final TrophyProgressRepository _repository;
 

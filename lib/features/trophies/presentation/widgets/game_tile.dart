@@ -1,8 +1,10 @@
 import 'package:final_fantasy_guide/features/trophies/domain/entities/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 class GameTile extends StatelessWidget {
-  const GameTile({super.key, 
+  const GameTile({
+    super.key,
     required this.game,
     required this.achievedCount,
     required this.onTap,
@@ -15,8 +17,9 @@ class GameTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final progress =
-        game.trophyCount == 0 ? 0.0 : achievedCount / game.trophyCount;
+    final progress = game.trophyCount == 0
+        ? 0.0
+        : achievedCount / game.trophyCount;
     final complete = achievedCount == game.trophyCount && game.trophyCount > 0;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -61,8 +64,9 @@ class GameTile extends StatelessWidget {
                       value: progress,
                       minHeight: 4,
                       borderRadius: BorderRadius.circular(2),
-                      backgroundColor:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                      backgroundColor: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.1,
+                      ),
                     ),
                   ],
                 ),
@@ -79,3 +83,42 @@ class GameTile extends StatelessWidget {
     );
   }
 }
+
+@Preview(name: 'No Progress', group: 'Game Tile')
+Widget gameTileNoProgress() => GameTile(
+  game: const Game(
+    id: 'ff7',
+    title: 'Final Fantasy VII',
+    numeral: 'VII',
+    coverAsset: '',
+    trophyCount: 50,
+  ),
+  achievedCount: 0,
+  onTap: () {},
+);
+
+@Preview(name: 'Partial Progress', group: 'Game Tile')
+Widget gameTilePartial() => GameTile(
+  game: const Game(
+    id: 'ff8',
+    title: 'Final Fantasy VIII',
+    numeral: 'VIII',
+    coverAsset: '',
+    trophyCount: 50,
+  ),
+  achievedCount: 20,
+  onTap: () {},
+);
+
+@Preview(name: 'Complete', group: 'Game Tile')
+Widget gameTileComplete() => GameTile(
+  game: const Game(
+    id: 'ff9',
+    title: 'Final Fantasy IX',
+    numeral: 'IX',
+    coverAsset: '',
+    trophyCount: 50,
+  ),
+  achievedCount: 50,
+  onTap: () {},
+);

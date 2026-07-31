@@ -1,5 +1,10 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import '../../domain/entities/trophy.dart';
 
+part 'trophy_model.g.dart';
+
+@JsonSerializable()
 class TrophyModel {
   const TrophyModel({
     required this.id,
@@ -12,33 +17,25 @@ class TrophyModel {
     required this.order,
   });
 
-  factory TrophyModel.fromJson(Map<String, dynamic> json) {
-    return TrophyModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      type: json['type'] as String,
-      description: json['description'] as String,
-      guide: json['guide'] as String,
-      missable: json['missable'] as bool,
-      icon: json['icon'] as String,
-      order: json['order'] as int,
-    );
-  }
+  factory TrophyModel.fromJson(Map<String, dynamic> json) =>
+      _$TrophyModelFromJson(json);
 
   final String id;
   final String title;
-  final String type;
+  final TrophyType type;
   final String description;
   final String guide;
   final bool missable;
   final String icon;
   final int order;
 
+  Map<String, dynamic> toJson() => _$TrophyModelToJson(this);
+
   Trophy toEntity() {
     return Trophy(
       id: id,
       title: title,
-      type: TrophyType.values.byName(type),
+      type: type,
       description: description,
       guide: guide,
       missable: missable,

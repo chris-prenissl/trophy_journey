@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 import '../../../trophies/presentation/widgets/trophy_badges.dart';
 import '../../domain/entities/journey.dart';
+import 'mock_journey_view_model.dart';
 import '../viewmodels/journey_view_model.dart';
 import 'journey_task_row.dart';
 
@@ -38,11 +40,7 @@ class JourneyStepCard extends StatelessWidget {
               ? theme.colorScheme.primary
               : theme.colorScheme.surfaceContainerHighest,
           child: complete
-              ? Icon(
-                  Icons.check,
-                  size: 16,
-                  color: theme.colorScheme.onPrimary,
-                )
+              ? Icon(Icons.check, size: 16, color: theme.colorScheme.onPrimary)
               : Text(
                   '$stepNumber',
                   style: theme.textTheme.labelMedium?.copyWith(
@@ -60,12 +58,8 @@ class JourneyStepCard extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            if (step.hasMissable) ...[
-              const MissableBadge(),
-            ],
-            if (step.hasRecommended) ...[
-              const RecommendedBadge(),
-            ],
+            if (step.hasMissable) ...[const MissableBadge()],
+            if (step.hasRecommended) ...[const RecommendedBadge()],
           ],
         ),
         trailing: IconButton(
@@ -110,3 +104,46 @@ class JourneyStepCard extends StatelessWidget {
     );
   }
 }
+
+@Preview(name: 'Basic Step', group: 'Journey Step Card')
+Widget journeyStepCardBasic() => JourneyStepCard(
+  step: const JourneyStep(
+    id: 'step_1',
+    title: 'First Steps',
+    instructions: 'Begin your journey here. Talk to the guide.',
+    tasks: [
+      JourneyTask(id: 'task_1', title: 'Talk to guide', trophyIds: []),
+      JourneyTask(id: 'task_2', title: 'Check map', trophyIds: []),
+      JourneyTask(id: 'task_3', title: 'Equip sword', trophyIds: []),
+    ],
+  ),
+  stepNumber: 1,
+  viewModel: MockJourneyViewModel(),
+  initiallyExpanded: true,
+);
+
+@Preview(name: 'With Missable', group: 'Journey Step Card')
+Widget journeyStepCardMissable() => JourneyStepCard(
+  step: const JourneyStep(
+    id: 'step_2',
+    title: 'Hidden Secrets',
+    instructions: 'Find optional rewards. Some items can be missed!',
+    tasks: [
+      JourneyTask(
+        id: 'task_4',
+        title: 'Find hidden materia',
+        trophyIds: [],
+        flag: TaskFlag.missable,
+      ),
+      JourneyTask(
+        id: 'task_5',
+        title: 'Collect rare item',
+        trophyIds: [],
+        flag: TaskFlag.recommended,
+      ),
+    ],
+  ),
+  stepNumber: 2,
+  viewModel: MockJourneyViewModel(),
+  initiallyExpanded: false,
+);

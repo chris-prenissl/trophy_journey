@@ -1,7 +1,7 @@
 import '../repositories/journey_repository.dart';
 
-class HasJourney {
-  const HasJourney(this._repository);
+class HasJourneyUseCase {
+  const HasJourneyUseCase(this._repository);
 
   final JourneyRepository _repository;
 
