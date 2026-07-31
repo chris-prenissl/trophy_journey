@@ -3,7 +3,7 @@ import 'package:flutter/widget_previews.dart';
 
 import '../../../trophies/presentation/widgets/trophy_badges.dart';
 import '../../domain/entities/journey.dart';
-import 'mock_journey_view_model.dart';
+import '../preview_mocks/mock_journey_view_model.dart';
 import '../viewmodels/journey_view_model.dart';
 import 'journey_task_row.dart';
 

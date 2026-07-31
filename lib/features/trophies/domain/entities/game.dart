@@ -28,4 +28,7 @@ class Game {
   final String? guideSlug;
 
   bool get hasGuide => guideSlug != null;
+
+  double completion(int achievedCount) =>
+      trophyCount == 0 ? 0 : achievedCount / trophyCount;
 }

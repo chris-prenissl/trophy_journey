@@ -136,4 +136,119 @@ void main() {
       viewModel = GameListViewModel(GetGamesUseCase(gameRepository), store);
     });
   });
+
+  group('sorting and filtering', () {
+    const alpha = Game(
+      id: 'alpha',
+      title: 'Alpha',
+      trophyCount: 4,
+      platform: 'PS4',
+      guideSlug: 'alpha',
+    );
+    const beta = Game(
+      id: 'beta',
+      title: 'Beta',
+      trophyCount: 2,
+      platform: 'PS5',
+    );
+    const gamma = Game(
+      id: 'gamma',
+      title: 'Gamma',
+      trophyCount: 5,
+      platform: 'PS4,PS5',
+    );
+
+    setUp(() {
+      when(
+        gameRepository.getGames(),
+      ).thenAnswer((_) async => [gamma, alpha, beta]);
+    });
+
+    test('shows every game in repository order by default', () async {
+      await viewModel.load();
+
+      expect(viewModel.sort, GameSort.recentlyPlayed);
+      expect(viewModel.visibleGames, [gamma, alpha, beta]);
+    });
+
+    test('filters by title query, ignoring case', () async {
+      await viewModel.load();
+
+      viewModel.setQuery('BET');
+
+      expect(viewModel.visibleGames, [beta]);
+    });
+
+    test('filters by play status', () async {
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
+        (_) async => {
+          'alpha': {'t1'},
+          'beta': {'t1', 't2'},
+        },
+      );
+      await store.load();
+      await viewModel.load();
+
+      viewModel.setStatusFilter(GameStatusFilter.inProgress);
+      expect(viewModel.visibleGames, [alpha]);
+
+      viewModel.setStatusFilter(GameStatusFilter.completed);
+      expect(viewModel.visibleGames, [beta]);
+
+      viewModel.setStatusFilter(GameStatusFilter.notStarted);
+      expect(viewModel.visibleGames, [gamma]);
+    });
+
+    test('lists distinct platforms and filters by selection', () async {
+      await viewModel.load();
+
+      expect(viewModel.platforms, ['PS4', 'PS5']);
+
+      viewModel.togglePlatform('PS5');
+      expect(viewModel.visibleGames, [gamma, beta]);
+
+      viewModel.togglePlatform('PS5');
+      expect(viewModel.visibleGames, [gamma, alpha, beta]);
+    });
+
+    test('filters to games with a bundled guide', () async {
+      await viewModel.load();
+
+      viewModel.setGuideOnly(true);
+
+      expect(viewModel.visibleGames, [alpha]);
+    });
+
+    test('sorts by title', () async {
+      await viewModel.load();
+
+      viewModel.setSort(GameSort.title);
+
+      expect(viewModel.visibleGames, [alpha, beta, gamma]);
+    });
+
+    test('sorts by completion percentage, highest first', () async {
+      when(progressRepository.getAllEarnedIds()).thenAnswer(
+        (_) async => {
+          'alpha': {'t1'},
+          'beta': {'t1', 't2'},
+        },
+      );
+      await store.load();
+      await viewModel.load();
+
+      viewModel.setSort(GameSort.completion);
+
+      expect(viewModel.visibleGames, [beta, alpha, gamma]);
+    });
+
+    test('re-sorts when progress changes elsewhere', () async {
+      await viewModel.load();
+      viewModel.setSort(GameSort.completion);
+
+      await store.applyEarned('gamma', {'t1', 't2', 't3', 't4', 't5'});
+
+      expect(viewModel.visibleGames, [gamma, alpha, beta]);
+    });
+  });
 }

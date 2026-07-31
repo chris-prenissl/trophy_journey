@@ -19,9 +19,7 @@ class GameTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final progress = game.trophyCount == 0
-        ? 0.0
-        : achievedCount / game.trophyCount;
+    final progress = game.completion(achievedCount);
     final complete = achievedCount == game.trophyCount && game.trophyCount > 0;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
