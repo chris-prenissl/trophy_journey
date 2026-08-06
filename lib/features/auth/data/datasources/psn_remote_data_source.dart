@@ -15,42 +15,31 @@ class PsnTokens {
   final Duration expiresIn;
 }
 
-abstract interface class PSNRemoteDataSource {
+abstract interface class PsnRemoteDataSource {
   Future<PsnTokens> exchangeCode(String code);
 
   Future<PsnTokens> refreshAccessToken(String refreshToken);
 }
 
-class PSNRemoteDataSourceImpl implements PSNRemoteDataSource {
-  PSNRemoteDataSourceImpl({http.Client? client, this.tokenUrl = _tokenUrl})
+class PsnRemoteDataSourceImpl implements PsnRemoteDataSource {
+  PsnRemoteDataSourceImpl({http.Client? client, this.tokenUrl = _tokenUrl})
     : _client = client ?? http.Client();
 
-  /// Credentials of the official PlayStation app. Sony only issues mobile
-  /// tokens to this client id, so the sign in has to impersonate it.
   static const clientId = '09515159-7237-4370-9b40-3806e67c0891';
   static const clientSecret = 'ucPjka5tntB2KqsP';
-
-  /// Sony ends a successful sign in by redirecting here with a `code` query
-  /// parameter. The scheme is not loadable, so the login web view has to
-  /// intercept the navigation instead of following it.
   static const redirectUri = 'com.scee.psxandroid.scecompcall://redirect';
-
   static const _scope = 'psn:mobile.v2.core psn:clientapp';
   static const _tokenUrl =
       'https://ca.account.sony.com/api/authz/v3/oauth/token';
 
-  /// The sign in page the login web view opens.
-  static Uri get authorizeUri => Uri.https(
-    'ca.account.sony.com',
-    '/api/authz/v3/oauth/authorize',
-    {
-      'access_type': 'offline',
-      'client_id': clientId,
-      'redirect_uri': redirectUri,
-      'response_type': 'code',
-      'scope': _scope,
-    },
-  );
+  static Uri get authorizeUri =>
+      Uri.https('ca.account.sony.com', '/api/authz/v3/oauth/authorize', {
+        'access_type': 'offline',
+        'client_id': clientId,
+        'redirect_uri': redirectUri,
+        'response_type': 'code',
+        'scope': _scope,
+      });
 
   final http.Client _client;
   final String tokenUrl;

@@ -1,5 +1,6 @@
 import '../../domain/entities/game.dart';
 import '../../domain/entities/trophy.dart';
+import '../../domain/repositories/game_repository.dart';
 import '../../domain/repositories/trophy_repository.dart';
 import '../datasources/psn_cache_data_source.dart';
 import '../datasources/psn_trophy_data_source.dart';
@@ -7,31 +8,30 @@ import '../datasources/trophy_asset_data_source.dart';
 import '../guide_matcher.dart';
 import '../models/psn_trophy_definition_model.dart';
 import '../models/trophy_model.dart';
-import '../psn_library.dart';
 
 class TrophyRepositoryImpl implements TrophyRepository {
   const TrophyRepositoryImpl({
-    required this._library,
-    required this._psn,
-    required this._cache,
-    required this._guides,
+    required this._gameRepository,
+    required this._psnTrophyDataSource,
+    required this._psnCacheDataSource,
+    required this._trophyAssetDataSource,
   });
 
-  final PsnLibrary _library;
-  final PsnTrophyDataSource _psn;
-  final PsnCacheDataSource _cache;
-  final TrophyAssetDataSource _guides;
+  final GameRepository _gameRepository;
+  final PsnTrophyDataSource _psnTrophyDataSource;
+  final PsnCacheDataSource _psnCacheDataSource;
+  final TrophyAssetDataSource _trophyAssetDataSource;
 
   @override
   Future<List<Trophy>> getTrophies(String gameId) async {
-    final game = await _library.gameById(gameId);
+    final game = await _gameRepository.getGame(gameId);
     if (game?.npCommunicationId == null) {
-      return _bundledTrophies(gameId);
+      return _getBundledTrophies(gameId);
     }
 
-    final definitions = await _definitions(game!);
+    final definitions = await _getGameDefinitions(game!);
     final guides = GuideMatcher.indexTrophies(
-      await _bundledGuides(game.guideSlug),
+      await _getBundledGuides(game.guideSlug),
     );
 
     return [
@@ -46,16 +46,18 @@ class TrophyRepositoryImpl implements TrophyRepository {
 
   @override
   Future<Set<String>> getPsnEarnedTrophyIds(String gameId) async {
-    final game = await _library.gameById(gameId);
+    final game = await _gameRepository.getGame(gameId);
     final npCommunicationId = game?.npCommunicationId;
     if (npCommunicationId == null) return const {};
 
-    final earnedIds = await _earnedIds(game!, npCommunicationId);
-    if (earnedIds.isEmpty) return const {};
+    final earnedIds = await _getGameEarnedIds(game!, npCommunicationId);
+    if (earnedIds.isEmpty) {
+      return const {};
+    }
 
-    final definitions = await _definitions(game);
+    final definitions = await _getGameDefinitions(game);
     final guides = GuideMatcher.indexTrophies(
-      await _bundledGuides(game.guideSlug),
+      await _getBundledGuides(game.guideSlug),
     );
 
     return {
@@ -66,32 +68,33 @@ class TrophyRepositoryImpl implements TrophyRepository {
     };
   }
 
-  Future<Set<int>> _earnedIds(Game game, String npCommunicationId) async {
+  Future<Set<int>> _getGameEarnedIds(Game game, String npCommunicationId) async {
     try {
-      final earned = await _psn.fetchEarnedTrophyIds(
+      final earned = await _psnTrophyDataSource.fetchEarnedTrophyIds(
         npCommunicationId: npCommunicationId,
         npServiceName: game.npServiceName ?? 'trophy',
       );
-      await _cache.writeEarned(npCommunicationId, earned);
+      await _psnCacheDataSource.writeEarned(npCommunicationId, earned);
       return earned;
     } catch (_) {
-      return await _cache.readEarned(npCommunicationId) ?? const {};
+      return await _psnCacheDataSource.readEarned(npCommunicationId) ??
+          const {};
     }
   }
 
-  Future<List<PsnTrophyDefinitionModel>> _definitions(Game game) async {
+  Future<List<PsnTrophyDefinitionModel>> _getGameDefinitions(Game game) async {
     final npCommunicationId = game.npCommunicationId!;
     try {
-      final definitions = await _psn.fetchTrophyDefinitions(
+      final definitions = await _psnTrophyDataSource.fetchTrophyDefinitions(
         npCommunicationId: npCommunicationId,
         npServiceName: game.npServiceName ?? 'trophy',
       );
-      await _cache.writeTrophies(npCommunicationId, [
+      await _psnCacheDataSource.writeTrophies(npCommunicationId, [
         for (final definition in definitions) definition.toJson(),
       ]);
       return definitions;
     } catch (_) {
-      final cached = await _cache.readTrophies(npCommunicationId);
+      final cached = await _psnCacheDataSource.readTrophies(npCommunicationId);
       if (cached == null) rethrow;
       return cached.map(PsnTrophyDefinitionModel.fromJson).toList();
     }
@@ -114,17 +117,17 @@ class TrophyRepositoryImpl implements TrophyRepository {
     return guide?.enrichFromPsn(psnTrophy) ?? psnTrophy;
   }
 
-  Future<List<TrophyModel>> _bundledGuides(String? guideSlug) async {
+  Future<List<TrophyModel>> _getBundledGuides(String? guideSlug) async {
     if (guideSlug == null) return const [];
     try {
-      return await _guides.loadTrophies(guideSlug);
+      return await _trophyAssetDataSource.loadTrophies(guideSlug);
     } catch (_) {
       return const [];
     }
   }
 
-  Future<List<Trophy>> _bundledTrophies(String gameId) async {
-    final models = await _guides.loadTrophies(gameId);
+  Future<List<Trophy>> _getBundledTrophies(String gameId) async {
+    final models = await _trophyAssetDataSource.loadTrophies(gameId);
     return models.map((m) => m.toEntity()).toList()
       ..sort((a, b) => a.order.compareTo(b.order));
   }

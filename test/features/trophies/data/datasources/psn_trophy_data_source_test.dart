@@ -10,7 +10,6 @@ const baseUrl = 'https://psn.example.test';
 
 ({PsnTrophyDataSource dataSource, List<http.Request> requests}) buildDataSource({
   required List<Map<String, dynamic>> Function(http.Request) bodies,
-  String? token = 'the-token',
   int statusCode = 200,
 }) {
   final requests = <http.Request>[];
@@ -23,38 +22,13 @@ const baseUrl = 'https://psn.example.test';
     return http.Response(jsonEncode(body), statusCode);
   });
   return (
-    dataSource: PsnTrophyDataSource(
-      accessToken: () async => token,
-      client: client,
-      baseUrl: baseUrl,
-    ),
+    dataSource: PsnTrophyDataSource(client: client, baseUrl: baseUrl),
     requests: requests,
   );
 }
 
 void main() {
-  group('auth', () {
-    test('sends the access token as a bearer header', () async {
-      final (:dataSource, :requests) = buildDataSource(bodies: (_) => []);
-
-      await dataSource.fetchTrophyTitles();
-
-      expect(requests.single.headers['Authorization'], 'Bearer the-token');
-    });
-
-    test('refuses to call out when signed out', () async {
-      final (:dataSource, :requests) = buildDataSource(
-        bodies: (_) => [],
-        token: null,
-      );
-
-      await expectLater(
-        dataSource.fetchTrophyTitles(),
-        throwsA(isA<PsnAuthRequiredException>()),
-      );
-      expect(requests, isEmpty);
-    });
-
+  group('failures', () {
     test('surfaces the status code when PSN rejects the call', () async {
       final (:dataSource, requests: _) = buildDataSource(
         bodies: (_) => [],
@@ -116,11 +90,7 @@ void main() {
           200,
         );
       });
-      final dataSource = PsnTrophyDataSource(
-        accessToken: () async => 'the-token',
-        client: client,
-        baseUrl: baseUrl,
-      );
+      final dataSource = PsnTrophyDataSource(client: client, baseUrl: baseUrl);
 
       final titles = await dataSource.fetchTrophyTitles();
 

@@ -1,86 +1,95 @@
 import 'dart:async';
 
-import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
-import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/get_current_session.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/login_with_authorization_code.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/logout.dart';
-import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/load_stored_session_use_case.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/sign_in_with_authorization_code_use_case.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/sign_out_use_case.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/watch_auth_session_use_case.dart';
+import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 
-import 'auth_view_model_test.mocks.dart';
+import '../../../../util/fake_auth_repository.dart';
 
-final session = AuthSession(
-  userId: 'psn_user',
-  accessToken: 'access',
-  refreshToken: 'refresh',
-  expiresAt: DateTime.now().add(const Duration(hours: 1)),
-);
-
-@GenerateNiceMocks([MockSpec<AuthRepository>()])
 void main() {
-  late MockAuthRepository repository;
+  late FakeAuthRepository repository;
   late AuthViewModel viewModel;
 
   setUp(() {
-    repository = MockAuthRepository();
-    when(repository.logout()).thenAnswer((_) => Future.value());
+    repository = FakeAuthRepository();
     viewModel = AuthViewModel(
-      loginWithAuthorizationCode: LoginWithAuthorizationCodeUseCase(repository),
-      logout: LogoutUseCase(repository),
-      getCurrentSession: GetCurrentSessionUseCase(repository),
+      watchSession: WatchAuthSessionUseCase(repository),
+      loadStoredSessionUseCase: LoadStoredSessionUseCase(repository),
+      signInWithAuthorizationCodeUseCase: SignInWithAuthorizationCodeUseCase(
+        repository,
+      ),
+      signOutUseCase: SignOutUseCase(repository),
     );
   });
 
   tearDown(() => viewModel.dispose());
 
-  group('loginWithAuthorizationCode', () {
-    test('starts with no session', () {
+  group('the session it reports', () {
+    test('starts empty', () {
       expect(viewModel.session, isNull);
+      expect(viewModel.isAuthenticated, isFalse);
       expect(viewModel.loading, isFalse);
       expect(viewModel.error, isNull);
     });
 
-    test('exposes the session once the exchange finishes', () async {
-      when(repository.loginWithAuthorizationCode('v3.code'))
-          .thenAnswer((_) async => session);
+    test('follows the repository without being asked', () {
+      var notifications = 0;
+      viewModel.addListener(() => notifications++);
+      final session = fakeSession();
 
-      await viewModel.loginWithAuthorizationCode('v3.code');
+      repository.emit(session);
 
       expect(viewModel.session, session);
+      expect(viewModel.isAuthenticated, isTrue);
+      expect(notifications, 1);
+    });
+
+    test('is not authenticated once the session has expired', () {
+      repository.emit(fakeSession(expiresIn: const Duration(hours: -1)));
+
+      expect(viewModel.session, isNotNull);
+      expect(viewModel.isAuthenticated, isFalse);
+    });
+  });
+
+  group('signInWithAuthorizationCode', () {
+    test('hands the code over and picks up the session', () async {
+      await viewModel.signInWithAuthorizationCode('v3.code');
+
+      expect(repository.signedInCodes, ['v3.code']);
+      expect(viewModel.session, repository.signInResult);
       expect(viewModel.loading, isFalse);
       expect(viewModel.error, isNull);
     });
 
     test('reports loading while the exchange is in flight', () async {
-      final gate = Completer<AuthSession>();
-      when(repository.loginWithAuthorizationCode(any))
-          .thenAnswer((_) => gate.future);
+      final gate = Completer<void>();
+      repository.signInGate = gate;
       var notifications = 0;
       viewModel.addListener(() => notifications++);
 
-      final pending = viewModel.loginWithAuthorizationCode('v3.code');
+      final pending = viewModel.signInWithAuthorizationCode('v3.code');
       await pumpEventQueue();
 
       expect(viewModel.loading, isTrue);
       expect(viewModel.session, isNull);
-      expect(notifications, 1);
 
-      gate.complete(session);
+      gate.complete();
       await pending;
 
       expect(viewModel.loading, isFalse);
-      expect(viewModel.session, session);
-      expect(notifications, 2);
+      expect(viewModel.session, isNotNull);
+      // Loading on, session in, loading off.
+      expect(notifications, 3);
     });
 
-    test('surfaces the failure and leaves the session empty', () async {
-      when(repository.loginWithAuthorizationCode(any))
-          .thenThrow(StateError('invalid_grant'));
+    test('surfaces the failure and stays signed out', () async {
+      repository.signInError = StateError('invalid_grant');
 
-      await viewModel.loginWithAuthorizationCode('v3.code');
+      await viewModel.signInWithAuthorizationCode('v3.code');
 
       expect(viewModel.session, isNull);
       expect(viewModel.loading, isFalse);
@@ -88,56 +97,50 @@ void main() {
     });
 
     test('clears an earlier error when retried', () async {
-      when(repository.loginWithAuthorizationCode(any))
-          .thenThrow(StateError('invalid_grant'));
-      await viewModel.loginWithAuthorizationCode('v3.code');
+      repository.signInError = StateError('invalid_grant');
+      await viewModel.signInWithAuthorizationCode('v3.code');
 
-      when(repository.loginWithAuthorizationCode(any))
-          .thenAnswer((_) async => session);
-      await viewModel.loginWithAuthorizationCode('v3.code');
+      repository.signInError = null;
+      await viewModel.signInWithAuthorizationCode('v3.code');
 
       expect(viewModel.error, isNull);
-      expect(viewModel.session, session);
+      expect(viewModel.session, isNotNull);
     });
   });
 
-  group('logout', () {
+  group('signOut', () {
     test('drops the session', () async {
-      when(repository.loginWithAuthorizationCode(any))
-          .thenAnswer((_) async => session);
-      await viewModel.loginWithAuthorizationCode('v3.code');
+      await viewModel.signInWithAuthorizationCode('v3.code');
 
-      await viewModel.logout();
+      await viewModel.signOut();
 
+      expect(repository.signOutCount, 1);
       expect(viewModel.session, isNull);
+      expect(viewModel.isAuthenticated, isFalse);
       expect(viewModel.error, isNull);
-      verify(repository.logout()).called(1);
     });
 
-    test('keeps the session when signing out fails', () async {
-      when(repository.loginWithAuthorizationCode(any))
-          .thenAnswer((_) async => session);
-      await viewModel.loginWithAuthorizationCode('v3.code');
-      when(repository.logout()).thenThrow(StateError('offline'));
+    test('reports a sign out that failed', () async {
+      await viewModel.signInWithAuthorizationCode('v3.code');
+      repository.signOutError = StateError('keychain');
 
-      await viewModel.logout();
+      await viewModel.signOut();
 
-      expect(viewModel.session, session);
-      expect(viewModel.error, contains('offline'));
+      expect(viewModel.error, contains('keychain'));
     });
   });
 
   group('loadStoredSession', () {
-    test('picks up whatever was persisted', () async {
-      when(repository.getStoredSession()).thenAnswer((_) async => session);
-
+    test('picks up whatever the repository restored', () async {
       await viewModel.loadStoredSession();
+      final stored = fakeSession();
+      repository.emit(stored);
 
-      expect(viewModel.session, session);
+      expect(viewModel.session, stored);
     });
 
     test('records the failure when storage throws', () async {
-      when(repository.getStoredSession()).thenThrow(StateError('keychain'));
+      repository.loadStoredSessionError = StateError('keychain');
 
       await viewModel.loadStoredSession();
 

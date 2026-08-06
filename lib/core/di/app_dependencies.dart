@@ -1,4 +1,3 @@
-import '../../core/auth_store.dart';
 import '../../features/auth/presentation/viewmodels/auth_view_model.dart';
 import '../../features/journey/domain/usecases/has_journey_use_case.dart';
 import '../../features/journey/presentation/viewmodels/journey_view_model.dart';
@@ -8,21 +7,19 @@ import '../../features/trophies/presentation/viewmodels/trophy_list_view_model.d
 
 class AppDependencies {
   const AppDependencies({
-    required this.authStore,
+    required this.authViewModel,
     required this.trophyProgressStore,
     required this.hasJourneyUseCase,
-    required this.createAuthViewModel,
     required this.createGameListViewModel,
     required this.createTrophyListViewModel,
     required this.createJourneyViewModel,
   });
 
-  final AuthStore authStore;
+  final AuthViewModel authViewModel;
   final TrophyProgressStore trophyProgressStore;
 
   final HasJourneyUseCase hasJourneyUseCase;
 
-  final AuthViewModel Function() createAuthViewModel;
   final GameListViewModel Function() createGameListViewModel;
   final TrophyListViewModel Function(String gameId) createTrophyListViewModel;
   final JourneyViewModel Function(String gameId) createJourneyViewModel;

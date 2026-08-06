@@ -1,11 +1,12 @@
-import 'package:trophy_journey/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:trophy_journey/features/auth/data/datasources/psn_remote_data_source.dart';
-import 'package:trophy_journey/features/auth/data/models/auth_session_model.dart';
-import 'package:trophy_journey/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:trophy_journey/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:trophy_journey/features/auth/data/datasources/psn_remote_data_source.dart';
+import 'package:trophy_journey/features/auth/data/datasources/psn_token_store.dart';
+import 'package:trophy_journey/features/auth/data/datasources/psn_web_session_data_source.dart';
+import 'package:trophy_journey/features/auth/data/models/auth_session_model.dart';
+import 'package:trophy_journey/features/auth/data/repositories/auth_repository_impl.dart';
 
 import 'auth_repository_impl_test.mocks.dart';
 
@@ -15,131 +16,128 @@ const tokens = PsnTokens(
   expiresIn: Duration(hours: 2),
 );
 
+AuthSessionModel storedSession({
+  Duration expiresIn = const Duration(hours: 1),
+  String token = 'access',
+}) => AuthSessionModel(
+  userId: 'psn_user',
+  accessToken: token,
+  refreshToken: 'refresh',
+  expiresAt: DateTime.now().add(expiresIn),
+);
+
 @GenerateNiceMocks([
   MockSpec<AuthLocalDataSource>(),
-  MockSpec<PSNRemoteDataSource>(),
+  MockSpec<PsnRemoteDataSource>(),
+  MockSpec<PsnWebSessionDataSource>(),
 ])
 void main() {
   late MockAuthLocalDataSource localDataSource;
-  late MockPSNRemoteDataSource remoteDataSource;
+  late MockPsnRemoteDataSource remoteDataSource;
+  late MockPsnWebSessionDataSource webSessionDataSource;
   late AuthRepositoryImpl repository;
 
   setUp(() {
     localDataSource = MockAuthLocalDataSource();
-    remoteDataSource = MockPSNRemoteDataSource();
+    remoteDataSource = MockPsnRemoteDataSource();
+    webSessionDataSource = MockPsnWebSessionDataSource();
     when(localDataSource.saveSession(any)).thenAnswer((_) => Future.value());
     when(localDataSource.clearSession()).thenAnswer((_) => Future.value());
+    when(localDataSource.getStoredSession()).thenAnswer((_) async => null);
+    when(webSessionDataSource.clear()).thenAnswer((_) => Future.value());
     repository = AuthRepositoryImpl(
-      localDataSource: localDataSource,
-      remoteDataSource: remoteDataSource,
+      tokenStore: PsnTokenStore(
+        localDataSource: localDataSource,
+        remoteDataSource: remoteDataSource,
+      ),
+      webSessionDataSource: webSessionDataSource,
     );
   });
 
-  group('loginWithAuthorizationCode', () {
-    test('trades the code for a session', () async {
+  group('signInWithAuthorizationCode', () {
+    test('publishes the session the store signed in with', () async {
       when(remoteDataSource.exchangeCode('v3.code'))
           .thenAnswer((_) async => tokens);
+      var notifications = 0;
+      repository.session.addListener(() => notifications++);
 
-      final session = await repository.loginWithAuthorizationCode('v3.code');
+      await repository.signInWithAuthorizationCode('v3.code');
 
-      expect(session.accessToken, 'access');
-      expect(session.refreshToken, 'refresh');
-      verify(remoteDataSource.exchangeCode('v3.code')).called(1);
-    });
-
-    test('dates the expiry from the lifetime Sony reported', () async {
-      when(remoteDataSource.exchangeCode(any)).thenAnswer((_) async => tokens);
-      final before = DateTime.now();
-
-      final session = await repository.loginWithAuthorizationCode('v3.code');
-
-      expect(
-        session.expiresAt.isAfter(before.add(const Duration(hours: 2)) //
-            .subtract(const Duration(seconds: 5))),
-        isTrue,
-      );
-      expect(
-        session.expiresAt.isBefore(
-          before.add(const Duration(hours: 2, seconds: 5)),
-        ),
-        isTrue,
-      );
-    });
-
-    test('persists the session it hands back', () async {
-      when(remoteDataSource.exchangeCode(any)).thenAnswer((_) async => tokens);
-
-      final session = await repository.loginWithAuthorizationCode('v3.code');
-
-      final saved = verify(localDataSource.saveSession(captureAny))
-          .captured
-          .single as AuthSessionModel;
-      expect(saved.accessToken, session.accessToken);
-      expect(saved.refreshToken, session.refreshToken);
-      expect(saved.expiresAt, session.expiresAt);
-    });
-
-    test('does not persist anything when the exchange fails', () async {
-      when(remoteDataSource.exchangeCode(any)).thenThrow(StateError('bad code'));
-
-      await expectLater(
-        repository.loginWithAuthorizationCode('v3.code'),
-        throwsStateError,
-      );
-
-      verifyNever(localDataSource.saveSession(any));
+      expect(repository.session.value?.accessToken, 'access');
+      expect(repository.isAuthenticated, isTrue);
+      expect(notifications, 1);
     });
   });
 
-  group('refreshToken', () {
-    test('exchanges the refresh token and persists the result', () async {
-      when(remoteDataSource.refreshAccessToken('refresh')).thenAnswer(
-        (_) async => const PsnTokens(
-          accessToken: 'next-access',
-          refreshToken: 'next-refresh',
-          expiresIn: Duration(hours: 1),
-        ),
-      );
+  group('loadStoredSession', () {
+    test('publishes what was persisted', () async {
+      final stored = storedSession();
+      when(localDataSource.getStoredSession()).thenAnswer((_) async => stored);
 
-      final session = await repository.refreshToken('refresh');
+      await repository.loadStoredSession();
 
-      expect(session.accessToken, 'next-access');
-      expect(session.refreshToken, 'next-refresh');
-      verify(localDataSource.saveSession(any)).called(1);
+      expect(repository.session.value?.accessToken, stored.accessToken);
+      expect(repository.session.value?.expiresAt, stored.expiresAt);
+      expect(repository.isAuthenticated, isTrue);
     });
-  });
 
-  group('getStoredSession', () {
-    test('maps the stored model to an entity', () async {
-      final expiresAt = DateTime.now().add(const Duration(hours: 1));
+    test('stays signed out when nothing is stored', () async {
+      await repository.loadStoredSession();
+
+      expect(repository.session.value, isNull);
+      expect(repository.isAuthenticated, isFalse);
+    });
+
+    test('stays signed out when reading throws', () async {
+      when(localDataSource.getStoredSession())
+          .thenThrow(StateError('keychain'));
+
+      await repository.loadStoredSession();
+
+      expect(repository.session.value, isNull);
+    });
+
+    test('is not authenticated on an expired session', () async {
       when(localDataSource.getStoredSession()).thenAnswer(
-        (_) async => AuthSessionModel(
-          userId: 'psn_user',
-          accessToken: 'access',
-          refreshToken: 'refresh',
-          expiresAt: expiresAt,
-        ),
+        (_) async => storedSession(expiresIn: const Duration(hours: -1)),
       );
 
-      final session = await repository.getStoredSession();
+      await repository.loadStoredSession();
 
-      expect(session, isA<AuthSession>());
-      expect(session!.accessToken, 'access');
-      expect(session.expiresAt, expiresAt);
-    });
-
-    test('is null when nothing is stored', () async {
-      when(localDataSource.getStoredSession()).thenAnswer((_) async => null);
-
-      expect(await repository.getStoredSession(), isNull);
+      expect(repository.session.value, isNotNull);
+      expect(repository.isAuthenticated, isFalse);
     });
   });
 
-  group('logout', () {
+  group('signOut', () {
+    setUp(() async {
+      when(localDataSource.getStoredSession())
+          .thenAnswer((_) async => storedSession());
+      await repository.loadStoredSession();
+    });
+
+    test('drops the session it published', () async {
+      var notifications = 0;
+      repository.session.addListener(() => notifications++);
+
+      await repository.signOut();
+
+      expect(repository.session.value, isNull);
+      expect(repository.isAuthenticated, isFalse);
+      expect(notifications, 1);
+    });
+
     test('wipes the stored session', () async {
-      await repository.logout();
+      await repository.signOut();
 
       verify(localDataSource.clearSession()).called(1);
+    });
+
+    test('drops the web view cookies so the login page cannot sign the user '
+        'straight back in', () async {
+      await repository.signOut();
+
+      verify(webSessionDataSource.clear()).called(1);
     });
   });
 }

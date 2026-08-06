@@ -15,6 +15,7 @@ class GameListScreen extends StatefulWidget {
 }
 
 class _GameListScreenState extends State<GameListScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   late final GameListViewModel _viewModel;
 
   @override
@@ -30,6 +31,12 @@ class _GameListScreenState extends State<GameListScreen> {
     super.dispose();
   }
 
+  Future<void> _signOut() async {
+    final authViewModel = AppScope.of(context).authViewModel;
+    Navigator.of(context).pop();
+    await authViewModel.signOut();
+  }
+
   void _openGame(Game game) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => TrophyListScreen(game: game)),
@@ -42,21 +49,18 @@ class _GameListScreenState extends State<GameListScreen> {
       listenable: _viewModel,
       builder: (context, _) {
         return Scaffold(
+          key: _scaffoldKey,
           appBar: AppBar(
             title: const Text('Trophy Journey'),
             actions: [
-              if (!_viewModel.loading) ...[
-                Center(
-                  child: Text(
-                    '${_viewModel.totalAchievedCount} / '
-                    '${_viewModel.totalTrophyCount}',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                _SortMenu(viewModel: _viewModel),
-              ],
+              IconButton(
+                icon: const Icon(Icons.menu),
+                tooltip: 'Menu',
+                onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+              ),
             ],
           ),
+          endDrawer: _AppMenu(onSignOut: _signOut),
           body: _viewModel.loading
               ? const Center(child: CircularProgressIndicator())
               : Column(
@@ -93,30 +97,34 @@ class _GameListScreenState extends State<GameListScreen> {
   }
 }
 
-class _SortMenu extends StatelessWidget {
-  const _SortMenu({required this.viewModel});
+class _AppMenu extends StatelessWidget {
+  const _AppMenu({required this.onSignOut});
 
-  final GameListViewModel viewModel;
+  final VoidCallback onSignOut;
 
   @override
   Widget build(BuildContext context) {
-    return MenuAnchor(
-      menuChildren: [
-        for (final sort in GameSort.values)
-          RadioMenuButton<GameSort>(
-            value: sort,
-            groupValue: viewModel.sort,
-            onChanged: (value) {
-              if (value != null) viewModel.setSort(value);
-            },
-            child: Text(sort.label),
-          ),
-      ],
-      builder: (context, controller, _) => IconButton(
-        icon: const Icon(Icons.sort),
-        tooltip: 'Sort',
-        onPressed: () =>
-            controller.isOpen ? controller.close() : controller.open(),
+    return Drawer(
+      width: 260,
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+              child: Text(
+                'Account',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Sign out of PSN'),
+              onTap: onSignOut,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,36 +1,53 @@
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/auth_session.dart';
-import '../../domain/usecases/get_current_session.dart';
-import '../../domain/usecases/login_with_authorization_code.dart';
-import '../../domain/usecases/logout.dart';
+import '../../domain/usecases/load_stored_session_use_case.dart';
+import '../../domain/usecases/sign_in_with_authorization_code_use_case.dart';
+import '../../domain/usecases/sign_out_use_case.dart';
+import '../../domain/usecases/watch_auth_session_use_case.dart';
 
 class AuthViewModel extends ChangeNotifier {
   AuthViewModel({
-    required this._loginWithAuthorizationCode,
-    required this._logout,
-    required this._getCurrentSession,
-  });
+    required WatchAuthSessionUseCase watchSession,
+    required this._loadStoredSessionUseCase,
+    required this._signInWithAuthorizationCodeUseCase,
+    required this._signOutUseCase,
+  }) : _authSession = watchSession() {
+    _authSession.addListener(notifyListeners);
+  }
 
-  final LoginWithAuthorizationCodeUseCase _loginWithAuthorizationCode;
-  final LogoutUseCase _logout;
-  final GetCurrentSessionUseCase _getCurrentSession;
+  final ValueListenable<AuthSession?> _authSession;
+  final LoadStoredSessionUseCase _loadStoredSessionUseCase;
+  final SignInWithAuthorizationCodeUseCase _signInWithAuthorizationCodeUseCase;
+  final SignOutUseCase _signOutUseCase;
 
-  AuthSession? _session;
   bool _loading = false;
   String? _error;
 
-  AuthSession? get session => _session;
+  AuthSession? get session => _authSession.value;
+
+  bool get isAuthenticated => _authSession.value?.isValid == true;
+
   bool get loading => _loading;
+
   String? get error => _error;
 
-  Future<void> loginWithAuthorizationCode(String code) async {
+  Future<void> loadStoredSession() async {
+    try {
+      await _loadStoredSessionUseCase();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> signInWithAuthorizationCode(String code) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _session = await _loginWithAuthorizationCode(code);
+      await _signInWithAuthorizationCodeUseCase(code);
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -39,28 +56,18 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> logout() async {
-    _loading = true;
-    notifyListeners();
-
+  Future<void> signOut() async {
     try {
-      await _logout();
-      _session = null;
-      _error = null;
+      await _signOutUseCase();
     } catch (e) {
       _error = e.toString();
-    } finally {
-      _loading = false;
       notifyListeners();
     }
   }
 
-  Future<void> loadStoredSession() async {
-    try {
-      _session = await _getCurrentSession();
-    } catch (e) {
-      _error = e.toString();
-    }
-    notifyListeners();
+  @override
+  void dispose() {
+    _authSession.removeListener(notifyListeners);
+    super.dispose();
   }
 }

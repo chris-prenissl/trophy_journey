@@ -1,15 +1,15 @@
+import 'package:flutter/foundation.dart';
+
 import '../entities/auth_session.dart';
 
 abstract interface class AuthRepository {
-  Future<AuthSession> loginWithAuthorizationCode(String code);
+  ValueListenable<AuthSession?> get session;
 
-  Future<void> logout();
+  bool get isAuthenticated;
 
-  Future<AuthSession?> getStoredSession();
+  Future<void> loadStoredSession();
 
-  Future<AuthSession> refreshToken(String refreshToken);
+  Future<void> signInWithAuthorizationCode(String code);
 
-  Future<void> saveSession(AuthSession session);
-  
-  Future<void> clearSession();
+  Future<void> signOut();
 }

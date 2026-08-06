@@ -1,18 +1,9 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 import '../models/psn_trophy_definition_model.dart';
 import '../models/psn_trophy_title_model.dart';
-
-typedef AccessTokenProvider = Future<String?> Function();
-
-class PsnAuthRequiredException implements Exception {
-  const PsnAuthRequiredException();
-
-  @override
-  String toString() => 'Not signed in to PlayStation Network';
-}
 
 class PsnRequestException implements Exception {
   const PsnRequestException(this.statusCode);
@@ -24,22 +15,18 @@ class PsnRequestException implements Exception {
 }
 
 class PsnTrophyDataSource {
-  PsnTrophyDataSource({
-    required this._accessToken,
-    http.Client? client,
-    this.baseUrl = _baseUrl,
-  }) : _client = client ?? http.Client();
+  PsnTrophyDataSource({Client? client, this.baseUrl = _baseUrl})
+    : _client = client ?? Client();
 
   static const _baseUrl = 'https://m.np.playstation.com';
   static const _titlePageSize = 800;
 
-  final AccessTokenProvider _accessToken;
-  final http.Client _client;
+  final Client _client;
   final String baseUrl;
 
   Future<List<PsnTrophyTitleModel>> fetchTrophyTitles() async {
     final titles = <PsnTrophyTitleModel>[];
-    var offset = 0;
+    int offset = 0;
 
     while (true) {
       final json = await _get('/api/trophy/v1/users/me/trophyTitles', {
@@ -51,7 +38,10 @@ class PsnTrophyDataSource {
       titles.addAll(page.map(PsnTrophyTitleModel.fromJson));
 
       final nextOffset = json['nextOffset'];
-      if (page.isEmpty || nextOffset == null) break;
+      if (page.isEmpty || nextOffset == null) {
+        break;
+      }
+
       offset = (nextOffset as num).toInt();
     }
 
@@ -93,15 +83,9 @@ class PsnTrophyDataSource {
     String path,
     Map<String, String> query,
   ) async {
-    final token = await _accessToken();
-    if (token == null) throw const PsnAuthRequiredException();
-
     final response = await _client.get(
       Uri.parse(baseUrl).replace(path: path, queryParameters: query),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+      headers: {'Accept': 'application/json'},
     );
 
     if (response.statusCode != 200) {

@@ -4,7 +4,7 @@ import 'package:trophy_journey/features/trophies/data/datasources/game_asset_dat
 import 'package:trophy_journey/features/trophies/data/datasources/psn_cache_data_source.dart';
 import 'package:trophy_journey/features/trophies/data/datasources/psn_trophy_data_source.dart';
 import 'package:trophy_journey/features/trophies/data/datasources/trophy_asset_data_source.dart';
-import 'package:trophy_journey/features/trophies/data/psn_library.dart';
+import 'package:trophy_journey/features/trophies/data/repositories/game_repository_impl.dart';
 import 'package:trophy_journey/features/trophies/data/repositories/trophy_repository_impl.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -75,27 +75,23 @@ Map<String, dynamic> get psnTitle => {
   MockClientHandler handler,
 ) {
   final client = MockClient(handler);
-  final psn = PsnTrophyDataSource(
-    accessToken: () async => 'token',
-    client: client,
-    baseUrl: 'https://psn.test',
-  );
+  final psn = PsnTrophyDataSource(client: client, baseUrl: 'https://psn.test');
   final cache = PsnCacheDataSource(
     factory: databaseFactoryFfi,
     path: inMemoryDatabasePath,
   );
   final guides = TrophyAssetDataSource(bundle);
-  final library = PsnLibrary(
-    psn: psn,
-    cache: cache,
-    guides: GameAssetDataSource(bundle),
+  final games = GameRepositoryImpl(
+    psnTrophyDataSource: psn,
+    psnCacheDataSource: cache,
+    gameAssetDataSource: GameAssetDataSource(bundle),
   );
   return (
     repository: TrophyRepositoryImpl(
-      library: library,
-      psn: psn,
-      cache: cache,
-      guides: guides,
+      gameRepository: games,
+      psnTrophyDataSource: psn,
+      psnCacheDataSource: cache,
+      trophyAssetDataSource: guides,
     ),
     cache: cache,
   );
@@ -104,7 +100,12 @@ Map<String, dynamic> get psnTitle => {
 http.Response jsonFor(http.Request request) {
   final path = request.url.path;
   if (path.endsWith('/trophyTitles')) {
-    return http.Response(jsonEncode({'trophyTitles': [psnTitle]}), 200);
+    return http.Response(
+      jsonEncode({
+        'trophyTitles': [psnTitle],
+      }),
+      200,
+    );
   }
   if (path.startsWith('/api/trophy/v1/users/me/npCommunicationIds')) {
     return http.Response(
@@ -156,29 +157,28 @@ void main() {
 
     test('falls back to the cached list when PSN is unreachable', () async {
       // Prime the cache with a good response.
-      final (repository: primed, :cache) =
-          buildRepository((r) async => jsonFor(r));
+      final (repository: primed, :cache) = buildRepository(
+        (r) async => jsonFor(r),
+      );
       addTearDown(cache.close);
       await primed.getTrophies('final-fantasy-x-hd');
 
       // A second repository sharing the cache, but offline for definitions.
       final offline = TrophyRepositoryImpl(
-        library: PsnLibrary(
-          psn: PsnTrophyDataSource(
-            accessToken: () async => 'token',
+        gameRepository: GameRepositoryImpl(
+          psnTrophyDataSource: PsnTrophyDataSource(
             client: MockClient((r) async => jsonFor(r)),
             baseUrl: 'https://psn.test',
           ),
-          cache: cache,
-          guides: GameAssetDataSource(bundle),
+          psnCacheDataSource: cache,
+          gameAssetDataSource: GameAssetDataSource(bundle),
         ),
-        psn: PsnTrophyDataSource(
-          accessToken: () async => 'token',
+        psnTrophyDataSource: PsnTrophyDataSource(
           client: MockClient((_) async => http.Response('nope', 503)),
           baseUrl: 'https://psn.test',
         ),
-        cache: cache,
-        guides: TrophyAssetDataSource(bundle),
+        psnCacheDataSource: cache,
+        trophyAssetDataSource: TrophyAssetDataSource(bundle),
       );
 
       final trophies = await offline.getTrophies('final-fantasy-x-hd');

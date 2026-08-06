@@ -1,7 +1,5 @@
-import 'package:trophy_journey/core/auth_store.dart';
 import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
-import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
 import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
@@ -20,7 +18,6 @@ import 'package:mockito/mockito.dart';
 import 'app_scope_test.mocks.dart';
 
 @GenerateNiceMocks([
-  MockSpec<AuthRepository>(),
   MockSpec<TrophyProgressRepository>(),
   MockSpec<JourneyRepository>(),
   MockSpec<GameListViewModel>(),
@@ -30,8 +27,6 @@ import 'app_scope_test.mocks.dart';
 ])
 void main() {
   late MockTrophyProgressRepository progressRepository;
-  late MockAuthRepository authRepository;
-  late AuthStore authStore;
   late TrophyProgressStore store;
   late AppDependencies dependencies;
 
@@ -39,20 +34,14 @@ void main() {
     progressRepository = MockTrophyProgressRepository();
     when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
-    authRepository = MockAuthRepository();
-    when(authRepository.getStoredSession()).thenAnswer((_) async => null);
-
-    authStore = AuthStore(repository: authRepository);
-
     store = TrophyProgressStore(
       GetAllEarnedTrophyIdsUseCase(progressRepository),
       ReplaceEarnedTrophiesUseCase(progressRepository),
     );
     dependencies = AppDependencies(
-      authStore: authStore,
+      authViewModel: MockAuthViewModel(),
       trophyProgressStore: store,
       hasJourneyUseCase: HasJourneyUseCase(MockJourneyRepository()),
-      createAuthViewModel: MockAuthViewModel.new,
       createGameListViewModel: MockGameListViewModel.new,
       createTrophyListViewModel: (_) => MockTrophyListViewModel(),
       createJourneyViewModel: (_) => MockJourneyViewModel(),
@@ -137,10 +126,9 @@ void main() {
 
   test('updateShouldNotify compares dependencies by identity', () {
     final other = AppDependencies(
-      authStore: authStore,
+      authViewModel: MockAuthViewModel(),
       trophyProgressStore: store,
       hasJourneyUseCase: HasJourneyUseCase(MockJourneyRepository()),
-      createAuthViewModel: MockAuthViewModel.new,
       createGameListViewModel: MockGameListViewModel.new,
       createTrophyListViewModel: (_) => MockTrophyListViewModel(),
       createJourneyViewModel: (_) => MockJourneyViewModel(),

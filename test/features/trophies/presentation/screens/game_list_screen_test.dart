@@ -1,7 +1,5 @@
-import 'package:trophy_journey/core/auth_store.dart';
 import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
-import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
 import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
@@ -68,7 +66,6 @@ const blitzball = Trophy(
 );
 
 @GenerateNiceMocks([
-  MockSpec<AuthRepository>(),
   MockSpec<GameRepository>(),
   MockSpec<TrophyRepository>(),
   MockSpec<TrophyProgressRepository>(),
@@ -77,18 +74,15 @@ const blitzball = Trophy(
   MockSpec<AuthViewModel>(),
 ])
 void main() {
-  late MockAuthRepository authRepository;
+  late MockAuthViewModel authViewModel;
   late MockGameRepository gameRepository;
   late MockTrophyRepository trophyRepository;
   late MockTrophyProgressRepository progressRepository;
   late MockJourneyRepository journeyRepository;
-  late AuthStore authStore;
   late TrophyProgressStore store;
 
   setUp(() {
-    authRepository = MockAuthRepository();
-    when(authRepository.getStoredSession()).thenAnswer((_) async => null);
-    authStore = AuthStore(repository: authRepository);
+    authViewModel = MockAuthViewModel();
 
     gameRepository = MockGameRepository();
     trophyRepository = MockTrophyRepository();
@@ -118,10 +112,9 @@ void main() {
     await tester.pumpWidget(
       AppScope(
         dependencies: AppDependencies(
-          authStore: authStore,
+          authViewModel: authViewModel,
           trophyProgressStore: store,
           hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
-          createAuthViewModel: MockAuthViewModel.new,
           createGameListViewModel: () =>
               GameListViewModel(GetGamesUseCase(gameRepository), store),
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
@@ -152,10 +145,9 @@ void main() {
     await tester.pumpWidget(
       AppScope(
         dependencies: AppDependencies(
-          authStore: authStore,
+          authViewModel: authViewModel,
           trophyProgressStore: store,
           hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
-          createAuthViewModel: MockAuthViewModel.new,
           createGameListViewModel: () =>
               GameListViewModel(GetGamesUseCase(gameRepository), store),
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
@@ -199,6 +191,18 @@ void main() {
     await tester.pump();
 
     expect(find.text('1 / 3'), findsOneWidget);
+  });
+
+  testWidgets('signs out of PSN from the menu drawer', (tester) async {
+    await pumpApp(tester);
+
+    await tester.tap(find.byTooltip('Menu'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Sign out of PSN'));
+    await tester.pumpAndSettle();
+
+    verify(authViewModel.signOut()).called(1);
   });
 
   testWidgets('picks up PSN earned trophies after opening a game', (

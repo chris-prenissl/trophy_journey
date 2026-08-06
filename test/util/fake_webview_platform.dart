@@ -56,6 +56,7 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
   NavigationRequestCallback? _onNavigationRequest;
   PageEventCallback? _onPageStarted;
   PageEventCallback? _onPageFinished;
+  WebResourceErrorCallback? _onWebResourceError;
 
   Future<NavigationDecision> navigateTo(String url) async {
     return _onNavigationRequest!(
@@ -66,6 +67,20 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
   void startPage(String url) => _onPageStarted?.call(url);
 
   void finishPage(String url) => _onPageFinished?.call(url);
+
+  void failLoad({
+    required int errorCode,
+    String description = 'Loading frame',
+    bool isForMainFrame = true,
+    String? url,
+  }) => _onWebResourceError?.call(
+    WebResourceError(
+      errorCode: errorCode,
+      description: description,
+      isForMainFrame: isForMainFrame,
+      url: url,
+    ),
+  );
 
   @override
   Future<void> setOnNavigationRequest(
@@ -87,7 +102,9 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnWebResourceError(
     WebResourceErrorCallback onWebResourceError,
-  ) async {}
+  ) async {
+    _onWebResourceError = onWebResourceError;
+  }
 }
 
 class FakeWebViewWidget extends PlatformWebViewWidget {

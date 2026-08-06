@@ -1,7 +1,5 @@
-import 'package:trophy_journey/core/auth_store.dart';
 import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
-import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
 import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
@@ -70,7 +68,6 @@ const another = Trophy(
 );
 
 @GenerateNiceMocks([
-  MockSpec<AuthRepository>(),
   MockSpec<TrophyRepository>(),
   MockSpec<TrophyProgressRepository>(),
   MockSpec<JourneyRepository>(),
@@ -79,17 +76,14 @@ const another = Trophy(
   MockSpec<AuthViewModel>(),
 ])
 void main() {
-  late MockAuthRepository authRepository;
+  late MockAuthViewModel authViewModel;
   late MockTrophyRepository trophyRepository;
   late MockTrophyProgressRepository progressRepository;
   late MockJourneyRepository journeyRepository;
-  late AuthStore authStore;
   late TrophyProgressStore store;
 
   setUp(() {
-    authRepository = MockAuthRepository();
-    when(authRepository.getStoredSession()).thenAnswer((_) async => null);
-    authStore = AuthStore(repository: authRepository);
+    authViewModel = MockAuthViewModel();
 
     trophyRepository = MockTrophyRepository();
     progressRepository = MockTrophyProgressRepository();
@@ -117,10 +111,9 @@ void main() {
     await tester.pumpWidget(
       AppScope(
         dependencies: AppDependencies(
-          authStore: authStore,
+          authViewModel: authViewModel,
           trophyProgressStore: store,
           hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
-          createAuthViewModel: MockAuthViewModel.new,
           createGameListViewModel: MockGameListViewModel.new,
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
             gameId,
@@ -152,10 +145,9 @@ void main() {
     await tester.pumpWidget(
       AppScope(
         dependencies: AppDependencies(
-          authStore: authStore,
+          authViewModel: authViewModel,
           trophyProgressStore: store,
           hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
-          createAuthViewModel: MockAuthViewModel.new,
           createGameListViewModel: MockGameListViewModel.new,
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
             gameId,

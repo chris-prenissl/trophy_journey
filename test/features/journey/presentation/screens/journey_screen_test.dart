@@ -1,7 +1,5 @@
-import 'package:trophy_journey/core/auth_store.dart';
 import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
-import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_progress_repository.dart';
@@ -40,7 +38,6 @@ const ffx = Game(
 );
 
 @GenerateNiceMocks([
-  MockSpec<AuthRepository>(),
   MockSpec<JourneyRepository>(),
   MockSpec<JourneyProgressRepository>(),
   MockSpec<TrophyRepository>(),
@@ -50,12 +47,11 @@ const ffx = Game(
   MockSpec<AuthViewModel>(),
 ])
 void main() {
-  late MockAuthRepository authRepository;
+  late MockAuthViewModel authViewModel;
   late MockJourneyRepository journeyRepository;
   late MockJourneyProgressRepository journeyProgressRepository;
   late MockTrophyRepository trophyRepository;
   late MockTrophyProgressRepository progressRepository;
-  late AuthStore authStore;
   late TrophyProgressStore store;
 
   final journey = Journey(
@@ -85,9 +81,7 @@ void main() {
   );
 
   setUp(() {
-    authRepository = MockAuthRepository();
-    when(authRepository.getStoredSession()).thenAnswer((_) async => null);
-    authStore = AuthStore(repository: authRepository);
+    authViewModel = MockAuthViewModel();
 
     journeyRepository = MockJourneyRepository();
     journeyProgressRepository = MockJourneyProgressRepository();
@@ -116,10 +110,9 @@ void main() {
 
   Widget buildApp() => AppScope(
     dependencies: AppDependencies(
-      authStore: authStore,
+      authViewModel: authViewModel,
       trophyProgressStore: store,
       hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
-      createAuthViewModel: MockAuthViewModel.new,
       createGameListViewModel: MockGameListViewModel.new,
       createTrophyListViewModel: (_) => MockTrophyListViewModel(),
       createJourneyViewModel: (gameId) => JourneyViewModel(

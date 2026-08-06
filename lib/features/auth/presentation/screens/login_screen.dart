@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../../../core/auth_store.dart';
 import '../../data/datasources/psn_remote_data_source.dart';
 import '../viewmodels/auth_view_model.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({
-    super.key,
-    required this.viewModel,
-    required this.authStore,
-  });
+  const LoginScreen({super.key, required this.viewModel});
 
   final AuthViewModel viewModel;
-  final AuthStore authStore;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -39,44 +33,46 @@ class _LoginScreenState extends State<LoginScreen> {
           onPageStarted: (_) => setState(() => _isLoading = true),
           onPageFinished: (_) => setState(() => _isLoading = false),
           onWebResourceError: (error) {
-            if (!mounted) return;
+            if (!mounted || _isSelfInflicted(error)) {
+              return;
+            }
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error: ${error.description}')),
             );
           },
         ),
       )
-      ..loadRequest(PSNRemoteDataSourceImpl.authorizeUri);
+      ..loadRequest(PsnRemoteDataSourceImpl.authorizeUri);
   }
 
-  /// Sony finishes the sign in by redirecting to a custom scheme the web view
-  /// cannot load, so the authorization code has to be taken off the request
-  /// before it is followed.
+  static const _cancellationCodes = {-999, 102};
+
+  bool _isSelfInflicted(WebResourceError error) =>
+      error.isForMainFrame == false ||
+      _cancellationCodes.contains(error.errorCode) ||
+      (error.url?.startsWith(PsnRemoteDataSourceImpl.redirectUri) == true);
+
   NavigationDecision _onNavigationRequest(NavigationRequest request) {
-    if (!request.url.startsWith(PSNRemoteDataSourceImpl.redirectUri)) {
-      return NavigationDecision.navigate;
+    if (!request.url.startsWith(PsnRemoteDataSourceImpl.redirectUri)) {
+      return .navigate;
     }
 
     final code = Uri.tryParse(request.url)?.queryParameters['code'];
     if (code != null && code.isNotEmpty && !_exchangingCode) {
       _exchangingCode = true;
-      _completeLogin(code);
+      _tryLogin(code);
     }
-    return NavigationDecision.prevent;
+    return .prevent;
   }
 
-  Future<void> _completeLogin(String code) async {
-    await widget.viewModel.loginWithAuthorizationCode(code);
-    if (!mounted) return;
-
-    final session = widget.viewModel.session;
-    if (session == null) {
-      _exchangingCode = false;
-      _webViewController.loadRequest(PSNRemoteDataSourceImpl.authorizeUri);
+  Future<void> _tryLogin(String code) async {
+    await widget.viewModel.signInWithAuthorizationCode(code);
+    if (!mounted || widget.viewModel.session != null) {
       return;
     }
 
-    await widget.authStore.setSession(session);
+    _exchangingCode = false;
+    _webViewController.loadRequest(PsnRemoteDataSourceImpl.authorizeUri);
   }
 
   @override
@@ -102,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   right: 0,
                   child: Container(
                     color: Colors.red,
-                    padding: const EdgeInsets.all(16),
+                    padding: const .all(16),
                     child: Text(
                       'Error: $error',
                       style: const TextStyle(color: Colors.white),

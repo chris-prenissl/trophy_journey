@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../viewmodels/game_list_view_model.dart';
+import 'game_sort_menu.dart';
+import 'trophy_count_card.dart';
 
 class GameFilterBar extends StatelessWidget {
   const GameFilterBar({super.key, required this.viewModel});
@@ -23,7 +25,17 @@ class GameFilterBar extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+          child: Row(
+            children: [
+              Expanded(child: TrophyCountCard(viewModel: viewModel)),
+              const SizedBox(width: 12),
+              GameSortMenu(viewModel: viewModel),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
           child: SegmentedButton<GameStatusFilter>(
             segments: const [
               ButtonSegment(value: GameStatusFilter.all, label: Text('All')),

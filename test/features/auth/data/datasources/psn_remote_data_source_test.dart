@@ -7,21 +7,19 @@ import 'package:http/testing.dart';
 
 const tokenUrl = 'https://example.test/token';
 
-const tokenResponse = '{"access_token":"access","refresh_token":"refresh",'
+const tokenResponse =
+    '{"access_token":"access","refresh_token":"refresh",'
     '"expires_in":3600,"token_type":"bearer"}';
 
-({PSNRemoteDataSourceImpl dataSource, List<http.Request> requests})
-buildDataSource({
-  String body = tokenResponse,
-  int statusCode = 200,
-}) {
+({PsnRemoteDataSourceImpl dataSource, List<http.Request> requests})
+buildDataSource({String body = tokenResponse, int statusCode = 200}) {
   final requests = <http.Request>[];
   final client = MockClient((request) async {
     requests.add(request);
     return http.Response(body, statusCode);
   });
   return (
-    dataSource: PSNRemoteDataSourceImpl(client: client, tokenUrl: tokenUrl),
+    dataSource: PsnRemoteDataSourceImpl(client: client, tokenUrl: tokenUrl),
     requests: requests,
   );
 }
@@ -29,18 +27,18 @@ buildDataSource({
 void main() {
   group('authorizeUri', () {
     test('points at the PSN sign in page', () {
-      final uri = PSNRemoteDataSourceImpl.authorizeUri;
+      final uri = PsnRemoteDataSourceImpl.authorizeUri;
 
       expect(uri.host, 'ca.account.sony.com');
       expect(uri.path, '/api/authz/v3/oauth/authorize');
     });
 
     test('asks for a code for the mobile client', () {
-      final query = PSNRemoteDataSourceImpl.authorizeUri.queryParameters;
+      final query = PsnRemoteDataSourceImpl.authorizeUri.queryParameters;
 
       expect(query['response_type'], 'code');
-      expect(query['client_id'], PSNRemoteDataSourceImpl.clientId);
-      expect(query['redirect_uri'], PSNRemoteDataSourceImpl.redirectUri);
+      expect(query['client_id'], PsnRemoteDataSourceImpl.clientId);
+      expect(query['redirect_uri'], PsnRemoteDataSourceImpl.redirectUri);
       expect(query['access_type'], 'offline');
     });
   });
@@ -54,7 +52,7 @@ void main() {
       final body = Uri.splitQueryString(requests.single.body);
       expect(body['code'], 'v3.code');
       expect(body['grant_type'], 'authorization_code');
-      expect(body['redirect_uri'], PSNRemoteDataSourceImpl.redirectUri);
+      expect(body['redirect_uri'], PsnRemoteDataSourceImpl.redirectUri);
       expect(requests.single.url.toString(), tokenUrl);
     });
 
@@ -65,8 +63,8 @@ void main() {
 
       final expected = base64Encode(
         utf8.encode(
-          '${PSNRemoteDataSourceImpl.clientId}:'
-          '${PSNRemoteDataSourceImpl.clientSecret}',
+          '${PsnRemoteDataSourceImpl.clientId}:'
+          '${PsnRemoteDataSourceImpl.clientSecret}',
         ),
       );
       expect(requests.single.headers['Authorization'], 'Basic $expected');

@@ -1,18 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:marionette_flutter/marionette_flutter.dart';
 
-import 'core/auth_store.dart';
 import 'core/di/app_dependencies.dart';
 import 'core/di/app_scope.dart';
 import 'features/auth/data/datasources/auth_local_data_source.dart';
+import 'features/auth/data/datasources/authenticated_psn_client.dart';
 import 'features/auth/data/datasources/psn_remote_data_source.dart';
+import 'features/auth/data/datasources/psn_token_store.dart';
+import 'features/auth/data/datasources/psn_web_session_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
-import 'features/auth/domain/usecases/get_current_session.dart';
-import 'features/auth/domain/usecases/login_with_authorization_code.dart';
-import 'features/auth/domain/usecases/logout.dart';
+import 'features/auth/domain/usecases/load_stored_session_use_case.dart';
+import 'features/auth/domain/usecases/sign_in_with_authorization_code_use_case.dart';
+import 'features/auth/domain/usecases/sign_out_use_case.dart';
+import 'features/auth/domain/usecases/watch_auth_session_use_case.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'features/journey/data/datasources/journey_asset_data_source.dart';
@@ -31,7 +35,6 @@ import 'features/trophies/data/datasources/progress_local_data_source.dart';
 import 'features/trophies/data/datasources/psn_cache_data_source.dart';
 import 'features/trophies/data/datasources/psn_trophy_data_source.dart';
 import 'features/trophies/data/datasources/trophy_asset_data_source.dart';
-import 'features/trophies/data/psn_library.dart';
 import 'features/trophies/data/repositories/game_repository_impl.dart';
 import 'features/trophies/data/repositories/trophy_progress_repository_impl.dart';
 import 'features/trophies/data/repositories/trophy_repository_impl.dart';
@@ -52,39 +55,47 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
   }
 
-  // Auth setup
   final authLocalDataSource = AuthLocalDataSourceImpl(
     const FlutterSecureStorage(),
   );
-  final authRemoteDataSource = PSNRemoteDataSourceImpl();
-  final authRepository = AuthRepositoryImpl(
+  final authRemoteDataSource = PsnRemoteDataSourceImpl();
+  final webSessionDataSource = PsnWebSessionDataSourceImpl();
+  final tokenStore = PsnTokenStore(
     localDataSource: authLocalDataSource,
     remoteDataSource: authRemoteDataSource,
   );
-  final authStore = AuthStore(repository: authRepository);
+  final authRepository = AuthRepositoryImpl(
+    tokenStore: tokenStore,
+    webSessionDataSource: webSessionDataSource,
+  );
+  final authViewModel = AuthViewModel(
+    watchSession: WatchAuthSessionUseCase(authRepository),
+    loadStoredSessionUseCase: LoadStoredSessionUseCase(authRepository),
+    signInWithAuthorizationCodeUseCase: SignInWithAuthorizationCodeUseCase(
+      authRepository,
+    ),
+    signOutUseCase: SignOutUseCase(authRepository),
+  );
 
   final psnTrophyDataSource = PsnTrophyDataSource(
-    accessToken: () async {
-      await authStore.refreshTokenIfNeeded();
-      return authStore.currentSession?.accessToken;
-    },
+    client: AuthenticatedPsnClient(
+      innerClient: Client(),
+      psnTokenStore: tokenStore,
+    ),
   );
-  final psnCache = PsnCacheDataSource();
-  final gameGuides = GameAssetDataSource(rootBundle);
-  final trophyGuides = TrophyAssetDataSource(rootBundle);
-
-  final psnLibrary = PsnLibrary(
-    psn: psnTrophyDataSource,
-    cache: psnCache,
-    guides: gameGuides,
+  final psnCacheDataSource = PsnCacheDataSource();
+  final gameAssetDataSource = GameAssetDataSource(rootBundle);
+  final trophyAssetDataSource = TrophyAssetDataSource(rootBundle);
+  final gameRepository = GameRepositoryImpl(
+    psnTrophyDataSource: psnTrophyDataSource,
+    psnCacheDataSource: psnCacheDataSource,
+    gameAssetDataSource: gameAssetDataSource,
   );
-
-  final gameRepository = GameRepositoryImpl(psnLibrary);
   final trophyRepository = TrophyRepositoryImpl(
-    library: psnLibrary,
-    psn: psnTrophyDataSource,
-    cache: psnCache,
-    guides: trophyGuides,
+    gameRepository: gameRepository,
+    psnTrophyDataSource: psnTrophyDataSource,
+    psnCacheDataSource: psnCacheDataSource,
+    trophyAssetDataSource: trophyAssetDataSource,
   );
   final trophyProgressRepository = TrophyProgressRepositoryImpl(
     ProgressLocalDataSource(),
@@ -103,18 +114,10 @@ void main() {
 
   runApp(
     TrophyJourneyApp(
-      authStore: authStore,
       dependencies: AppDependencies(
-        authStore: authStore,
+        authViewModel: authViewModel,
         trophyProgressStore: trophyProgressStore,
         hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
-        createAuthViewModel: () => AuthViewModel(
-          loginWithAuthorizationCode: LoginWithAuthorizationCodeUseCase(
-            authRepository,
-          ),
-          logout: LogoutUseCase(authRepository),
-          getCurrentSession: GetCurrentSessionUseCase(authRepository),
-        ),
         createGameListViewModel: () => GameListViewModel(
           GetGamesUseCase(gameRepository),
           trophyProgressStore,
@@ -140,13 +143,8 @@ void main() {
 }
 
 class TrophyJourneyApp extends StatefulWidget {
-  const TrophyJourneyApp({
-    super.key,
-    required this.authStore,
-    required this.dependencies,
-  });
+  const TrophyJourneyApp({super.key, required this.dependencies});
 
-  final AuthStore authStore;
   final AppDependencies dependencies;
 
   @override
@@ -155,19 +153,13 @@ class TrophyJourneyApp extends StatefulWidget {
 
 class _TrophyJourneyAppState extends State<TrophyJourneyApp> {
   late final Future<void> _authInitFuture;
-  late final AuthViewModel _authViewModel;
+
+  AuthViewModel get _authViewModel => widget.dependencies.authViewModel;
 
   @override
   void initState() {
     super.initState();
-    _authViewModel = widget.dependencies.createAuthViewModel();
-    _authInitFuture = widget.authStore.loadSession();
-  }
-
-  @override
-  void dispose() {
-    _authViewModel.dispose();
-    super.dispose();
+    _authInitFuture = _authViewModel.loadStoredSession();
   }
 
   @override
@@ -188,15 +180,12 @@ class _TrophyJourneyAppState extends State<TrophyJourneyApp> {
             ),
             home: snapshot.connectionState == ConnectionState.done
                 ? ListenableBuilder(
-                    listenable: widget.authStore,
+                    listenable: _authViewModel,
                     builder: (context, _) {
-                      if (widget.authStore.isAuthenticated) {
+                      if (_authViewModel.isAuthenticated) {
                         return const GameListScreen();
                       } else {
-                        return LoginScreen(
-                          viewModel: _authViewModel,
-                          authStore: widget.authStore,
-                        );
+                        return LoginScreen(viewModel: _authViewModel);
                       }
                     },
                   )
