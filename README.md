@@ -35,6 +35,10 @@ platinum walkthroughs with checkable tasks.
 - **Offline-friendly** — PSN responses are cached in SQLite, so the
   library and trophy lists keep working without a connection.
 
+## Technologies
+
+_Flutter_ | _Dart_ | _PlayStation_API_ | _ChangeNotifier_ | _InheritedNotifier_
+
 ## Usage
 
 ```sh
