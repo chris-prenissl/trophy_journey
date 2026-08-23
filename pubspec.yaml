@@ -30,24 +30,3 @@ dev_dependencies:
   webview_flutter_platform_interface: ^2.13.1
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/data/
-    - assets/data/trophies/
-    - assets/data/journeys/
-    - assets/covers/
-    - assets/icons/final-fantasy-1-pixel-remaster/
-    - assets/icons/final-fantasy-ii/
-    - assets/icons/final-fantasy-iii/
-    - assets/icons/final-fantasy-iv/
-    - assets/icons/final-fantasy-v-v2/
-    - assets/icons/final-fantasy-vi/
-    - assets/icons/final-fantasy-vii/
-    - assets/icons/final-fantasy-8-remastered/
-    - assets/icons/final-fantasy-ix/
-    - assets/icons/final-fantasy-x-hd/
-    - assets/icons/final-fantasy-xii-the-zodiac-age/
-    - assets/icons/final-fantasy-xiii/
-    - assets/icons/final-fantasy-xiv-a-realm-reborn/
-    - assets/icons/final-fantasy-xv-na/
-    - assets/icons/final-fantasy-xvi/
