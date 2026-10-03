@@ -26,13 +26,11 @@ const journeyJson = <String, dynamic>{
   ],
 };
 
-class _ManifestAssetBundle extends FakeAssetBundle {
-  _ManifestAssetBundle(super.assets, Iterable<String> manifestKeys)
-    : _manifest = const StandardMessageCodec().encodeMessage(<Object?, Object?>{
-        for (final key in manifestKeys) key: <Object?>[],
-      })!;
-
-  final ByteData _manifest;
+class _ManifestAssetBundle(super.assets, Iterable<String> manifestKeys)
+    extends FakeAssetBundle {
+  final ByteData _manifest = const StandardMessageCodec().encodeMessage(
+    <Object?, Object?>{for (final key in manifestKeys) key: <Object?>[]},
+  )!;
 
   @override
   Future<ByteData> load(String key) async =>

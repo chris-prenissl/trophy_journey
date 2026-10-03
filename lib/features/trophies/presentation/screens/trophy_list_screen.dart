@@ -10,11 +10,8 @@ import '../widgets/trophy_filter_chips.dart';
 import '../widgets/trophy_tile.dart';
 import 'trophy_detail_screen.dart';
 
-class TrophyListScreen extends StatefulWidget {
-  const TrophyListScreen({super.key, required this.game});
-
-  final Game game;
-
+class const TrophyListScreen({super.key, required final Game game})
+    extends StatefulWidget {
   @override
   State<TrophyListScreen> createState() => _TrophyListScreenState();
 }

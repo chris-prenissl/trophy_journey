@@ -9,25 +9,15 @@ import '../../domain/usecases/get_journey_use_case.dart';
 import '../../domain/usecases/set_journey_bookmark_use_case.dart';
 import '../../domain/usecases/set_task_checked_use_case.dart';
 
-class JourneyViewModel extends ChangeNotifier {
-  JourneyViewModel(
-    this._gameId,
-    this._getJourney,
-    this._getTrophies,
-    this._getCheckedTaskIds,
-    this._setTaskChecked,
-    this._getJourneyBookmark,
-    this._setJourneyBookmark,
-  );
-
-  final String _gameId;
-  final GetJourneyUseCase _getJourney;
-  final GetTrophiesUseCase _getTrophies;
-  final GetCheckedTaskIdsUseCase _getCheckedTaskIds;
-  final SetTaskCheckedUseCase _setTaskChecked;
-  final GetJourneyBookmarkUseCase _getJourneyBookmark;
-  final SetJourneyBookmarkUseCase _setJourneyBookmark;
-
+class JourneyViewModel(
+  final String _gameId,
+  final GetJourneyUseCase _getJourney,
+  final GetTrophiesUseCase _getTrophies,
+  final GetCheckedTaskIdsUseCase _getCheckedTaskIds,
+  final SetTaskCheckedUseCase _setTaskChecked,
+  final GetJourneyBookmarkUseCase _getJourneyBookmark,
+  final SetJourneyBookmarkUseCase _setJourneyBookmark,
+) extends ChangeNotifier {
   Journey? _journey;
   Map<String, Trophy> _trophyById = const {};
   Set<String> _checkedTaskIds = {};

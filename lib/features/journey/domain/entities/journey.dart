@@ -10,48 +10,31 @@ enum TaskFlag {
   };
 }
 
-class JourneyTask {
-  const JourneyTask({
-    required this.id,
-    required this.title,
-    this.note = '',
-    required this.trophyIds,
-    this.flag = TaskFlag.none,
-  });
-
-  final String id;
-  final String title;
-  final String note;
-  final List<String> trophyIds;
-  final TaskFlag flag;
-
+class const JourneyTask({
+  required final String id,
+  required final String title,
+  final String note = '',
+  required final List<String> trophyIds,
+  final TaskFlag flag = TaskFlag.none,
+}) {
   bool get isMissable => flag == TaskFlag.missable;
   bool get isRecommended => flag == TaskFlag.recommended;
 }
 
-class JourneyStep {
-  const JourneyStep({
-    required this.id,
-    required this.title,
-    required this.instructions,
-    required this.tasks,
-  });
-
-  final String id;
-  final String title;
-  final String instructions;
-  final List<JourneyTask> tasks;
-
+class const JourneyStep({
+  required final String id,
+  required final String title,
+  required final String instructions,
+  required final List<JourneyTask> tasks,
+}) {
   bool get hasMissable => tasks.any((t) => t.isMissable);
   bool get hasRecommended => tasks.any((t) => t.isRecommended);
 }
 
-class Journey {
-  Journey({required this.gameId, required this.steps});
-
-  final String gameId;
-  final List<JourneyStep> steps;
-
+class Journey({
+  required final String gameId,
+  required final List<JourneyStep> steps,
+}) {
   late final List<JourneyTask> allTasks = [
     for (final step in steps) ...step.tasks,
   ];

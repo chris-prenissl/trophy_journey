@@ -5,20 +5,13 @@ import '../../../trophies/presentation/widgets/trophy_badges.dart';
 import '../../domain/entities/journey.dart';
 import 'trophy_chip.dart';
 
-class JourneyTaskRow extends StatelessWidget {
-  const JourneyTaskRow({
-    super.key,
-    required this.task,
-    required this.checked,
-    required this.trophies,
-    required this.onToggle,
-  });
-
-  final JourneyTask task;
-  final bool checked;
-  final List<Trophy> trophies;
-  final VoidCallback onToggle;
-
+class const JourneyTaskRow({
+  super.key,
+  required final JourneyTask task,
+  required final bool checked,
+  required final List<Trophy> trophies,
+  required final VoidCallback onToggle,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

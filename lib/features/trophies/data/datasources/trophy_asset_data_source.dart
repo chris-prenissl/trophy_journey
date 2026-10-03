@@ -4,11 +4,7 @@ import 'package:flutter/services.dart';
 
 import '../models/trophy_model.dart';
 
-class TrophyAssetDataSource {
-  const TrophyAssetDataSource(this._bundle);
-
-  final AssetBundle _bundle;
-
+class const TrophyAssetDataSource(final AssetBundle _bundle) {
   static String assetPathFor(String gameId) =>
       'assets/data/trophies/$gameId.json';
 

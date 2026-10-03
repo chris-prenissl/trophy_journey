@@ -7,20 +7,13 @@ import '../preview_mocks/mock_journey_view_model.dart';
 import '../viewmodels/journey_view_model.dart';
 import 'journey_task_row.dart';
 
-class JourneyStepCard extends StatelessWidget {
-  const JourneyStepCard({
-    super.key,
-    required this.step,
-    required this.stepNumber,
-    required this.viewModel,
-    required this.initiallyExpanded,
-  });
-
-  final JourneyStep step;
-  final int stepNumber;
-  final JourneyViewModel viewModel;
-  final bool initiallyExpanded;
-
+class const JourneyStepCard({
+  super.key,
+  required final JourneyStep step,
+  required final int stepNumber,
+  required final JourneyViewModel viewModel,
+  required final bool initiallyExpanded,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

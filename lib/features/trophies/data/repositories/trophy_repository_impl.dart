@@ -9,19 +9,12 @@ import '../guide_matcher.dart';
 import '../models/psn_trophy_definition_model.dart';
 import '../models/trophy_model.dart';
 
-class TrophyRepositoryImpl implements TrophyRepository {
-  const TrophyRepositoryImpl({
-    required this._gameRepository,
-    required this._psnTrophyDataSource,
-    required this._psnCacheDataSource,
-    required this._trophyAssetDataSource,
-  });
-
-  final GameRepository _gameRepository;
-  final PsnTrophyDataSource _psnTrophyDataSource;
-  final PsnCacheDataSource _psnCacheDataSource;
-  final TrophyAssetDataSource _trophyAssetDataSource;
-
+class const TrophyRepositoryImpl({
+  required final GameRepository _gameRepository,
+  required final PsnTrophyDataSource _psnTrophyDataSource,
+  required final PsnCacheDataSource _psnCacheDataSource,
+  required final TrophyAssetDataSource _trophyAssetDataSource,
+}) implements TrophyRepository {
   @override
   Future<List<Trophy>> getTrophies(String gameId) async {
     final game = await _gameRepository.getGame(gameId);

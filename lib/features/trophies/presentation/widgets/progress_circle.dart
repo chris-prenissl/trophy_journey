@@ -1,16 +1,11 @@
 import 'package:flutter/widget_previews.dart';
 import 'package:material_ui/material_ui.dart';
 
-class ProgressCircle extends StatelessWidget {
-  const ProgressCircle({
-    super.key,
-    required this.achieved,
-    required this.total,
-  });
-
-  final int achieved;
-  final int total;
-
+class const ProgressCircle({
+  super.key,
+  required final int achieved,
+  required final int total,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

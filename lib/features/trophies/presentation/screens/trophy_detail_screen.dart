@@ -6,16 +6,11 @@ import '../state/trophy_progress_store.dart';
 import '../widgets/artwork.dart';
 import '../widgets/trophy_badges.dart';
 
-class TrophyDetailScreen extends StatefulWidget {
-  const TrophyDetailScreen({
-    super.key,
-    required this.gameId,
-    required this.trophy,
-  });
-
-  final String gameId;
-  final Trophy trophy;
-
+class const TrophyDetailScreen({
+  super.key,
+  required final String gameId,
+  required final Trophy trophy,
+}) extends StatefulWidget {
   @override
   State<TrophyDetailScreen> createState() => _TrophyDetailScreenState();
 }

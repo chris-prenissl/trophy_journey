@@ -5,14 +5,12 @@ import '../../domain/entities/journey.dart';
 part 'journey_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class JourneyModel {
-  const JourneyModel({required this.gameId, required this.steps});
-
+class const JourneyModel({
+  required final String gameId,
+  required final List<JourneyStepModel> steps,
+}) {
   factory JourneyModel.fromJson(Map<String, dynamic> json) =>
       _$JourneyModelFromJson(json);
-
-  final String gameId;
-  final List<JourneyStepModel> steps;
 
   Map<String, dynamic> toJson() => _$JourneyModelToJson(this);
 
@@ -25,21 +23,14 @@ class JourneyModel {
 }
 
 @JsonSerializable(explicitToJson: true)
-class JourneyStepModel {
-  const JourneyStepModel({
-    required this.id,
-    required this.title,
-    required this.instructions,
-    required this.tasks,
-  });
-
+class const JourneyStepModel({
+  required final String id,
+  required final String title,
+  required final String instructions,
+  required final List<JourneyTaskModel> tasks,
+}) {
   factory JourneyStepModel.fromJson(Map<String, dynamic> json) =>
       _$JourneyStepModelFromJson(json);
-
-  final String id;
-  final String title;
-  final String instructions;
-  final List<JourneyTaskModel> tasks;
 
   Map<String, dynamic> toJson() => _$JourneyStepModelToJson(this);
 

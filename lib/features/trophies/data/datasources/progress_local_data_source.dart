@@ -1,14 +1,10 @@
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
-class ProgressLocalDataSource {
-  ProgressLocalDataSource({DatabaseFactory? factory, this._path})
-    : _factory = factory ?? databaseFactory;
-
+class ProgressLocalDataSource({DatabaseFactory? factory, final String? _path}) {
   static const _table = 'earned';
 
-  final DatabaseFactory _factory;
-  final String? _path;
+  final DatabaseFactory _factory = factory ?? databaseFactory;
   Database? _db;
 
   Future<Database> _database() async {

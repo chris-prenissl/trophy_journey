@@ -4,11 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../trophies/domain/entities/trophy.dart';
 import '../../../trophies/presentation/widgets/trophy_badges.dart';
 
-class TrophyChip extends StatelessWidget {
-  final Trophy trophy;
-
-  const TrophyChip({super.key, required this.trophy});
-
+class const TrophyChip({super.key, required final Trophy trophy})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = trophyTypeColors[trophy.type]!;

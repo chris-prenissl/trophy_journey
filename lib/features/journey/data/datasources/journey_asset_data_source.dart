@@ -4,10 +4,7 @@ import 'package:flutter/services.dart';
 
 import '../models/journey_model.dart';
 
-class JourneyAssetDataSource {
-  JourneyAssetDataSource(this._bundle);
-
-  final AssetBundle _bundle;
+class JourneyAssetDataSource(final AssetBundle _bundle) {
   Set<String>? _manifestKeys;
 
   static String assetPathFor(String gameId) =>

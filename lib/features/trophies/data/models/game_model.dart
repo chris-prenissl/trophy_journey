@@ -5,25 +5,16 @@ import '../../domain/entities/game.dart';
 part 'game_model.g.dart';
 
 @JsonSerializable()
-class GameModel {
-  const GameModel({
-    required this.id,
-    required this.title,
-    required this.numeral,
-    required this.cover,
-    required this.trophyCount,
-    this.psnNames = const [],
-  });
-
+class const GameModel({
+  required final String id,
+  required final String title,
+  required final String numeral,
+  required final String cover,
+  required final int trophyCount,
+  final List<String> psnNames = const [],
+}) {
   factory GameModel.fromJson(Map<String, dynamic> json) =>
       _$GameModelFromJson(json);
-
-  final String id;
-  final String title;
-  final String numeral;
-  final String cover;
-  final int trophyCount;
-  final List<String> psnNames;
 
   Map<String, dynamic> toJson() => _$GameModelToJson(this);
 

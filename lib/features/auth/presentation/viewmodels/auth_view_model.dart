@@ -7,21 +7,17 @@ import '../../domain/usecases/sign_in_use_case.dart';
 import '../../domain/usecases/sign_out_use_case.dart';
 import '../../domain/usecases/watch_auth_session_use_case.dart';
 
-class AuthViewModel extends ChangeNotifier {
-  AuthViewModel({
-    required WatchAuthSessionUseCase watchSession,
-    required this._loadStoredSessionUseCase,
-    required this._signInUseCase,
-    required this._signOutUseCase,
-  }) : _authSession = watchSession() {
+class AuthViewModel({
+  required WatchAuthSessionUseCase watchSession,
+  required final LoadStoredSessionUseCase _loadStoredSessionUseCase,
+  required final SignInUseCase _signInUseCase,
+  required final SignOutUseCase _signOutUseCase,
+}) extends ChangeNotifier {
+  this {
     _authSession.addListener(notifyListeners);
   }
 
-  final ValueListenable<AuthSession?> _authSession;
-  final LoadStoredSessionUseCase _loadStoredSessionUseCase;
-  final SignInUseCase _signInUseCase;
-  final SignOutUseCase _signOutUseCase;
-
+  final ValueListenable<AuthSession?> _authSession = watchSession();
   bool _loading = false;
   String? _error;
 

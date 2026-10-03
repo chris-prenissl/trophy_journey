@@ -3,17 +3,13 @@ import 'dart:convert';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
-class PsnCacheDataSource {
-  PsnCacheDataSource({DatabaseFactory? factory, this._path})
-    : _factory = factory ?? databaseFactory;
-
+class PsnCacheDataSource({DatabaseFactory? factory, final String? _path}) {
   static const _titlesTable = 'psn_titles';
   static const _trophiesTable = 'psn_trophies';
   static const _earnedTable = 'psn_earned';
   static const _titlesKey = 'me';
 
-  final DatabaseFactory _factory;
-  final String? _path;
+  final DatabaseFactory _factory = factory ?? databaseFactory;
   Database? _db;
 
   Future<Database> _database() async {

@@ -1,11 +1,9 @@
 import '../../domain/repositories/journey_progress_repository.dart';
 import '../datasources/journey_local_data_source.dart';
 
-class JourneyProgressRepositoryImpl implements JourneyProgressRepository {
-  const JourneyProgressRepositoryImpl(this._dataSource);
-
-  final JourneyLocalDataSource _dataSource;
-
+class const JourneyProgressRepositoryImpl(
+  final JourneyLocalDataSource _dataSource,
+) implements JourneyProgressRepository {
   @override
   Future<Set<String>> getCheckedTaskIds(String gameId) =>
       _dataSource.loadCheckedTaskIds(gameId);

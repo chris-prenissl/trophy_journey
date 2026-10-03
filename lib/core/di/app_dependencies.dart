@@ -5,22 +5,13 @@ import '../../features/trophies/presentation/state/trophy_progress_store.dart';
 import '../../features/trophies/presentation/viewmodels/game_list_view_model.dart';
 import '../../features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 
-class AppDependencies {
-  const AppDependencies({
-    required this.authViewModel,
-    required this.trophyProgressStore,
-    required this.hasJourneyUseCase,
-    required this.createGameListViewModel,
-    required this.createTrophyListViewModel,
-    required this.createJourneyViewModel,
-  });
-
-  final AuthViewModel authViewModel;
-  final TrophyProgressStore trophyProgressStore;
-
-  final HasJourneyUseCase hasJourneyUseCase;
-
-  final GameListViewModel Function() createGameListViewModel;
-  final TrophyListViewModel Function(String gameId) createTrophyListViewModel;
-  final JourneyViewModel Function(String gameId) createJourneyViewModel;
-}
+class const AppDependencies({
+  required final AuthViewModel authViewModel,
+  required final TrophyProgressStore trophyProgressStore,
+  required final HasJourneyUseCase hasJourneyUseCase,
+  required final GameListViewModel Function() createGameListViewModel,
+  required final TrophyListViewModel Function(String gameId)
+  createTrophyListViewModel,
+  required final JourneyViewModel Function(String gameId)
+  createJourneyViewModel,
+});

@@ -142,11 +142,10 @@ void main() {
   );
 }
 
-class TrophyJourneyApp extends StatefulWidget {
-  const TrophyJourneyApp({super.key, required this.dependencies});
-
-  final AppDependencies dependencies;
-
+class const TrophyJourneyApp({
+  super.key,
+  required final AppDependencies dependencies,
+}) extends StatefulWidget {
   @override
   State<TrophyJourneyApp> createState() => _TrophyJourneyAppState();
 }

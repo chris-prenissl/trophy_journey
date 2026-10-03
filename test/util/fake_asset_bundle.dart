@@ -3,11 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-class FakeAssetBundle extends CachingAssetBundle {
-  FakeAssetBundle(this._assets);
-
-  final Map<String, String> _assets;
-
+class FakeAssetBundle(final Map<String, String> _assets)
+    extends CachingAssetBundle {
   @override
   Future<ByteData> load(String key) async {
     final value = _assets[key];

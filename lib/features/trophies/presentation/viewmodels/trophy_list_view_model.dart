@@ -5,19 +5,16 @@ import '../../domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
 import '../../domain/usecases/get_trophies_use_case.dart';
 import '../state/trophy_progress_store.dart';
 
-class TrophyListViewModel extends ChangeNotifier {
-  TrophyListViewModel(
-    this._gameId,
-    this._getTrophies,
-    this._progress, {
-    this._getPsnEarnedTrophyIds,
-  }) {
+class TrophyListViewModel(
+  final String _gameId,
+  final GetTrophiesUseCase _getTrophies,
+  final TrophyProgressStore _progress, {
+  this._getPsnEarnedTrophyIds,
+}) extends ChangeNotifier {
+  this {
     _progress.addListener(_onProgressChanged);
   }
 
-  final String _gameId;
-  final GetTrophiesUseCase _getTrophies;
-  final TrophyProgressStore _progress;
   final GetPsnEarnedTrophyIdsUseCase? _getPsnEarnedTrophyIds;
 
   List<Trophy> _trophies = const [];

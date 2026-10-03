@@ -16,13 +16,13 @@ enum GameSort {
 
 enum GameStatusFilter { all, notStarted, inProgress, completed }
 
-class GameListViewModel extends ChangeNotifier {
-  GameListViewModel(this._getGames, this._progress) {
+class GameListViewModel(
+  final GetGamesUseCase _getGames,
+  final TrophyProgressStore _progress,
+) extends ChangeNotifier {
+  this {
     _progress.addListener(_onProgressChanged);
   }
-
-  final GetGamesUseCase _getGames;
-  final TrophyProgressStore _progress;
 
   List<Game> _games = const [];
   List<Game>? _visibleGames;

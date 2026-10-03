@@ -4,18 +4,12 @@ import '../../domain/entities/trophy.dart';
 import 'artwork.dart';
 import 'trophy_badges.dart';
 
-class TrophyTile extends StatelessWidget {
-  const TrophyTile({
-    super.key,
-    required this.trophy,
-    required this.achieved,
-    required this.onTap,
-  });
-
-  final Trophy trophy;
-  final bool achieved;
-  final VoidCallback onTap;
-
+class const TrophyTile({
+  super.key,
+  required final Trophy trophy,
+  required final bool achieved,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -3,20 +3,13 @@ import 'package:material_ui/material_ui.dart';
 import '../../domain/entities/game.dart';
 import '../../domain/entities/trophy.dart';
 
-class Artwork extends StatelessWidget {
-  const Artwork({
-    super.key,
-    required this.asset,
-    required this.url,
-    required this.size,
-    required this.placeholder,
-  });
-
-  final String? asset;
-  final String? url;
-  final double size;
-  final IconData placeholder;
-
+class const Artwork({
+  super.key,
+  required final String? asset,
+  required final String? url,
+  required final double size,
+  required final IconData placeholder,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final asset = this.asset;
@@ -52,12 +45,11 @@ class Artwork extends StatelessWidget {
   );
 }
 
-class GameCover extends StatelessWidget {
-  const GameCover({super.key, required this.game, this.size = 56});
-
-  final Game game;
-  final double size;
-
+class const GameCover({
+  super.key,
+  required final Game game,
+  final double size = 56,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Artwork(
     asset: game.coverAsset,
@@ -67,12 +59,11 @@ class GameCover extends StatelessWidget {
   );
 }
 
-class TrophyIcon extends StatelessWidget {
-  const TrophyIcon({super.key, required this.trophy, this.size = 56});
-
-  final Trophy trophy;
-  final double size;
-
+class const TrophyIcon({
+  super.key,
+  required final Trophy trophy,
+  final double size = 56,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Artwork(
     asset: trophy.iconAsset,

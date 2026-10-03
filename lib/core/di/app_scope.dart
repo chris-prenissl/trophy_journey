@@ -2,11 +2,11 @@ import 'package:flutter/widgets.dart';
 
 import 'app_dependencies.dart';
 
-class AppScope extends InheritedWidget {
-  const AppScope({super.key, required this.dependencies, required super.child});
-
-  final AppDependencies dependencies;
-
+class const AppScope({
+  super.key,
+  required final AppDependencies dependencies,
+  required super.child,
+}) extends InheritedWidget {
   static AppDependencies of(BuildContext context) {
     final scope = context.getInheritedWidgetOfExactType<AppScope>();
     assert(scope != null, 'AppScope not found above this context');

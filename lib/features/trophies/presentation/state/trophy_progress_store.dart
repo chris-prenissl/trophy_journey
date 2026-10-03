@@ -3,12 +3,10 @@ import 'package:flutter/foundation.dart';
 import '../../domain/usecases/get_all_earned_trophy_ids_use_case.dart';
 import '../../domain/usecases/replace_earned_trophies_use_case.dart';
 
-class TrophyProgressStore extends ChangeNotifier {
-  TrophyProgressStore(this._getAllEarnedTrophyIds, this._replaceEarnedTrophies);
-
-  final GetAllEarnedTrophyIdsUseCase _getAllEarnedTrophyIds;
-  final ReplaceEarnedTrophiesUseCase _replaceEarnedTrophies;
-
+class TrophyProgressStore(
+  final GetAllEarnedTrophyIdsUseCase _getAllEarnedTrophyIds,
+  final ReplaceEarnedTrophiesUseCase _replaceEarnedTrophies,
+) extends ChangeNotifier {
   Map<String, Set<String>> _earnedByGame = const {};
   bool _loading = true;
 

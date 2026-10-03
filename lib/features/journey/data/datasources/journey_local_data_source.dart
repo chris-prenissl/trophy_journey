@@ -1,15 +1,14 @@
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 
-class JourneyLocalDataSource {
-  JourneyLocalDataSource({DatabaseFactory? factory, this._databasePath})
-    : _factory = factory ?? databaseFactory;
-
+class JourneyLocalDataSource({
+  DatabaseFactory? factory,
+  final String? _databasePath,
+}) {
   static const _taskTable = 'journey_task_progress';
   static const _bookmarkTable = 'journey_bookmark';
 
-  final DatabaseFactory _factory;
-  final String? _databasePath;
+  final DatabaseFactory _factory = factory ?? databaseFactory;
   Database? _db;
 
   Future<Database> _database() async {

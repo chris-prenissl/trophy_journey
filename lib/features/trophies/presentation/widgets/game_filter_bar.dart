@@ -4,11 +4,10 @@ import '../viewmodels/game_list_view_model.dart';
 import 'game_sort_menu.dart';
 import 'trophy_count_card.dart';
 
-class GameFilterBar extends StatelessWidget {
-  const GameFilterBar({super.key, required this.viewModel});
-
-  final GameListViewModel viewModel;
-
+class const GameFilterBar({
+  super.key,
+  required final GameListViewModel viewModel,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final platforms = viewModel.platforms;

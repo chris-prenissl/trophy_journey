@@ -7,11 +7,8 @@ import 'auth_local_data_source.dart';
 
 const String _sessionKey = 'auth_session';
 
-class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  const AuthLocalDataSourceImpl(this._storage);
-
-  final FlutterSecureStorage _storage;
-
+class const AuthLocalDataSourceImpl(final FlutterSecureStorage _storage)
+    implements AuthLocalDataSource {
   @override
   Future<AuthSessionModel?> getStoredSession() async {
     try {

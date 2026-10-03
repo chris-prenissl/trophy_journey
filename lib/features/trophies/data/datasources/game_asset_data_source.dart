@@ -4,12 +4,8 @@ import 'package:flutter/services.dart';
 
 import '../models/game_model.dart';
 
-class GameAssetDataSource {
-  const GameAssetDataSource(this._bundle);
-
+class const GameAssetDataSource(final AssetBundle _bundle) {
   static const assetPath = 'assets/data/games.json';
-
-  final AssetBundle _bundle;
 
   Future<List<GameModel>> loadGames() async {
     final raw = await _bundle.loadString(assetPath);

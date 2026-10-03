@@ -5,25 +5,16 @@ import 'package:http/http.dart';
 import '../models/psn_trophy_definition_model.dart';
 import '../models/psn_trophy_title_model.dart';
 
-class PsnRequestException implements Exception {
-  const PsnRequestException(this.statusCode);
-
-  final int statusCode;
-
+class const PsnRequestException(final int statusCode) implements Exception {
   @override
   String toString() => 'PlayStation Network request failed ($statusCode)';
 }
 
-class PsnTrophyDataSource {
-  PsnTrophyDataSource({Client? client, this.baseUrl = _baseUrl})
-    : _client = client ?? Client();
-
+class PsnTrophyDataSource({Client? client, final String baseUrl = _baseUrl}) {
   static const _baseUrl = 'https://m.np.playstation.com';
   static const _titlePageSize = 800;
 
-  final Client _client;
-  final String baseUrl;
-
+  final Client _client = client ?? Client();
   Future<List<PsnTrophyTitleModel>> fetchTrophyTitles() async {
     final titles = <PsnTrophyTitleModel>[];
     var offset = 0;

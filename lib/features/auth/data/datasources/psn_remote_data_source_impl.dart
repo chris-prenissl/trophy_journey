@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 
 import 'psn_remote_data_source.dart';
 
-class PsnRemoteDataSourceImpl implements PsnRemoteDataSource {
-  PsnRemoteDataSourceImpl({http.Client? client, this.tokenUrl = _tokenUrl})
-    : _client = client ?? http.Client();
-
+class PsnRemoteDataSourceImpl({
+  http.Client? client,
+  final String tokenUrl = _tokenUrl,
+}) implements PsnRemoteDataSource {
   static const clientId = '09515159-7237-4370-9b40-3806e67c0891';
   static const clientSecret = 'ucPjka5tntB2KqsP';
   static const redirectUri = 'com.scee.psxandroid.scecompcall://redirect';
@@ -24,9 +24,7 @@ class PsnRemoteDataSourceImpl implements PsnRemoteDataSource {
         'scope': _scope,
       });
 
-  final http.Client _client;
-  final String tokenUrl;
-
+  final http.Client _client = client ?? http.Client();
   @override
   Future<PsnTokens> exchangeCode(String code) => _requestTokens({
     'code': code,

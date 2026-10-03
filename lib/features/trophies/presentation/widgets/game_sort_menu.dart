@@ -2,11 +2,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../viewmodels/game_list_view_model.dart';
 
-class GameSortMenu extends StatelessWidget {
-  const GameSortMenu({super.key, required this.viewModel});
-
-  final GameListViewModel viewModel;
-
+class const GameSortMenu({
+  super.key,
+  required final GameListViewModel viewModel,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(

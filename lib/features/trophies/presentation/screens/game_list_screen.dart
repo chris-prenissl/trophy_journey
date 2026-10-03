@@ -7,9 +7,7 @@ import '../widgets/game_filter_bar.dart';
 import '../widgets/game_tile.dart';
 import 'trophy_list_screen.dart';
 
-class GameListScreen extends StatefulWidget {
-  const GameListScreen({super.key});
-
+class const GameListScreen({super.key}) extends StatefulWidget {
   @override
   State<GameListScreen> createState() => _GameListScreenState();
 }
@@ -97,11 +95,8 @@ class _GameListScreenState extends State<GameListScreen> {
   }
 }
 
-class _AppMenu extends StatelessWidget {
-  const _AppMenu({required this.onSignOut});
-
-  final VoidCallback onSignOut;
-
+class const _AppMenu({required final VoidCallback onSignOut})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(

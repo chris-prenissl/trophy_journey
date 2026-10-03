@@ -7,17 +7,11 @@ import '../guide_matcher.dart';
 import '../models/game_model.dart';
 import '../models/psn_trophy_title_model.dart';
 
-class GameRepositoryImpl implements GameRepository {
-  GameRepositoryImpl({
-    required this.psnTrophyDataSource,
-    required this.psnCacheDataSource,
-    required this.gameAssetDataSource,
-  });
-
-  final PsnTrophyDataSource psnTrophyDataSource;
-  final PsnCacheDataSource psnCacheDataSource;
-  final GameAssetDataSource gameAssetDataSource;
-
+class GameRepositoryImpl({
+  required final PsnTrophyDataSource psnTrophyDataSource,
+  required final PsnCacheDataSource psnCacheDataSource,
+  required final GameAssetDataSource gameAssetDataSource,
+}) implements GameRepository {
   GuideMatcher? _matcher;
   List<Game>? _games;
 

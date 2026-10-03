@@ -9,11 +9,8 @@ const trophyTypeColors = <TrophyType, Color>{
   TrophyType.platinum: Color(0xFF7FD4E4),
 };
 
-class TrophyTypeBadge extends StatelessWidget {
-  const TrophyTypeBadge({super.key, required this.type});
-
-  final TrophyType type;
-
+class const TrophyTypeBadge({super.key, required final TrophyType type})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = trophyTypeColors[type]!;
@@ -25,9 +22,7 @@ class TrophyTypeBadge extends StatelessWidget {
   }
 }
 
-class MissableBadge extends StatelessWidget {
-  const MissableBadge({super.key});
-
+class const MissableBadge({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const _Badge(
@@ -38,9 +33,7 @@ class MissableBadge extends StatelessWidget {
   }
 }
 
-class RecommendedBadge extends StatelessWidget {
-  const RecommendedBadge({super.key});
-
+class const RecommendedBadge({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const _Badge(
@@ -51,13 +44,11 @@ class RecommendedBadge extends StatelessWidget {
   }
 }
 
-class _Badge extends StatelessWidget {
-  const _Badge({required this.label, required this.color, required this.icon});
-
-  final String label;
-  final Color color;
-  final IconData icon;
-
+class const _Badge({
+  required final String label,
+  required final Color color,
+  required final IconData icon,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

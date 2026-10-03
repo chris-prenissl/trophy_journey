@@ -41,8 +41,8 @@ String slugify(String value) {
       .replaceAll(RegExp(r'^-+|-+$'), '');
 }
 
-class GuideMatcher {
-  GuideMatcher(List<GameModel> games)
+class GuideMatcher(List<GameModel> games) {
+  this
     : _gamesByName = {
         for (final game in games) ...{
           slugify(game.title): game,

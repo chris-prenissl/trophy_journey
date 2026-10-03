@@ -5,15 +5,10 @@ import '../models/auth_session_model.dart';
 import 'auth_local_data_source.dart';
 import 'psn_remote_data_source.dart';
 
-class PsnTokenStore {
-  PsnTokenStore({
-    required this.localDataSource,
-    required this.remoteDataSource,
-  });
-
-  final AuthLocalDataSource localDataSource;
-  final PsnRemoteDataSource remoteDataSource;
-
+class PsnTokenStore({
+  required final AuthLocalDataSource localDataSource,
+  required final PsnRemoteDataSource remoteDataSource,
+}) {
   final _session = ValueNotifier<AuthSession?>(null);
 
   ValueListenable<AuthSession?> get session => _session;

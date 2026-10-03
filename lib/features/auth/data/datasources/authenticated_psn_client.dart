@@ -2,22 +2,15 @@ import 'package:http/http.dart';
 
 import 'psn_token_store.dart';
 
-class PsnAuthRequiredException implements Exception {
-  const PsnAuthRequiredException();
-
+class const PsnAuthRequiredException() implements Exception {
   @override
   String toString() => 'Not signed in to PlayStation Network';
 }
 
-class AuthenticatedPsnClient extends BaseClient {
-  AuthenticatedPsnClient({
-    required this._innerClient,
-    required this._psnTokenStore,
-  });
-
-  final Client _innerClient;
-  final PsnTokenStore _psnTokenStore;
-
+class AuthenticatedPsnClient({
+  required final Client _innerClient,
+  required final PsnTokenStore _psnTokenStore,
+}) extends BaseClient {
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
     final token = await _psnTokenStore.accessToken();

@@ -2,11 +2,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../viewmodels/trophy_list_view_model.dart';
 
-class TrophyFilterChips extends StatelessWidget {
-  const TrophyFilterChips({super.key, required this.viewModel});
-
-  final TrophyListViewModel viewModel;
-
+class const TrophyFilterChips({
+  super.key,
+  required final TrophyListViewModel viewModel,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(

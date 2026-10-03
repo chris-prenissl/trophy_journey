@@ -4,18 +4,12 @@ import 'package:material_ui/material_ui.dart';
 import '../../domain/entities/game.dart';
 import 'artwork.dart';
 
-class GameTile extends StatelessWidget {
-  const GameTile({
-    super.key,
-    required this.game,
-    required this.achievedCount,
-    required this.onTap,
-  });
-
-  final Game game;
-  final int achievedCount;
-  final VoidCallback onTap;
-
+class const GameTile({
+  super.key,
+  required final Game game,
+  required final int achievedCount,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

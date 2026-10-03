@@ -5,15 +5,10 @@ import '../../domain/repositories/auth_repository.dart';
 import '../datasources/psn_browser_auth_data_source.dart';
 import '../datasources/psn_token_store.dart';
 
-class AuthRepositoryImpl implements AuthRepository {
-  const AuthRepositoryImpl({
-    required this._tokenStore,
-    required this._browserAuthDataSource,
-  });
-
-  final PsnTokenStore _tokenStore;
-  final PsnBrowserAuthDataSource _browserAuthDataSource;
-
+class const AuthRepositoryImpl({
+  required final PsnTokenStore _tokenStore,
+  required final PsnBrowserAuthDataSource _browserAuthDataSource,
+}) implements AuthRepository {
   @override
   ValueListenable<AuthSession?> get session => _tokenStore.session;
 

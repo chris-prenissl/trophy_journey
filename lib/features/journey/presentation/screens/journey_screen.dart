@@ -5,11 +5,8 @@ import '../../../trophies/domain/entities/game.dart';
 import '../viewmodels/journey_view_model.dart';
 import '../widgets/journey_step_card.dart';
 
-class JourneyScreen extends StatefulWidget {
-  const JourneyScreen({super.key, required this.game});
-
-  final Game game;
-
+class const JourneyScreen({super.key, required final Game game})
+    extends StatefulWidget {
   @override
   State<JourneyScreen> createState() => _JourneyScreenState();
 }

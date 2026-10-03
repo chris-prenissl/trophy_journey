@@ -2,11 +2,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../viewmodels/game_list_view_model.dart';
 
-class TrophyCountCard extends StatelessWidget {
-  const TrophyCountCard({super.key, required this.viewModel});
-
-  final GameListViewModel viewModel;
-
+class const TrophyCountCard({
+  super.key,
+  required final GameListViewModel viewModel,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

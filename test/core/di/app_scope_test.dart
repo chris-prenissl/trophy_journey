@@ -154,11 +154,9 @@ void main() {
   });
 }
 
-class _ReadsInInitState extends StatefulWidget {
-  const _ReadsInInitState({required this.onRead});
-
-  final void Function(AppDependencies) onRead;
-
+class const _ReadsInInitState({
+  required final void Function(AppDependencies) onRead,
+}) extends StatefulWidget {
   @override
   State<_ReadsInInitState> createState() => _ReadsInInitStateState();
 }

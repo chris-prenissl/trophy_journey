@@ -10,11 +10,9 @@ typedef BrowserAuthenticate = Future<String> Function({
   required String callbackUrlScheme,
 });
 
-class PsnBrowserAuthDataSourceImpl implements PsnBrowserAuthDataSource {
-  PsnBrowserAuthDataSourceImpl([BrowserAuthenticate? authenticate])
-    : _authenticate = authenticate ?? _systemBrowser;
-
-  final BrowserAuthenticate _authenticate;
+class PsnBrowserAuthDataSourceImpl([BrowserAuthenticate? authenticate])
+    implements PsnBrowserAuthDataSource {
+  final BrowserAuthenticate _authenticate = authenticate ?? _systemBrowser;
 
   static Future<String> _systemBrowser({
     required String url,

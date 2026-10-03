@@ -2,11 +2,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../viewmodels/auth_view_model.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key, required this.viewModel});
-
-  final AuthViewModel viewModel;
-
+class const LoginScreen({super.key, required final AuthViewModel viewModel})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
