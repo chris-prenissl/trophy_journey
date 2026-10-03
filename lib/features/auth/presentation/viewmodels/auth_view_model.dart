@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/auth_session.dart';
-import '../../domain/usecases/load_stored_session_use_case.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/load_stored_session_use_case.dart';
 import '../../domain/usecases/sign_in_use_case.dart';
 import '../../domain/usecases/sign_out_use_case.dart';
 import '../../domain/usecases/watch_auth_session_use_case.dart';

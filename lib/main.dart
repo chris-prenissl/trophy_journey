@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
 import 'package:marionette_flutter/marionette_flutter.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'core/di/app_dependencies.dart';
 import 'core/di/app_scope.dart';
+import 'features/auth/data/datasources/auth_local_data_source_impl.dart';
 import 'features/auth/data/datasources/authenticated_psn_client.dart';
+import 'features/auth/data/datasources/psn_browser_auth_data_source_impl.dart';
+import 'features/auth/data/datasources/psn_remote_data_source_impl.dart';
 import 'features/auth/data/datasources/psn_token_store.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/usecases/load_stored_session_use_case.dart';
@@ -21,8 +24,8 @@ import 'features/journey/data/datasources/journey_local_data_source.dart';
 import 'features/journey/data/repositories/journey_progress_repository_impl.dart';
 import 'features/journey/data/repositories/journey_repository_impl.dart';
 import 'features/journey/domain/usecases/get_checked_task_ids_use_case.dart';
-import 'features/journey/domain/usecases/get_journey_use_case.dart';
 import 'features/journey/domain/usecases/get_journey_bookmark_use_case.dart';
+import 'features/journey/domain/usecases/get_journey_use_case.dart';
 import 'features/journey/domain/usecases/has_journey_use_case.dart';
 import 'features/journey/domain/usecases/set_journey_bookmark_use_case.dart';
 import 'features/journey/domain/usecases/set_task_checked_use_case.dart';
@@ -44,9 +47,6 @@ import 'features/trophies/presentation/screens/game_list_screen.dart';
 import 'features/trophies/presentation/state/trophy_progress_store.dart';
 import 'features/trophies/presentation/viewmodels/game_list_view_model.dart';
 import 'features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
-import 'features/auth/data/datasources/auth_local_data_source_impl.dart';
-import 'features/auth/data/datasources/psn_remote_data_source_impl.dart';
-import 'features/auth/data/datasources/psn_browser_auth_data_source_impl.dart';
 
 void main() {
   if (kDebugMode) {
@@ -55,8 +55,8 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
   }
 
-  final authLocalDataSource = AuthLocalDataSourceImpl(
-    const FlutterSecureStorage(
+  const authLocalDataSource = AuthLocalDataSourceImpl(
+    FlutterSecureStorage(
       mOptions: MacOsOptions(usesDataProtectionKeychain: false),
     ),
   );

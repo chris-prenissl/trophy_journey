@@ -1,5 +1,5 @@
-import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 
 AuthSession sessionExpiring(Duration fromNow) => AuthSession(
   userId: 'psn_user',

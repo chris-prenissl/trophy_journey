@@ -1,3 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
@@ -20,10 +24,6 @@ import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_li
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/game_tile.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_tile.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'game_list_screen_test.mocks.dart';
 
@@ -49,7 +49,6 @@ const sphereBreak = Trophy(
   type: TrophyType.bronze,
   description: 'description',
   guide: 'guide',
-  missable: false,
   iconAsset: 'assets/icons/final-fantasy-xvi/fistful-of-steel.png',
   order: 0,
 );
@@ -60,7 +59,6 @@ const blitzball = Trophy(
   type: TrophyType.silver,
   description: 'description',
   guide: 'guide',
-  missable: false,
   iconAsset: 'assets/icons/final-fantasy-xvi/every-damn-sinew.png',
   order: 1,
 );

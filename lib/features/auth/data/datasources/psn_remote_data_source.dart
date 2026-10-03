@@ -1,4 +1,3 @@
-
 class PsnTokens {
   const PsnTokens({
     required this.accessToken,

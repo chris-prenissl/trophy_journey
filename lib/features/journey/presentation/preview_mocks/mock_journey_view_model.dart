@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../domain/entities/journey.dart';
 import '../../../trophies/domain/entities/trophy.dart';
+import '../../domain/entities/journey.dart';
 import '../viewmodels/journey_view_model.dart';
 
 class MockJourneyViewModel extends ChangeNotifier implements JourneyViewModel {

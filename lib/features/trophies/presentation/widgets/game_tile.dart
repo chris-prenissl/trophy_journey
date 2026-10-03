@@ -1,7 +1,7 @@
-import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../../domain/entities/game.dart';
 import 'artwork.dart';
 
 class GameTile extends StatelessWidget {

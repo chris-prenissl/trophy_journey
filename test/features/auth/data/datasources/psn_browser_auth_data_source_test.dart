@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:trophy_journey/features/auth/data/datasources/psn_browser_auth_data_source_impl.dart';
 import 'package:trophy_journey/features/auth/data/datasources/psn_remote_data_source_impl.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 
 void main() {
   late List<({String url, String scheme})> calls;

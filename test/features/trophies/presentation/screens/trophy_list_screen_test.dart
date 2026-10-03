@@ -1,3 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
@@ -19,10 +23,6 @@ import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_li
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/progress_circle.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_tile.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'trophy_list_screen_test.mocks.dart';
 
@@ -40,7 +40,6 @@ const ordinary = Trophy(
   type: TrophyType.bronze,
   description: 'description',
   guide: 'guide text',
-  missable: false,
   iconAsset: 'assets/icons/final-fantasy-xvi/fistful-of-steel.png',
   order: 0,
 );
@@ -62,7 +61,6 @@ const another = Trophy(
   type: TrophyType.gold,
   description: 'description',
   guide: 'guide text',
-  missable: false,
   iconAsset: 'assets/icons/final-fantasy-xvi/fistful-of-steel.png',
   order: 2,
 );

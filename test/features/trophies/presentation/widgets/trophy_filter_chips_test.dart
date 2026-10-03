@@ -1,3 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
@@ -7,10 +11,6 @@ import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_filter_chips.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'trophy_filter_chips_test.mocks.dart';
 
@@ -20,7 +20,6 @@ const ordinary = Trophy(
   type: TrophyType.bronze,
   description: 'description',
   guide: 'guide',
-  missable: false,
   iconAsset: 'assets/icons/t1.png',
   order: 0,
 );

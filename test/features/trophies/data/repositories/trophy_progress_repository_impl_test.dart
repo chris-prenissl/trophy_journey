@@ -1,7 +1,7 @@
-import 'package:trophy_journey/features/trophies/data/datasources/progress_local_data_source.dart';
-import 'package:trophy_journey/features/trophies/data/repositories/trophy_progress_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:trophy_journey/features/trophies/data/datasources/progress_local_data_source.dart';
+import 'package:trophy_journey/features/trophies/data/repositories/trophy_progress_repository_impl.dart';
 
 void main() {
   setUpAll(sqfliteFfiInit);

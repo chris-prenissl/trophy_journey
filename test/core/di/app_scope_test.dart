@@ -1,3 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
@@ -10,10 +14,6 @@ import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'app_scope_test.mocks.dart';
 

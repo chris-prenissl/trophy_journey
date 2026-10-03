@@ -24,8 +24,6 @@ class TrophyCountCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
               colors: [
                 theme.colorScheme.primaryContainer,
                 theme.colorScheme.surfaceContainerHighest,

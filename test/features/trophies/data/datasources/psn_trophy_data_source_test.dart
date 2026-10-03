@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:trophy_journey/features/trophies/data/datasources/psn_trophy_data_source.dart';
-import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:trophy_journey/features/trophies/data/datasources/psn_trophy_data_source.dart';
+import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 
 const baseUrl = 'https://psn.example.test';
 

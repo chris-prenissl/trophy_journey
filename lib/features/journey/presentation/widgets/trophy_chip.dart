@@ -1,7 +1,8 @@
-import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
-import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:material_ui/material_ui.dart';
+
+import '../../../trophies/domain/entities/trophy.dart';
+import '../../../trophies/presentation/widgets/trophy_badges.dart';
 
 class TrophyChip extends StatelessWidget {
   final Trophy trophy;
@@ -46,7 +47,6 @@ Widget trophyChipBronze() => const TrophyChip(
     type: TrophyType.bronze,
     description: 'Earn a bronze trophy',
     guide: 'Complete any task',
-    missable: false,
     iconAsset: 'assets/trophies/bronze.png',
     order: 1,
   ),
@@ -60,7 +60,6 @@ Widget trophyChipGold() => const TrophyChip(
     type: TrophyType.gold,
     description: 'Earn a gold trophy',
     guide: 'Complete all tasks',
-    missable: false,
     iconAsset: 'assets/trophies/gold.png',
     order: 2,
   ),
@@ -74,7 +73,6 @@ Widget trophyChipPlatinum() => const TrophyChip(
     type: TrophyType.platinum,
     description: 'Earn platinum',
     guide: 'Unlock all trophies',
-    missable: false,
     iconAsset: 'assets/trophies/platinum.png',
     order: 3,
   ),

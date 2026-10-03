@@ -1,18 +1,18 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_progress_repository.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
 import 'package:trophy_journey/features/journey/domain/usecases/get_checked_task_ids_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/get_journey_use_case.dart';
 import 'package:trophy_journey/features/journey/domain/usecases/get_journey_bookmark_use_case.dart';
+import 'package:trophy_journey/features/journey/domain/usecases/get_journey_use_case.dart';
 import 'package:trophy_journey/features/journey/domain/usecases/set_journey_bookmark_use_case.dart';
 import 'package:trophy_journey/features/journey/domain/usecases/set_task_checked_use_case.dart';
 import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'journey_view_model_test.mocks.dart';
 
@@ -22,7 +22,6 @@ const zanarkand = Trophy(
   type: TrophyType.bronze,
   description: 'description',
   guide: 'guide',
-  missable: false,
   iconAsset: 'assets/icons/tr1.png',
   order: 0,
 );

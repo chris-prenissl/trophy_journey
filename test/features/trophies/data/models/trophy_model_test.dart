@@ -1,6 +1,6 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:trophy_journey/features/trophies/data/models/trophy_model.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 const trophyJson = <String, dynamic>{
   'id': 't1',

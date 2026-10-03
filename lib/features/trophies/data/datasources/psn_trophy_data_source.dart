@@ -26,7 +26,7 @@ class PsnTrophyDataSource {
 
   Future<List<PsnTrophyTitleModel>> fetchTrophyTitles() async {
     final titles = <PsnTrophyTitleModel>[];
-    int offset = 0;
+    var offset = 0;
 
     while (true) {
       final json = await _get('/api/trophy/v1/users/me/trophyTitles', {

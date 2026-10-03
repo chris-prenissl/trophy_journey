@@ -4,8 +4,8 @@ import '../../../trophies/domain/entities/trophy.dart';
 import '../../../trophies/domain/usecases/get_trophies_use_case.dart';
 import '../../domain/entities/journey.dart';
 import '../../domain/usecases/get_checked_task_ids_use_case.dart';
-import '../../domain/usecases/get_journey_use_case.dart';
 import '../../domain/usecases/get_journey_bookmark_use_case.dart';
+import '../../domain/usecases/get_journey_use_case.dart';
 import '../../domain/usecases/set_journey_bookmark_use_case.dart';
 import '../../domain/usecases/set_task_checked_use_case.dart';
 

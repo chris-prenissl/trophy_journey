@@ -1,14 +1,13 @@
 import 'dart:convert';
 
-import 'package:trophy_journey/features/auth/data/models/auth_session_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:trophy_journey/features/auth/data/datasources/auth_local_data_source_impl.dart';
+import 'package:trophy_journey/features/auth/data/models/auth_session_model.dart';
 
 import 'auth_local_data_source_test.mocks.dart';
-
-import 'package:trophy_journey/features/auth/data/datasources/auth_local_data_source_impl.dart';
 
 @GenerateNiceMocks([MockSpec<FlutterSecureStorage>()])
 void main() {
@@ -19,7 +18,7 @@ void main() {
     userId: 'psn_user',
     accessToken: 'access',
     refreshToken: 'refresh',
-    expiresAt: DateTime.utc(2026, 1, 1),
+    expiresAt: DateTime.utc(2026),
   );
 
   setUp(() {

@@ -1,6 +1,6 @@
-import 'package:trophy_journey/features/journey/data/datasources/journey_local_data_source.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:trophy_journey/features/journey/data/datasources/journey_local_data_source.dart';
 
 void main() {
   setUpAll(sqfliteFfiInit);

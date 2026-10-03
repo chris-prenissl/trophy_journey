@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../trophies/presentation/widgets/trophy_badges.dart';
 import '../../domain/entities/journey.dart';

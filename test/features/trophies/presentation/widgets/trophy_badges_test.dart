@@ -1,7 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 Future<void> pumpBadge(WidgetTester tester, Widget badge) => tester.pumpWidget(
   MaterialApp(

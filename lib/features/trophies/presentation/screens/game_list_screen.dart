@@ -1,10 +1,10 @@
-import 'package:trophy_journey/features/trophies/presentation/widgets/game_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/di/app_scope.dart';
 import '../../domain/entities/game.dart';
 import '../viewmodels/game_list_view_model.dart';
 import '../widgets/game_filter_bar.dart';
+import '../widgets/game_tile.dart';
 import 'trophy_list_screen.dart';
 
 class GameListScreen extends StatefulWidget {
@@ -38,8 +38,9 @@ class _GameListScreenState extends State<GameListScreen> {
   }
 
   void _openGame(Game game) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => TrophyListScreen(game: game)));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => TrophyListScreen(game: game)),
+    );
   }
 
   @override

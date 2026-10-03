@@ -41,14 +41,14 @@ class _TrophyListScreenState extends State<TrophyListScreen> {
   }
 
   void _openJourney() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => JourneyScreen(game: widget.game)));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => JourneyScreen(game: widget.game)),
+    );
   }
 
   void _openTrophyDetail(Trophy trophy) {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (_) =>
             TrophyDetailScreen(gameId: widget.game.id, trophy: trophy),
       ),

@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:trophy_journey/features/trophies/data/datasources/game_asset_data_source.dart';
 import 'package:trophy_journey/features/trophies/data/datasources/psn_cache_data_source.dart';
 import 'package:trophy_journey/features/trophies/data/datasources/psn_trophy_data_source.dart';
@@ -7,10 +11,6 @@ import 'package:trophy_journey/features/trophies/data/datasources/trophy_asset_d
 import 'package:trophy_journey/features/trophies/data/repositories/game_repository_impl.dart';
 import 'package:trophy_journey/features/trophies/data/repositories/trophy_repository_impl.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../../../util/fake_asset_bundle.dart';
 

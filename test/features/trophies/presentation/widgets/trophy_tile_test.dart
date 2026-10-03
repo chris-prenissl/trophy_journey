@@ -1,8 +1,8 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_tile.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 const ordinary = Trophy(
   id: 't1',
@@ -10,7 +10,6 @@ const ordinary = Trophy(
   type: TrophyType.bronze,
   description: 'A short description',
   guide: 'guide',
-  missable: false,
   iconAsset: 'assets/icons/final-fantasy-xvi/fistful-of-steel.png',
   order: 0,
 );
@@ -68,7 +67,7 @@ void main() {
   });
 
   testWidgets('shows an empty marker for unearned trophies', (tester) async {
-    await pumpTile(tester, achieved: false);
+    await pumpTile(tester);
 
     expect(find.byIcon(Icons.circle_outlined), findsOneWidget);
     expect(find.byIcon(Icons.check_circle), findsNothing);
@@ -82,13 +81,13 @@ void main() {
   });
 
   testWidgets('offers no way to tick the trophy off', (tester) async {
-    await pumpTile(tester, achieved: false);
+    await pumpTile(tester);
 
     expect(find.byType(Checkbox), findsNothing);
   });
 
   testWidgets('calls onTap when the tile is tapped', (tester) async {
-    int taps = 0;
+    var taps = 0;
     await pumpTile(tester, onTap: () => taps++);
 
     await tester.tap(find.text('Ordinary'));

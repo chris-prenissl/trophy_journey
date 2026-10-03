@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/load_stored_session_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/load_stored_session_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/sign_in_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/sign_out_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/watch_auth_session_use_case.dart';

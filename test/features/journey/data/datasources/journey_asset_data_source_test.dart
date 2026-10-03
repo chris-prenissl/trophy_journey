@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:trophy_journey/features/journey/data/datasources/journey_asset_data_source.dart';
-import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:trophy_journey/features/journey/data/datasources/journey_asset_data_source.dart';
+import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 
 import '../../../../util/fake_asset_bundle.dart';
 

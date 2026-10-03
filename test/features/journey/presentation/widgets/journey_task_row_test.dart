@@ -1,10 +1,10 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 import 'package:trophy_journey/features/journey/presentation/widgets/journey_task_row.dart';
 import 'package:trophy_journey/features/journey/presentation/widgets/trophy_chip.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 const plain = JourneyTask(id: 't1', title: 'Beat Sinspawn', trophyIds: []);
 
@@ -21,7 +21,6 @@ const sinspawn = Trophy(
   type: TrophyType.silver,
   description: 'description',
   guide: 'guide',
-  missable: false,
   iconAsset: 'assets/icons/tr1.png',
   order: 0,
 );

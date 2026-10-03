@@ -1,10 +1,10 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:trophy_journey/features/trophies/data/guide_matcher.dart';
 import 'package:trophy_journey/features/trophies/data/models/game_model.dart';
 import 'package:trophy_journey/features/trophies/data/models/psn_trophy_definition_model.dart';
 import 'package:trophy_journey/features/trophies/data/models/psn_trophy_title_model.dart';
 import 'package:trophy_journey/features/trophies/data/models/trophy_model.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 GameModel game(String id, String title, {List<String> psnNames = const []}) =>
     GameModel(

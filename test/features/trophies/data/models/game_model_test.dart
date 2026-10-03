@@ -1,5 +1,5 @@
-import 'package:trophy_journey/features/trophies/data/models/game_model.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:trophy_journey/features/trophies/data/models/game_model.dart';
 
 const gameJson = <String, dynamic>{
   'id': 'ffx',
