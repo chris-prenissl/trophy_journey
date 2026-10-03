@@ -143,7 +143,6 @@ void main() {
       title: 'Alpha',
       trophyCount: 4,
       platform: 'PS4',
-      guideSlug: 'alpha',
     );
     const beta = Game(
       id: 'beta',
@@ -208,14 +207,6 @@ void main() {
 
       viewModel.togglePlatform('PS5');
       expect(viewModel.visibleGames, [gamma, alpha, beta]);
-    });
-
-    test('filters to games with a bundled guide', () async {
-      await viewModel.load();
-
-      viewModel.setGuideOnly(true);
-
-      expect(viewModel.visibleGames, [alpha]);
     });
 
     test('sorts by title', () async {

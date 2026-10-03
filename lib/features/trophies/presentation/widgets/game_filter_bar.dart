@@ -57,7 +57,7 @@ class const GameFilterBar({
                 viewModel.setStatusFilter(selection.first),
           ),
         ),
-        if (platforms.length > 1 || viewModel.hasGuides)
+        if (platforms.length > 1)
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
@@ -71,15 +71,6 @@ class const GameFilterBar({
                   ),
                   const SizedBox(width: 8),
                 ],
-                if (viewModel.hasGuides)
-                  FilterChip(
-                    label: const Text('Has guide'),
-                    avatar: viewModel.guideOnly
-                        ? null
-                        : const Icon(Icons.menu_book_outlined, size: 18),
-                    selected: viewModel.guideOnly,
-                    onSelected: viewModel.setGuideOnly,
-                  ),
               ],
             ),
           ),

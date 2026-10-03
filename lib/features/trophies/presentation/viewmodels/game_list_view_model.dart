@@ -29,7 +29,6 @@ class GameListViewModel(
   GameSort _sort = GameSort.recentlyPlayed;
   GameStatusFilter _statusFilter = GameStatusFilter.all;
   Set<String> _selectedPlatforms = const {};
-  bool _guideOnly = false;
   String _query = '';
   bool _loading = true;
 
@@ -45,16 +44,12 @@ class GameListViewModel(
 
   Set<String> get selectedPlatforms => _selectedPlatforms;
 
-  bool get guideOnly => _guideOnly;
-
   String get query => _query;
 
   List<String> get platforms {
     final seen = <String>{for (final g in _games) ..._platformsOf(g)};
     return seen.toList()..sort();
   }
-
-  bool get hasGuides => _games.any((g) => g.hasGuide);
 
   int get totalTrophyCount => _games.fold(0, (sum, g) => sum + g.trophyCount);
 
@@ -100,13 +95,6 @@ class GameListViewModel(
     final next = {..._selectedPlatforms};
     if (!next.add(platform)) next.remove(platform);
     _selectedPlatforms = next;
-    _invalidate();
-  }
-
-  void setGuideOnly(bool value) {
-    if (_guideOnly == value) return;
-
-    _guideOnly = value;
     _invalidate();
   }
 
@@ -159,7 +147,6 @@ class GameListViewModel(
           !_platformsOf(game).any(_selectedPlatforms.contains)) {
         return false;
       }
-      if (_guideOnly && !game.hasGuide) return false;
       return true;
     }).toList();
 

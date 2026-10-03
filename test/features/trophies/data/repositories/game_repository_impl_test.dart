@@ -108,7 +108,7 @@ void main() {
       expect(game.title, 'Final Fantasy X HD');
       expect(game.coverAsset, 'assets/covers/ffx.png');
       expect(game.numeral, 'X');
-      expect(game.hasGuide, isTrue);
+      expect(game.guideSlug, 'final-fantasy-x-hd');
     });
 
     test('keeps unguided games under their PSN identity', () async {
@@ -125,7 +125,7 @@ void main() {
       expect(game.title, 'Some Other Game');
       expect(game.coverAsset, isNull);
       expect(game.iconUrl, 'https://img/NPWR9.png');
-      expect(game.hasGuide, isFalse);
+      expect(game.guideSlug, isNull);
     });
 
     test('sorts the library by most recently played', () async {

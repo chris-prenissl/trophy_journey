@@ -16,7 +16,6 @@ const alpha = Game(
   title: 'Alpha',
   trophyCount: 4,
   platform: 'PS4',
-  guideSlug: 'alpha',
 );
 const beta = Game(id: 'beta', title: 'Beta', trophyCount: 2, platform: 'PS5');
 
@@ -93,17 +92,5 @@ void main() {
     await tester.pump();
 
     expect(viewModel.selectedPlatforms, isEmpty);
-  });
-
-  testWidgets('guide chip narrows the list to games with a guide', (
-    tester,
-  ) async {
-    await pumpBar(tester);
-
-    await tester.tap(find.widgetWithText(FilterChip, 'Has guide'));
-    await tester.pump();
-
-    expect(viewModel.guideOnly, isTrue);
-    expect(viewModel.visibleGames, [alpha]);
   });
 }

@@ -1,0 +1,610 @@
+{
+  "gameId": "final-fantasy-x-hd",
+  "steps": [
+    {
+      "id": "zanarkand-baaj",
+      "title": "Zanarkand, Baaj Temple & the Salvage Ship",
+      "instructions": "Play through the opening in Zanarkand and the ruins of Baaj Temple. Once Rikku's crew pulls Tidus aboard the Al Bhed salvage ship, look around the deck before diving: the very first Al Bhed Primer lies at the back of the ship. You cannot return to the ship, but a missed Primer I can still be found later in the Sanubia Desert (oasis, north-east).",
+      "tasks": [
+        {
+          "id": "zanarkand-baaj-primer-1",
+          "title": "Pick up Al Bhed Primer I on the salvage ship deck",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ],
+          "note": "Starts the 26-primer collection. Speaking in Tongues pops on ANY primer, so tick it off with whichever one you find first. If you miss this one, it can be picked up later in the Sanubia Desert oasis."
+        }
+      ]
+    },
+    {
+      "id": "besaid",
+      "title": "Besaid - Village & Cloister of Trials",
+      "instructions": "Follow the story through Besaid Village. Al Bhed Primer II is in the Crusaders' Lodge. The Jecht Sphere stands to the right of Besaid Temple - take it now: once you own the airship, Dark Valefor blocks the village entrance. Inside the temple's Cloister of Trials, take the detour for the Destruction Sphere treasure (Rod of Wisdom) before finishing the trial, for the same reason.",
+      "tasks": [
+        {
+          "id": "besaid-primer-2",
+          "title": "Grab Al Bhed Primer II in the Crusaders Lodge",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "besaid-cloister",
+          "title": "Clear the Besaid Cloister of Trials",
+          "trophyIds": [
+            "the-right-thing"
+          ]
+        },
+        {
+          "id": "besaid-jecht-sphere",
+          "title": "Pick up the Jecht Sphere to the right of Besaid Temple",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "flag": "recommended",
+          "note": "One of the 10 Jecht Spheres. After the airship, Dark Valefor blocks the village, so grab it on the first pass."
+        },
+        {
+          "id": "besaid-destruction-sphere",
+          "title": "Open the Destruction Sphere chest in the Cloister (Rod of Wisdom)",
+          "trophyIds": [
+            "feel-the-pain"
+          ],
+          "flag": "recommended",
+          "note": "Needed for Anima. After you get the airship, Dark Valefor guards the village entrance - do it now."
+        }
+      ]
+    },
+    {
+      "id": "ss-liki-kilika",
+      "title": "S.S. Liki & Kilika",
+      "instructions": "On the S.S. Liki, head to the Power Room for Al Bhed Primer III (missable here, but also recoverable in the Sanubia Desert later). In Kilika, Primer IV is in the tavern. In the Kilika Temple Cloister of Trials, use the Destruction Sphere to open the hidden chest (Red Armlet). The Jecht Sphere is on the S.S. Liki bridge, next to the captain.",
+      "tasks": [
+        {
+          "id": "ss-liki-kilika-primers-3-4",
+          "title": "Collect Primer III (S.S. Liki power room) and Primer IV (Kilika tavern)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "kilika-destruction-sphere",
+          "title": "Open the Destruction Sphere chest in the Kilika Cloister",
+          "trophyIds": [
+            "feel-the-pain"
+          ],
+          "flag": "recommended",
+          "note": "Needed for Anima. Not blocked by a Dark Aeon later, but it is easiest to take it now."
+        },
+        {
+          "id": "liki-jecht-sphere",
+          "title": "Pick up the Jecht Sphere on the S.S. Liki bridge",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "One of the 10 Jecht Spheres."
+        }
+      ]
+    },
+    {
+      "id": "ss-winno",
+      "title": "S.S. Winno - Learn the Jecht Shot",
+      "instructions": "On the night voyage to Luca, examine the blitzball on deck to start the Jecht Shot minigame: press the matching direction and confirm button whenever a text prompt appears, and hit enough of them to learn the shot. It makes the Luca tournament and the later Blitzball grind far easier. Al Bhed Primer V is on the bridge, behind the boat operator (missable here, but recoverable in the Sanubia Desert later).",
+      "tasks": [
+        {
+          "id": "ss-winno-jecht-shot",
+          "title": "Complete the Jecht Shot minigame",
+          "trophyIds": [
+            "striker"
+          ],
+          "flag": "recommended",
+          "note": "Not permanently missable - sail from Kilika to Luca again to retry - but learning it now makes the Luca tournament much easier."
+        },
+        {
+          "id": "ss-winno-primer-5",
+          "title": "Pick up Al Bhed Primer V on the bridge",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "luca",
+      "title": "Luca - Blitzball Tournament",
+      "instructions": "Before the tournament, find Al Bhed Primer VI in the Luca Stadium basement (the locker room opposite the Besaid Aurochs' room, where a Jecht Sphere also lies in the hallway outside) and Primer VII at the foot of the stairs to the Sphere Theater. Then win the story tournament against the Luca Goers: with the Jecht Shot, keep possession, break through and shoot late in each half. If you lose, nothing becomes missable - both blitzball trophies can still be earned in later matches and tournaments.",
+      "tasks": [
+        {
+          "id": "luca-primers-6-7",
+          "title": "Collect Primer VI (Stadium basement locker room) and Primer VII (Theater stairs)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "luca-win-tournament",
+          "title": "Win the Luca blitzball tournament",
+          "trophyIds": [
+            "teamwork",
+            "show-off"
+          ],
+          "note": "Teamwork and Show Off pop on ANY blitzball match or tournament win, not only Luca. If you lost here, win any later match or tournament instead and tick this off then."
+        },
+        {
+          "id": "luca-jecht-sphere",
+          "title": "Pick up the Jecht Sphere in the Stadium basement hallway",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "One of the 10 Jecht Spheres."
+        }
+      ]
+    },
+    {
+      "id": "mi-ihen-highroad",
+      "title": "Mi'ihen Highroad",
+      "instructions": "Walk the Highroad (skip the chocobo rental the first time so you don't miss ground items). Rin gives Al Bhed Primer VIII at his travel agency. Primer IX lies on the Newroad, North, just after you leave the agency. A Jecht Sphere sits near a treasure chest on the Oldroad South path. Fight everything on the way - the sphere levels pay off later.",
+      "tasks": [
+        {
+          "id": "mi-ihen-primers-8-9",
+          "title": "Collect Primer VIII (Rin's agency) and Primer IX (Newroad, North)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "mi-ihen-jecht-sphere",
+          "title": "Pick up the Jecht Sphere near the chest on the Oldroad South path",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "One of the 10 Jecht Spheres."
+        }
+      ]
+    },
+    {
+      "id": "mushroom-rock-djose",
+      "title": "Mushroom Rock Road & Djose Temple",
+      "instructions": "Al Bhed Primer X is on Mushroom Rock Road, hidden against the ground on a ledge, and Primer XI sits on the Djose Highroad behind a large rock pillar. A Jecht Sphere lies on the ridge where you met Gatta and Luzzu. In the Djose Cloister of Trials, complete the extra pedestal puzzle to reach the Destruction Sphere room and the Magic Sphere chest.",
+      "tasks": [
+        {
+          "id": "mushroom-rock-primers-10-11",
+          "title": "Collect Primer X (Mushroom Rock Road) and Primer XI (Djose Highroad)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "djose-destruction-sphere",
+          "title": "Open the Destruction Sphere chest in the Djose Cloister",
+          "trophyIds": [
+            "feel-the-pain"
+          ],
+          "flag": "recommended",
+          "note": "Needed for Anima. Not blocked by a Dark Aeon later, but it is easiest to take it now."
+        },
+        {
+          "id": "mushroom-rock-jecht-sphere",
+          "title": "Pick up the Jecht Sphere on the ridge on Mushroom Rock Road",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "One of the 10 Jecht Spheres."
+        }
+      ]
+    },
+    {
+      "id": "moonflow-guadosalam",
+      "title": "Moonflow & Guadosalam",
+      "instructions": "Al Bhed Primer XII is on the Moonflow's North Wharf after the shoopuf ride, where Rikku rejoins and completes your party. A Jecht Sphere rests at the South Bank wharf. In Guadosalam, Primer XIII is in the small house to the left of Seymour's manor. Story scenes in the Farplane follow; nothing else is missable here.",
+      "tasks": [
+        {
+          "id": "moonflow-rikku-joins",
+          "title": "Recruit Rikku after the shoopuf crossing (full party assembled)",
+          "trophyIds": [
+            "all-together"
+          ]
+        },
+        {
+          "id": "moonflow-primers-12-13",
+          "title": "Collect Primer XII (North Wharf) and Primer XIII (Guadosalam house)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "moonflow-jecht-sphere",
+          "title": "Pick up the Jecht Sphere on the Moonflow South Bank wharf",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "One of the 10 Jecht Spheres."
+        }
+      ]
+    },
+    {
+      "id": "thunder-plains",
+      "title": "Thunder Plains",
+      "instructions": "Cross the Thunder Plains and visit Rin's Travel Agency. Al Bhed Primer XIV is only given if you answer Rin's question about studying Al Bhed positively (it is recoverable later in the Sanubia Desert if you slip). A Jecht Sphere sits beside a lightning rod tower in the southern half. You will see the lightning-dodging minigame here - don't grind the 200 dodges yet; it is far less painful later in one focused session. That grind is tracked in the Celestial Weapons step.",
+      "tasks": [
+        {
+          "id": "thunder-plains-primer-14",
+          "title": "Get Al Bhed Primer XIV from Rin (answer positively about studying Al Bhed)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "thunder-plains-jecht-sphere",
+          "title": "Pick up the Jecht Sphere beside the lightning tower in the south",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "One of the 10 Jecht Spheres."
+        }
+      ]
+    },
+    {
+      "id": "macalania",
+      "title": "Macalania - Spherimorph & the Temple",
+      "instructions": "In Macalania Woods, Primer XV lies on the Lake Road, off the main path near a Save Sphere. Defeat Spherimorph to receive the first Jecht Sphere; a second one sits near the entrance on the right. Primer XVI is outside the Lake Macalania travel agency. Story continues to the 'Underwater Date' scene with Yuna. In the Macalania Cloister of Trials, collect the Destruction Sphere treasure (Luck Sphere) - Dark Shiva waits at the temple after the airship.",
+      "tasks": [
+        {
+          "id": "macalania-primers-15-16",
+          "title": "Collect Primer XV (Lake Road) and Primer XVI (outside the lake travel agency)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "macalania-spherimorph",
+          "title": "Defeat Spherimorph and receive the first Jecht Sphere",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ]
+        },
+        {
+          "id": "macalania-underwater-date",
+          "title": "View the 'Underwater Date' scene",
+          "trophyIds": [
+            "heartstrings"
+          ]
+        },
+        {
+          "id": "macalania-destruction-sphere",
+          "title": "Open the Destruction Sphere chest in the Macalania Cloister",
+          "trophyIds": [
+            "feel-the-pain"
+          ],
+          "flag": "recommended",
+          "note": "Needed for Anima. After the airship, Dark Shiva guards the temple - do it now."
+        }
+      ]
+    },
+    {
+      "id": "bikanel-home",
+      "title": "Bikanel Desert & Home",
+      "instructions": "CRITICAL STEP. In the Sanubia Desert, pick up Primer XVII (Sanubia Central, underneath the ruins) and Primer XVIII (Sanubia Central, next to the signpost near the north exit toward Home) - both stay obtainable later. Inside Home, however, three primers are PERMANENTLY MISSABLE because Home is destroyed after this visit: XIX (outside the entrance, near the ruins), XX (Living Quarters, on the bed after the forced fight) and XXI (Main Corridor, right hallway at the three-way fork). Search before advancing to the summoners' chamber.",
+      "tasks": [
+        {
+          "id": "bikanel-primers-17-18",
+          "title": "Collect Primer XVII and Primer XVIII in the Sanubia Desert",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        },
+        {
+          "id": "home-primers-19-21",
+          "title": "Collect Primers XIX, XX and XXI inside Home",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ],
+          "flag": "missable",
+          "note": "PERMANENTLY MISSABLE - Home is destroyed after this visit. Missing one forces a new playthrough for the gold trophy."
+        }
+      ]
+    },
+    {
+      "id": "bevelle-calm-lands",
+      "title": "Bevelle, Calm Lands & Cavern of the Stolen Fayth",
+      "instructions": "During the escape from Bevelle, Al Bhed Primer XXII lies on the ground on the way to the temple after the wedding scene, before the Cloister of Trials - the LAST permanently missable primer. The Bevelle Cloister's Destruction Sphere is needed to finish the trial, so it is collected automatically. Afterwards in the Calm Lands: Primer XXIII lies in the northwest corner of the plains, Primer XXIV at Remiem Temple (reached by chocobo) and Primer XXV at a dead end in the Cavern of the Stolen Fayth.",
+      "tasks": [
+        {
+          "id": "bevelle-primer-22",
+          "title": "Pick up Al Bhed Primer XXII on the way to Bevelle Temple after the wedding scene",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ],
+          "flag": "missable",
+          "note": "PERMANENTLY MISSABLE - you cannot return after the escape."
+        },
+        {
+          "id": "calm-lands-primers-23-25",
+          "title": "Collect Primer XXIII (Calm Lands), XXIV (Remiem Temple) and XXV (Cavern of the Stolen Fayth)",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gagazet-zanarkand",
+      "title": "Mt. Gagazet & Zanarkand Ruins",
+      "instructions": "Climb Mt. Gagazet (a Jecht Sphere waits on the Mountain Trail) and pass the trials in the caves. In Zanarkand, the Cloister of Trials' Destruction Sphere treasure cannot be reached on this first visit - it needs the airship, so it is handled in the Airship Detours step. At the end awaits Yunalesca: her Mega Death kills non-zombified party members, so prepare accordingly for her last phase.",
+      "tasks": [
+        {
+          "id": "zanarkand-yunalesca",
+          "title": "Defeat Yunalesca",
+          "trophyIds": [
+            "overcoming-the-past"
+          ]
+        },
+        {
+          "id": "gagazet-jecht-sphere",
+          "title": "Pick up the Jecht Sphere on the Mt. Gagazet Mountain Trail",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "The last optional Jecht Sphere."
+        }
+      ]
+    },
+    {
+      "id": "airship-sin",
+      "title": "Airship & Inside Sin",
+      "instructions": "With the airship you can travel almost everywhere, and the point of no return is only at the very end - everything from here on can be done in any order. This is an ideal moment to pause the story and tackle side content: revisit areas, collect missed Jecht Spheres, recruit the optional aeons, unlock the Omega Ruins, begin Monster Arena captures and obtain the Celestial Mirror. Following the story into Sin, you will face Seymour Omnis: bring Tidus and Yuna's aeons and hit hard. STOP before the final area if you still have side content - the following steps assume you stay in the endgame world.",
+      "tasks": [
+        {
+          "id": "sin-seymour-omnis",
+          "title": "Defeat Seymour Omnis inside Sin",
+          "trophyIds": [
+            "the-destination-of-hatred"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aeon-roundup",
+      "title": "Airship Detours - All Aeons & Jecht Spheres",
+      "instructions": "Time to collect the optional aeons. Yojimbo: reach the end of the Cavern of the Stolen Fayth and haggle - offer roughly half of his asking price and adjust (the lowest he accepts is about 190,350 gil). Anima: first make sure all six Cloister Destruction Sphere treasures are done (Zanarkand's is only possible now, via the airship - avoid the Yunalesca room, where Dark Bahamut waits), then return to Baaj Temple via the airship coordinates. Magus Sisters: needs Yojimbo and Anima, the Flower Scepter (beat Belgemine's Bahamut at Remiem Temple) and the Blossom Crown (capture at least one of every fiend on Mt. Gagazet in the Monster Arena). Finish the ten Jecht Spheres for Auron's overdrives, and use Kimahri's Lancet on fiends to start learning Ronso Rages. The Omega Ruins (hidden airship coordinates around X 72, Y 35) hold the final primer, XXVI, just north of the last cluster of chests.",
+      "tasks": [
+        {
+          "id": "zanarkand-destruction-sphere",
+          "title": "Open the Destruction Sphere room in the Zanarkand Cloister (Magistral Rod)",
+          "trophyIds": [
+            "feel-the-pain"
+          ],
+          "note": "Only possible after you get the airship. Highlight all white squares (3 in the first room, 4 in the second), take the sphere and place it in the second room. Dark Bahamut stands in the Yunalesca room - avoid it."
+        },
+        {
+          "id": "aeon-yojimbo",
+          "title": "Hire Yojimbo in the Cavern of the Stolen Fayth",
+          "trophyIds": [
+            "it-s-all-about-the-money"
+          ],
+          "note": "Reachable once you are in the Calm Lands. Not missable."
+        },
+        {
+          "id": "aeon-anima",
+          "title": "Obtain Anima at Baaj Temple (requires all six Destruction Sphere treasures)",
+          "trophyIds": [
+            "feel-the-pain"
+          ]
+        },
+        {
+          "id": "aeon-magus-sisters",
+          "title": "Obtain the Magus Sisters at Remiem Temple",
+          "trophyIds": [
+            "delta-attack"
+          ],
+          "note": "Needs Yojimbo and Anima first, then the Flower Scepter (Belgemine's Bahamut) and the Blossom Crown (Gagazet captures)."
+        },
+        {
+          "id": "aeon-all-summons",
+          "title": "Confirm all aeons obtained (story aeons + Yojimbo, Anima, Magus Sisters)",
+          "trophyIds": [
+            "summon-master"
+          ]
+        },
+        {
+          "id": "jecht-spheres-all",
+          "title": "Collect all 10 Jecht Spheres",
+          "trophyIds": [
+            "messenger-from-the-past"
+          ],
+          "note": "Locations: Macalania Woods (Spherimorph) and near its entrance, Besaid Village, S.S. Liki bridge, Luca Stadium basement, Mi'ihen Oldroad South, Mushroom Rock Road, Moonflow South Bank, Thunder Plains south, Mt. Gagazet."
+        },
+        {
+          "id": "omega-ruins-primer-26",
+          "title": "Find Al Bhed Primer XXVI in the Omega Ruins",
+          "trophyIds": [
+            "speaking-in-tongues",
+            "master-linguist"
+          ],
+          "note": "Unlock the Omega Ruins via hidden airship coordinates (X 69-75, Y 33-38)."
+        }
+      ]
+    },
+    {
+      "id": "celestial-weapons",
+      "title": "Celestial Weapons & Minigames",
+      "instructions": "The long minigame stretch - do these in one focused push. Calm Lands: complete all chocobo training with the trainer, then beat the Catcher Chocobo race with a total time of 0:0.0 (balloons subtract 3 seconds, birds add 3) for Tidus' Sun Sigil. Remiem Temple: win the chocobo race while opening all 5 chests. Thunder Plains: dodge 200 lightning bolts for the Venus Sigil. Buy every sphere at the Luca Theater (needs a lot of gil). Then gather the remaining crests and sigils and forge all seven Celestial Weapons via the Celestial Mirror in Macalania Woods.",
+      "tasks": [
+        {
+          "id": "chocobo-training",
+          "title": "Pass all chocobo training in the Calm Lands",
+          "trophyIds": [
+            "chocobo-license"
+          ]
+        },
+        {
+          "id": "chocobo-catcher-race",
+          "title": "Win the Catcher Chocobo race with total time 0:0.0",
+          "trophyIds": [
+            "chocobo-rider"
+          ],
+          "note": "Famously tedious - aim for a dozen or more balloons and no bird hits."
+        },
+        {
+          "id": "remiem-chocobo-race",
+          "title": "Win the Remiem Temple chocobo race opening all 5 chests",
+          "trophyIds": [
+            "chocobo-master"
+          ]
+        },
+        {
+          "id": "lightning-dodging",
+          "title": "Dodge 200 consecutive lightning strikes and claim the reward",
+          "trophyIds": [
+            "lightning-dancer"
+          ],
+          "note": "The trophy needs the reward from the Thunder Plains agency chest after 200 dodges. Do it in one dedicated session."
+        },
+        {
+          "id": "luca-theater-spheres",
+          "title": "Buy every sphere at the Luca Theater",
+          "trophyIds": [
+            "theater-enthusiast"
+          ]
+        },
+        {
+          "id": "all-celestial-weapons",
+          "title": "Obtain all seven Celestial Weapons",
+          "trophyIds": [
+            "weapon-master"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blitzball-league",
+      "title": "Blitzball League",
+      "instructions": "Blitzball Master needs every slot reel of Wakka's overdrive set, and these are won as prizes in blitzball league and tournament play. Recruit strong players, check the prize list in the blitzball menu and keep playing until every reel is yours. This also finishes Wakka's Celestial Weapon material if you have not done it yet.",
+      "tasks": [
+        {
+          "id": "blitzball-all-reels",
+          "title": "Unlock all of Wakka's slot reels via blitzball prizes",
+          "trophyIds": [
+            "blitzball-master",
+            "teamwork",
+            "show-off"
+          ],
+          "note": "Teamwork (win a match) and Show Off (win a tournament) pop on any blitzball win, so they may already be done from Luca - if not, the league and tournaments here earn them. If you never won a tournament, you will along the way."
+        }
+      ]
+    },
+    {
+      "id": "monster-arena-grid",
+      "title": "Monster Arena, Sphere Grid & Superbosses",
+      "instructions": "The endgame grind, all fueled by the Monster Arena at the Calm Lands. Capture fiends with weapons that have the Capture ability to unlock creations. Don Tonberry enables the well-known AP trick: weapons with Overdrive to AP plus Double/Triple AP, since his Karma counter fills the other characters' overdrive gauges, which turns into AP - use it to max the Sphere Grid fast. Along the way: steal 200 times with Rikku, spend 100,000+ gil on bribes (Rikku's Bribe), break 9,999 damage, then 99,999 (needs Break Damage Limit). Learn all 12 Ronso Rages with Kimahri's Lancet. Complete one character's entire Sphere Grid, then all seven main characters'. Finally: defeat Nemesis (unlocked after capturing 10 of every capturable fiend and defeating all other Monster Arena creations - leave and re-enter the arena to see him) and Penance (appears on the airship destination list after all other Dark Aeons are defeated).",
+      "tasks": [
+        {
+          "id": "rikku-200-steals",
+          "title": "Steal successfully 200 times with Rikku",
+          "trophyIds": [
+            "a-talent-for-acquisition"
+          ],
+          "note": "Counts every successful steal from the start of the game, so it can progress during normal play."
+        },
+        {
+          "id": "bribe-100k",
+          "title": "Spend 100,000+ gil on bribes",
+          "trophyIds": [
+            "under-the-table"
+          ],
+          "note": "Bribe is found at the end of Rikku's section of the Sphere Grid. The trophy counts total gil spent across all bribes."
+        },
+        {
+          "id": "damage-9999",
+          "title": "Deal 9,999+ damage in a single attack",
+          "trophyIds": [
+            "power-strike"
+          ],
+          "note": "Pops on any single hit of 9,999+, so it often comes earlier with a strong overdrive - tick it off whenever it happens."
+        },
+        {
+          "id": "damage-99999",
+          "title": "Deal 99,999 damage in a single attack",
+          "trophyIds": [
+            "mega-strike"
+          ],
+          "note": "Requires Break Damage Limit on the weapon."
+        },
+        {
+          "id": "ronso-rages-all",
+          "title": "Learn all 12 Ronso Rages with Kimahri's Lancet",
+          "trophyIds": [
+            "learning"
+          ],
+          "note": "Use Kimahri's Lancet on the fiends that teach each Rage; some only appear late in the game."
+        },
+        {
+          "id": "sphere-grid-one",
+          "title": "Complete the entire Sphere Grid for one character",
+          "trophyIds": [
+            "sphere-master"
+          ]
+        },
+        {
+          "id": "sphere-grid-all",
+          "title": "Complete the Sphere Grids for all seven main characters",
+          "trophyIds": [
+            "perfect-sphere-master"
+          ],
+          "note": "The Don Tonberry AP trick makes the grind manageable."
+        },
+        {
+          "id": "defeat-nemesis",
+          "title": "Defeat Nemesis in the Monster Arena",
+          "trophyIds": [
+            "overcoming-the-nemesis"
+          ],
+          "note": "Unlocked by capturing 10 of every capturable fiend and defeating all other creations."
+        },
+        {
+          "id": "defeat-penance",
+          "title": "Defeat Penance",
+          "trophyIds": [
+            "perseverance"
+          ],
+          "note": "Appears after all other Dark Aeons are defeated."
+        }
+      ]
+    },
+    {
+      "id": "endgame",
+      "title": "Endgame - Yu Yevon & Eternal Calm",
+      "instructions": "When everything else is done, fly into the final dungeon and finish the story - the final bosses are a victory lap for an endgame party. Afterwards, watch the 'Eternal Calm' bonus video from the game's extras menu to claim the last trophy. The platinum ('Completion') pops on its own once every other trophy is earned - it has no checklist entry here.",
+      "tasks": [
+        {
+          "id": "defeat-yu-yevon",
+          "title": "Defeat Yu Yevon and finish the story",
+          "trophyIds": [
+            "the-eternal-calm"
+          ]
+        },
+        {
+          "id": "watch-eternal-calm",
+          "title": "Watch the 'Eternal Calm' bonus video",
+          "trophyIds": [
+            "a-journey-s-catalyst"
+          ]
+        }
+      ]
+    }
+  ]
+}
