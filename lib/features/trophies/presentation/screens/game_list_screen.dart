@@ -1,5 +1,5 @@
 import 'package:trophy_journey/features/trophies/presentation/widgets/game_tile.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/di/app_scope.dart';
 import '../../domain/entities/game.dart';

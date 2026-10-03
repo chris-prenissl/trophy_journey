@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/di/app_scope.dart';
 import '../../../trophies/domain/entities/game.dart';

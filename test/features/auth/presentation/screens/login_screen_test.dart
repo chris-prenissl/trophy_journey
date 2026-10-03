@@ -5,7 +5,7 @@ import 'package:trophy_journey/features/auth/domain/usecases/sign_out_use_case.d
 import 'package:trophy_journey/features/auth/domain/usecases/watch_auth_session_use_case.dart';
 import 'package:trophy_journey/features/auth/presentation/screens/login_screen.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 

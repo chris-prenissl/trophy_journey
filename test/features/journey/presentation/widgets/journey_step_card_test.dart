@@ -14,7 +14,7 @@ import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../viewmodels/game_list_view_model.dart';
 import 'game_sort_menu.dart';

@@ -1,5 +1,5 @@
 import 'package:trophy_journey/features/journey/presentation/widgets/trophy_chip.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../trophies/domain/entities/trophy.dart';
 import '../../../trophies/presentation/widgets/trophy_badges.dart';

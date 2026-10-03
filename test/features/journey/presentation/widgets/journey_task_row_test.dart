@@ -3,7 +3,7 @@ import 'package:trophy_journey/features/journey/presentation/widgets/journey_tas
 import 'package:trophy_journey/features/journey/presentation/widgets/trophy_chip.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_badges.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const plain = JourneyTask(id: 't1', title: 'Beat Sinspawn', trophyIds: []);

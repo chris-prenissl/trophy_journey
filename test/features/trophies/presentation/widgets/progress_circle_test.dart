@@ -1,5 +1,5 @@
 import 'package:trophy_journey/features/trophies/presentation/widgets/progress_circle.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Future<void> pumpCircle(
