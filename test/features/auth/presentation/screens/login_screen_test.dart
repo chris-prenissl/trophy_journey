@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/load_stored_session_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/sign_in_use_case.dart';
@@ -10,14 +13,35 @@ import 'package:trophy_journey/features/auth/domain/usecases/watch_auth_session_
 import 'package:trophy_journey/features/auth/presentation/screens/login_screen.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 
-import '../../../../util/fake_auth_repository.dart';
+import 'login_screen_test.mocks.dart';
 
+AuthSession fakeSession({
+  Duration expiresIn = const Duration(hours: 1),
+  String token = 'access',
+}) => AuthSession(
+  userId: 'psn_user',
+  accessToken: token,
+  refreshToken: 'refresh',
+  expiresAt: DateTime.now().add(expiresIn),
+);
+
+@GenerateNiceMocks([MockSpec<AuthRepository>()])
 void main() {
-  late FakeAuthRepository repository;
+  late MockAuthRepository repository;
+  late ValueNotifier<AuthSession?> session;
+  late AuthSession signedIn;
   late AuthViewModel viewModel;
 
   setUp(() {
-    repository = FakeAuthRepository();
+    repository = MockAuthRepository();
+    session = ValueNotifier(null);
+    signedIn = fakeSession();
+    when(repository.session).thenReturn(session);
+    when(repository.isAuthenticated)
+        .thenAnswer((_) => session.value?.isValid ?? false);
+    when(repository.loadStoredSession()).thenAnswer((_) async {});
+    when(repository.signIn()).thenAnswer((_) async => session.value = signedIn);
+    when(repository.signOut()).thenAnswer((_) async => session.value = null);
     viewModel = AuthViewModel(
       watchSession: WatchAuthSessionUseCase(repository),
       loadStoredSessionUseCase: LoadStoredSessionUseCase(repository),
@@ -26,7 +50,10 @@ void main() {
     );
   });
 
-  tearDown(() => viewModel.dispose());
+  tearDown(() {
+    viewModel.dispose();
+    session.dispose();
+  });
 
   Future<void> pumpScreen(WidgetTester tester) =>
       tester.pumpWidget(MaterialApp(home: LoginScreen(viewModel: viewModel)));
@@ -46,15 +73,18 @@ void main() {
     await tester.tap(signInButton);
     await tester.pumpAndSettle();
 
-    expect(repository.signInCount, 1);
-    expect(viewModel.session, repository.signInResult);
+    verify(repository.signIn()).called(1);
+    expect(viewModel.session, signedIn);
   });
 
   testWidgets('shows a spinner and disables the button while signing in', (
     tester,
   ) async {
     final gate = Completer<void>();
-    repository.signInGate = gate;
+    when(repository.signIn()).thenAnswer((_) async {
+      await gate.future;
+      session.value = signedIn;
+    });
     await pumpScreen(tester);
 
     await tester.tap(signInButton);
@@ -75,7 +105,7 @@ void main() {
   testWidgets('shows the reason when sign in fails and allows a retry', (
     tester,
   ) async {
-    repository.signInError = StateError('invalid_grant');
+    when(repository.signIn()).thenThrow(StateError('invalid_grant'));
     await pumpScreen(tester);
 
     await tester.tap(signInButton);
@@ -84,16 +114,16 @@ void main() {
     expect(find.textContaining('invalid_grant'), findsOneWidget);
     expect(viewModel.session, isNull);
 
-    repository.signInError = null;
+    when(repository.signIn()).thenAnswer((_) async => session.value = signedIn);
     await tester.tap(signInButton);
     await tester.pumpAndSettle();
 
     expect(find.textContaining('invalid_grant'), findsNothing);
-    expect(viewModel.session, repository.signInResult);
+    expect(viewModel.session, signedIn);
   });
 
   testWidgets('shows no error when the user cancels', (tester) async {
-    repository.signInError = const SignInCancelledException();
+    when(repository.signIn()).thenThrow(const SignInCancelledException());
     await pumpScreen(tester);
 
     await tester.tap(signInButton);

@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/load_stored_session_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/sign_in_use_case.dart';
@@ -8,14 +12,35 @@ import 'package:trophy_journey/features/auth/domain/usecases/sign_out_use_case.d
 import 'package:trophy_journey/features/auth/domain/usecases/watch_auth_session_use_case.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 
-import '../../../../util/fake_auth_repository.dart';
+import 'auth_view_model_test.mocks.dart';
 
+AuthSession fakeSession({
+  Duration expiresIn = const Duration(hours: 1),
+  String token = 'access',
+}) => AuthSession(
+  userId: 'psn_user',
+  accessToken: token,
+  refreshToken: 'refresh',
+  expiresAt: DateTime.now().add(expiresIn),
+);
+
+@GenerateNiceMocks([MockSpec<AuthRepository>()])
 void main() {
-  late FakeAuthRepository repository;
+  late MockAuthRepository repository;
+  late ValueNotifier<AuthSession?> session;
+  late AuthSession signedIn;
   late AuthViewModel viewModel;
 
   setUp(() {
-    repository = FakeAuthRepository();
+    repository = MockAuthRepository();
+    session = ValueNotifier(null);
+    signedIn = fakeSession();
+    when(repository.session).thenReturn(session);
+    when(repository.isAuthenticated)
+        .thenAnswer((_) => session.value?.isValid ?? false);
+    when(repository.loadStoredSession()).thenAnswer((_) async {});
+    when(repository.signIn()).thenAnswer((_) async => session.value = signedIn);
+    when(repository.signOut()).thenAnswer((_) async => session.value = null);
     viewModel = AuthViewModel(
       watchSession: WatchAuthSessionUseCase(repository),
       loadStoredSessionUseCase: LoadStoredSessionUseCase(repository),
@@ -24,7 +49,10 @@ void main() {
     );
   });
 
-  tearDown(() => viewModel.dispose());
+  tearDown(() {
+    viewModel.dispose();
+    session.dispose();
+  });
 
   group('the session it reports', () {
     test('starts empty', () {
@@ -37,17 +65,17 @@ void main() {
     test('follows the repository without being asked', () {
       var notifications = 0;
       viewModel.addListener(() => notifications++);
-      final session = fakeSession();
+      final restored = fakeSession();
 
-      repository.emit(session);
+      session.value = restored;
 
-      expect(viewModel.session, session);
+      expect(viewModel.session, restored);
       expect(viewModel.isAuthenticated, isTrue);
       expect(notifications, 1);
     });
 
     test('is not authenticated once the session has expired', () {
-      repository.emit(fakeSession(expiresIn: const Duration(hours: -1)));
+      session.value = fakeSession(expiresIn: const Duration(hours: -1));
 
       expect(viewModel.session, isNotNull);
       expect(viewModel.isAuthenticated, isFalse);
@@ -58,15 +86,18 @@ void main() {
     test('signs in and picks up the session', () async {
       await viewModel.signIn();
 
-      expect(repository.signInCount, 1);
-      expect(viewModel.session, repository.signInResult);
+      verify(repository.signIn()).called(1);
+      expect(viewModel.session, signedIn);
       expect(viewModel.loading, isFalse);
       expect(viewModel.error, isNull);
     });
 
     test('reports loading while the exchange is in flight', () async {
       final gate = Completer<void>();
-      repository.signInGate = gate;
+      when(repository.signIn()).thenAnswer((_) async {
+        await gate.future;
+        session.value = signedIn;
+      });
       var notifications = 0;
       viewModel.addListener(() => notifications++);
 
@@ -86,7 +117,7 @@ void main() {
     });
 
     test('surfaces the failure and stays signed out', () async {
-      repository.signInError = StateError('invalid_grant');
+      when(repository.signIn()).thenThrow(StateError('invalid_grant'));
 
       await viewModel.signIn();
 
@@ -96,7 +127,7 @@ void main() {
     });
 
     test('stays quiet when the user cancels', () async {
-      repository.signInError = const SignInCancelledException();
+      when(repository.signIn()).thenThrow(const SignInCancelledException());
 
       await viewModel.signIn();
 
@@ -106,10 +137,11 @@ void main() {
     });
 
     test('clears an earlier error when retried', () async {
-      repository.signInError = StateError('invalid_grant');
+      when(repository.signIn()).thenThrow(StateError('invalid_grant'));
       await viewModel.signIn();
 
-      repository.signInError = null;
+      when(repository.signIn())
+          .thenAnswer((_) async => session.value = signedIn);
       await viewModel.signIn();
 
       expect(viewModel.error, isNull);
@@ -123,7 +155,7 @@ void main() {
 
       await viewModel.signOut();
 
-      expect(repository.signOutCount, 1);
+      verify(repository.signOut()).called(1);
       expect(viewModel.session, isNull);
       expect(viewModel.isAuthenticated, isFalse);
       expect(viewModel.error, isNull);
@@ -131,7 +163,7 @@ void main() {
 
     test('reports a sign out that failed', () async {
       await viewModel.signIn();
-      repository.signOutError = StateError('keychain');
+      when(repository.signOut()).thenThrow(StateError('keychain'));
 
       await viewModel.signOut();
 
@@ -143,13 +175,13 @@ void main() {
     test('picks up whatever the repository restored', () async {
       await viewModel.loadStoredSession();
       final stored = fakeSession();
-      repository.emit(stored);
+      session.value = stored;
 
       expect(viewModel.session, stored);
     });
 
     test('records the failure when storage throws', () async {
-      repository.loadStoredSessionError = StateError('keychain');
+      when(repository.loadStoredSession()).thenThrow(StateError('keychain'));
 
       await viewModel.loadStoredSession();
 
