@@ -2,6 +2,10 @@ import 'package:flutter/foundation.dart';
 
 import '../entities/auth_session.dart';
 
+class SignInCancelledException implements Exception {
+  const SignInCancelledException();
+}
+
 abstract interface class AuthRepository {
   ValueListenable<AuthSession?> get session;
 
@@ -9,7 +13,7 @@ abstract interface class AuthRepository {
 
   Future<void> loadStoredSession();
 
-  Future<void> signInWithAuthorizationCode(String code);
+  Future<void> signIn();
 
   Future<void> signOut();
 }

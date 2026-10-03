@@ -4,9 +4,10 @@ import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:trophy_journey/features/auth/data/datasources/psn_remote_data_source.dart';
 import 'package:trophy_journey/features/auth/data/datasources/psn_token_store.dart';
-import 'package:trophy_journey/features/auth/data/datasources/psn_web_session_data_source.dart';
+import 'package:trophy_journey/features/auth/data/datasources/psn_browser_auth_data_source.dart';
 import 'package:trophy_journey/features/auth/data/models/auth_session_model.dart';
 import 'package:trophy_journey/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
 
 import 'auth_repository_impl_test.mocks.dart';
 
@@ -29,43 +30,68 @@ AuthSessionModel storedSession({
 @GenerateNiceMocks([
   MockSpec<AuthLocalDataSource>(),
   MockSpec<PsnRemoteDataSource>(),
-  MockSpec<PsnWebSessionDataSource>(),
+  MockSpec<PsnBrowserAuthDataSource>(),
 ])
 void main() {
   late MockAuthLocalDataSource localDataSource;
   late MockPsnRemoteDataSource remoteDataSource;
-  late MockPsnWebSessionDataSource webSessionDataSource;
+  late MockPsnBrowserAuthDataSource browserAuthDataSource;
   late AuthRepositoryImpl repository;
 
   setUp(() {
     localDataSource = MockAuthLocalDataSource();
     remoteDataSource = MockPsnRemoteDataSource();
-    webSessionDataSource = MockPsnWebSessionDataSource();
+    browserAuthDataSource = MockPsnBrowserAuthDataSource();
     when(localDataSource.saveSession(any)).thenAnswer((_) => Future.value());
     when(localDataSource.clearSession()).thenAnswer((_) => Future.value());
     when(localDataSource.getStoredSession()).thenAnswer((_) async => null);
-    when(webSessionDataSource.clear()).thenAnswer((_) => Future.value());
+    when(browserAuthDataSource.authorize()).thenAnswer((_) async => 'v3.code');
     repository = AuthRepositoryImpl(
       tokenStore: PsnTokenStore(
         localDataSource: localDataSource,
         remoteDataSource: remoteDataSource,
       ),
-      webSessionDataSource: webSessionDataSource,
+      browserAuthDataSource: browserAuthDataSource,
     );
   });
 
-  group('signInWithAuthorizationCode', () {
+  group('signIn', () {
     test('publishes the session the store signed in with', () async {
       when(remoteDataSource.exchangeCode('v3.code'))
           .thenAnswer((_) async => tokens);
       var notifications = 0;
       repository.session.addListener(() => notifications++);
 
-      await repository.signInWithAuthorizationCode('v3.code');
+      await repository.signIn();
 
       expect(repository.session.value?.accessToken, 'access');
       expect(repository.isAuthenticated, isTrue);
       expect(notifications, 1);
+    });
+  });
+
+  group('signIn with the browser', () {
+    test('trades the code from the browser for the session', () async {
+      when(remoteDataSource.exchangeCode('v3.code'))
+          .thenAnswer((_) async => tokens);
+
+      await repository.signIn();
+
+      verify(browserAuthDataSource.authorize()).called(1);
+      verify(remoteDataSource.exchangeCode('v3.code')).called(1);
+    });
+
+    test('stays signed out when the browser is cancelled', () async {
+      when(browserAuthDataSource.authorize())
+          .thenThrow(const SignInCancelledException());
+
+      await expectLater(
+        repository.signIn(),
+        throwsA(isA<SignInCancelledException>()),
+      );
+
+      expect(repository.session.value, isNull);
+      verifyNever(remoteDataSource.exchangeCode(any));
     });
   });
 
@@ -131,13 +157,6 @@ void main() {
       await repository.signOut();
 
       verify(localDataSource.clearSession()).called(1);
-    });
-
-    test('drops the web view cookies so the login page cannot sign the user '
-        'straight back in', () async {
-      await repository.signOut();
-
-      verify(webSessionDataSource.clear()).called(1);
     });
   });
 }

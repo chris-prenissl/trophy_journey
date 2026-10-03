@@ -68,7 +68,10 @@ class TrophyRepositoryImpl implements TrophyRepository {
     };
   }
 
-  Future<Set<int>> _getGameEarnedIds(Game game, String npCommunicationId) async {
+  Future<Set<int>> _getGameEarnedIds(
+    Game game,
+    String npCommunicationId,
+  ) async {
     try {
       final earned = await _psnTrophyDataSource.fetchEarnedTrophyIds(
         npCommunicationId: npCommunicationId,

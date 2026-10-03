@@ -7,14 +7,11 @@ import 'package:marionette_flutter/marionette_flutter.dart';
 
 import 'core/di/app_dependencies.dart';
 import 'core/di/app_scope.dart';
-import 'features/auth/data/datasources/auth_local_data_source.dart';
 import 'features/auth/data/datasources/authenticated_psn_client.dart';
-import 'features/auth/data/datasources/psn_remote_data_source.dart';
 import 'features/auth/data/datasources/psn_token_store.dart';
-import 'features/auth/data/datasources/psn_web_session_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/usecases/load_stored_session_use_case.dart';
-import 'features/auth/domain/usecases/sign_in_with_authorization_code_use_case.dart';
+import 'features/auth/domain/usecases/sign_in_use_case.dart';
 import 'features/auth/domain/usecases/sign_out_use_case.dart';
 import 'features/auth/domain/usecases/watch_auth_session_use_case.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
@@ -47,6 +44,9 @@ import 'features/trophies/presentation/screens/game_list_screen.dart';
 import 'features/trophies/presentation/state/trophy_progress_store.dart';
 import 'features/trophies/presentation/viewmodels/game_list_view_model.dart';
 import 'features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
+import 'features/auth/data/datasources/auth_local_data_source_impl.dart';
+import 'features/auth/data/datasources/psn_remote_data_source_impl.dart';
+import 'features/auth/data/datasources/psn_browser_auth_data_source_impl.dart';
 
 void main() {
   if (kDebugMode) {
@@ -56,24 +56,24 @@ void main() {
   }
 
   final authLocalDataSource = AuthLocalDataSourceImpl(
-    const FlutterSecureStorage(),
+    const FlutterSecureStorage(
+      mOptions: MacOsOptions(usesDataProtectionKeychain: false),
+    ),
   );
   final authRemoteDataSource = PsnRemoteDataSourceImpl();
-  final webSessionDataSource = PsnWebSessionDataSourceImpl();
+  final browserAuthDataSource = PsnBrowserAuthDataSourceImpl();
   final tokenStore = PsnTokenStore(
     localDataSource: authLocalDataSource,
     remoteDataSource: authRemoteDataSource,
   );
   final authRepository = AuthRepositoryImpl(
     tokenStore: tokenStore,
-    webSessionDataSource: webSessionDataSource,
+    browserAuthDataSource: browserAuthDataSource,
   );
   final authViewModel = AuthViewModel(
     watchSession: WatchAuthSessionUseCase(authRepository),
     loadStoredSessionUseCase: LoadStoredSessionUseCase(authRepository),
-    signInWithAuthorizationCodeUseCase: SignInWithAuthorizationCodeUseCase(
-      authRepository,
-    ),
+    signInUseCase: SignInUseCase(authRepository),
     signOutUseCase: SignOutUseCase(authRepository),
   );
 

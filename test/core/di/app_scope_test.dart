@@ -134,14 +134,21 @@ void main() {
       createJourneyViewModel: (_) => MockJourneyViewModel(),
     );
 
-    final widget = AppScope(dependencies: dependencies, child: const SizedBox());
+    final widget = AppScope(
+      dependencies: dependencies,
+      child: const SizedBox(),
+    );
 
     expect(
-      widget.updateShouldNotify(AppScope(dependencies: other, child: const SizedBox())),
+      widget.updateShouldNotify(
+        AppScope(dependencies: other, child: const SizedBox()),
+      ),
       isTrue,
     );
     expect(
-      widget.updateShouldNotify(AppScope(dependencies: dependencies, child: const SizedBox())),
+      widget.updateShouldNotify(
+        AppScope(dependencies: dependencies, child: const SizedBox()),
+      ),
       isFalse,
     );
   });

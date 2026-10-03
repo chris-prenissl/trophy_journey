@@ -42,11 +42,10 @@ class _ManifestAssetBundle extends FakeAssetBundle {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final bundle = _ManifestAssetBundle({
-    'assets/data/journeys/ffx.json': jsonEncode(journeyJson),
-  }, [
-    'assets/data/journeys/ffx.json',
-  ]);
+  final bundle = _ManifestAssetBundle(
+    {'assets/data/journeys/ffx.json': jsonEncode(journeyJson)},
+    ['assets/data/journeys/ffx.json'],
+  );
 
   test('loads and parses the journey asset for a game', () async {
     final dataSource = JourneyAssetDataSource(bundle);

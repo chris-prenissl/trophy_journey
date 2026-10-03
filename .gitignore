@@ -56,3 +56,4 @@ android/app/google-services.json
 android/fastlane/report.xml
 android/.bundle/
 android/vendor/
+android/.kotlin/

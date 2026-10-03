@@ -4,10 +4,30 @@ import 'models/psn_trophy_title_model.dart';
 import 'models/trophy_model.dart';
 
 const _romanNumerals = {
-  'Ⅰ': 'I', 'Ⅱ': 'II', 'Ⅲ': 'III', 'Ⅳ': 'IV', 'Ⅴ': 'V', 'Ⅵ': 'VI',
-  'Ⅶ': 'VII', 'Ⅷ': 'VIII', 'Ⅸ': 'IX', 'Ⅹ': 'X', 'Ⅺ': 'XI', 'Ⅻ': 'XII',
-  'ⅰ': 'i', 'ⅱ': 'ii', 'ⅲ': 'iii', 'ⅳ': 'iv', 'ⅴ': 'v', 'ⅵ': 'vi',
-  'ⅶ': 'vii', 'ⅷ': 'viii', 'ⅸ': 'ix', 'ⅹ': 'x', 'ⅺ': 'xi', 'ⅻ': 'xii',
+  'Ⅰ': 'I',
+  'Ⅱ': 'II',
+  'Ⅲ': 'III',
+  'Ⅳ': 'IV',
+  'Ⅴ': 'V',
+  'Ⅵ': 'VI',
+  'Ⅶ': 'VII',
+  'Ⅷ': 'VIII',
+  'Ⅸ': 'IX',
+  'Ⅹ': 'X',
+  'Ⅺ': 'XI',
+  'Ⅻ': 'XII',
+  'ⅰ': 'i',
+  'ⅱ': 'ii',
+  'ⅲ': 'iii',
+  'ⅳ': 'iv',
+  'ⅴ': 'v',
+  'ⅵ': 'vi',
+  'ⅶ': 'vii',
+  'ⅷ': 'viii',
+  'ⅸ': 'ix',
+  'ⅹ': 'x',
+  'ⅺ': 'xi',
+  'ⅻ': 'xii',
 };
 
 String slugify(String value) {
@@ -34,7 +54,6 @@ class GuideMatcher {
 
   GameModel? guideForGame(PsnTrophyTitleModel title) =>
       _gamesByName[slugify(title.trophyTitleName)];
-
 
   static Map<String, TrophyModel> indexTrophies(List<TrophyModel> guides) => {
     for (final guide in guides) guide.id: guide,

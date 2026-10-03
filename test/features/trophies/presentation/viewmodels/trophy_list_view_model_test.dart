@@ -248,8 +248,7 @@ void main() {
         'ffx',
         GetTrophiesUseCase(trophyRepository),
         store,
-        getPsnEarnedTrophyIds:
-            GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+        getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(trophyRepository),
       );
 
       await viewModel.load();
@@ -266,8 +265,7 @@ void main() {
         'ffx',
         GetTrophiesUseCase(trophyRepository),
         store,
-        getPsnEarnedTrophyIds:
-            GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+        getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(trophyRepository),
       );
 
       await viewModel.load();

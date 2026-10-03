@@ -38,9 +38,8 @@ class _GameListScreenState extends State<GameListScreen> {
   }
 
   void _openGame(Game game) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => TrophyListScreen(game: game)),
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => TrophyListScreen(game: game)));
   }
 
   @override

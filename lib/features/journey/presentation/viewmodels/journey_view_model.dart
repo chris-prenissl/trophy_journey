@@ -78,7 +78,9 @@ class JourneyViewModel extends ChangeNotifier {
     _journey = await _getJourney(_gameId);
 
     final trophies = await _getTrophies(_gameId);
-    _trophyById = Map.fromEntries(trophies.map((trophy) => MapEntry(trophy.id, trophy)));
+    _trophyById = Map.fromEntries(
+      trophies.map((trophy) => MapEntry(trophy.id, trophy)),
+    );
     _checkedTaskIds = await _getCheckedTaskIds(_gameId);
     _bookmarkedStepId = await _getJourneyBookmark(_gameId);
     _loading = false;
@@ -114,7 +116,7 @@ class JourneyViewModel extends ChangeNotifier {
     final previous = _bookmarkedStepId;
     _bookmarkedStepId = previous == stepId ? null : stepId;
     notifyListeners();
-    
+
     try {
       await _setJourneyBookmark(_gameId, _bookmarkedStepId);
     } catch (_) {

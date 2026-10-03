@@ -119,8 +119,9 @@ void main() {
             gameId,
             GetTrophiesUseCase(trophyRepository),
             store,
-            getPsnEarnedTrophyIds:
-                GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+            getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(
+              trophyRepository,
+            ),
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),
@@ -153,8 +154,9 @@ void main() {
             gameId,
             GetTrophiesUseCase(trophyRepository),
             store,
-            getPsnEarnedTrophyIds:
-                GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+            getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(
+              trophyRepository,
+            ),
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),
@@ -244,9 +246,7 @@ void main() {
     );
   });
 
-  testWidgets('opens the detail screen with the trophy guide', (
-    tester,
-  ) async {
+  testWidgets('opens the detail screen with the trophy guide', (tester) async {
     await pumpScreen(tester);
 
     await tester.tap(find.text('Ordinary'));

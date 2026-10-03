@@ -80,12 +80,10 @@ class PsnCacheDataSource {
     return {for (final row in rows) (row['trophyId'] as num).toInt()};
   }
 
-  Future<void> writeEarned(
-    String npCommunicationId,
-    Set<int> trophyIds,
-  ) => _write(_earnedTable, 'np_communication_id', npCommunicationId, [
-    for (final id in trophyIds) {'trophyId': id},
-  ]);
+  Future<void> writeEarned(String npCommunicationId, Set<int> trophyIds) =>
+      _write(_earnedTable, 'np_communication_id', npCommunicationId, [
+        for (final id in trophyIds) {'trophyId': id},
+      ]);
 
   Future<List<Map<String, dynamic>>?> _read(
     String table,

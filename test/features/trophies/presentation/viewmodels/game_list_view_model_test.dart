@@ -159,9 +159,8 @@ void main() {
     );
 
     setUp(() {
-      when(
-        gameRepository.getGames(),
-      ).thenAnswer((_) async => [gamma, alpha, beta]);
+      when(gameRepository.getGames())
+          .thenAnswer((_) async => [gamma, alpha, beta]);
     });
 
     test('shows every game in repository order by default', () async {

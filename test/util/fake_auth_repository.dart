@@ -31,7 +31,7 @@ class FakeAuthRepository implements AuthRepository {
   Object? signOutError;
 
   AuthSession? signInResult = fakeSession();
-  final signedInCodes = <String>[];
+  var signInCount = 0;
   var signOutCount = 0;
 
   /// Complete to let a held sign in finish, for tests that need to look at the
@@ -53,8 +53,8 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> signInWithAuthorizationCode(String code) async {
-    signedInCodes.add(code);
+  Future<void> signIn() async {
+    signInCount++;
     await signInGate?.future;
     if (signInError case final error?) throw error;
     _session.value = signInResult;

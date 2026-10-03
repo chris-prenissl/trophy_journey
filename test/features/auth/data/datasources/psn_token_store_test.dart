@@ -52,9 +52,8 @@ void main() {
     );
 
     test('trades the code for a session and publishes it', () async {
-      when(
-        remoteDataSource.exchangeCode('v3.code'),
-      ).thenAnswer((_) async => tokens);
+      when(remoteDataSource.exchangeCode('v3.code'))
+          .thenAnswer((_) async => tokens);
       var notifications = 0;
       store.session.addListener(() => notifications++);
 
@@ -100,7 +99,8 @@ void main() {
     });
 
     test('does not persist anything when the exchange fails', () async {
-      when(remoteDataSource.exchangeCode(any)).thenThrow(StateError('bad code'));
+      when(remoteDataSource.exchangeCode(any))
+          .thenThrow(StateError('bad code'));
 
       await expectLater(store.signIn('v3.code'), throwsStateError);
 
@@ -144,24 +144,26 @@ void main() {
       verifyNever(remoteDataSource.refreshAccessToken(any));
     });
 
-    test('swaps in the new pair even when the old one had not expired', () async {
-      await signedInWith(storedSession(token: 'stored-access'));
-      when(remoteDataSource.refreshAccessToken('refresh')).thenAnswer(
-        (_) async => const PsnTokens(
-          accessToken: 'next-access',
-          refreshToken: 'next-refresh',
-          expiresIn: Duration(hours: 1),
-        ),
-      );
+    test(
+      'swaps in the new pair even when the old one had not expired',
+      () async {
+        await signedInWith(storedSession(token: 'stored-access'));
+        when(remoteDataSource.refreshAccessToken('refresh')).thenAnswer(
+          (_) async => const PsnTokens(
+            accessToken: 'next-access',
+            refreshToken: 'next-refresh',
+            expiresIn: Duration(hours: 1),
+          ),
+        );
 
-      expect(await store.refresh(), 'next-access');
-    });
+        expect(await store.refresh(), 'next-access');
+      },
+    );
 
     test('clears the session when Sony refuses', () async {
       await signedInWith(storedSession(expiresIn: const Duration(hours: -1)));
-      when(
-        remoteDataSource.refreshAccessToken(any),
-      ).thenThrow(StateError('revoked'));
+      when(remoteDataSource.refreshAccessToken(any))
+          .thenThrow(StateError('revoked'));
 
       expect(await store.refresh(), isNull);
       expect(store.session.value, isNull);
@@ -182,7 +184,8 @@ void main() {
     });
 
     test('stays empty when reading throws', () async {
-      when(localDataSource.getStoredSession()).thenThrow(StateError('keychain'));
+      when(localDataSource.getStoredSession())
+          .thenThrow(StateError('keychain'));
 
       await store.load();
 

@@ -45,7 +45,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final stepContext = _stepKeys[steps[index].id]?.currentContext;
       if (stepContext == null) return;
-      
+
       Scrollable.ensureVisible(
         stepContext,
         alignment: 0.1,

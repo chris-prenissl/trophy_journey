@@ -64,7 +64,8 @@ class ProgressCircle extends StatelessWidget {
 Widget progressCirclePartial() => const ProgressCircle(achieved: 15, total: 50);
 
 @Preview(name: 'Complete', group: 'Progress Circle')
-Widget progressCircleComplete() => const ProgressCircle(achieved: 50, total: 50);
+Widget progressCircleComplete() =>
+    const ProgressCircle(achieved: 50, total: 50);
 
 @Preview(name: 'Empty', group: 'Progress Circle')
 Widget progressCircleEmpty() => const ProgressCircle(achieved: 0, total: 50);

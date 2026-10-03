@@ -8,7 +8,8 @@ import 'package:http/testing.dart';
 
 const baseUrl = 'https://psn.example.test';
 
-({PsnTrophyDataSource dataSource, List<http.Request> requests}) buildDataSource({
+({PsnTrophyDataSource dataSource, List<http.Request> requests})
+buildDataSource({
   required List<Map<String, dynamic>> Function(http.Request) bodies,
   int statusCode = 200,
 }) {
@@ -54,8 +55,18 @@ void main() {
             'trophyTitleName': 'FINAL FANTASY X HD Remaster',
             'trophyTitleIconUrl': 'https://img.example/ffx.png',
             'trophyTitlePlatform': 'PS4',
-            'definedTrophies': {'bronze': 22, 'silver': 7, 'gold': 4, 'platinum': 1},
-            'earnedTrophies': {'bronze': 5, 'silver': 1, 'gold': 0, 'platinum': 0},
+            'definedTrophies': {
+              'bronze': 22,
+              'silver': 7,
+              'gold': 4,
+              'platinum': 1,
+            },
+            'earnedTrophies': {
+              'bronze': 5,
+              'silver': 1,
+              'gold': 0,
+              'platinum': 0,
+            },
             'lastUpdatedDateTime': '2026-07-30T12:00:00Z',
           },
         ],
@@ -69,10 +80,7 @@ void main() {
       expect(title.definedTrophies.total, 34);
       expect(title.earnedTrophies.total, 6);
       expect(title.lastUpdatedDateTime, DateTime.parse('2026-07-30T12:00:00Z'));
-      expect(
-        requests.single.url.path,
-        '/api/trophy/v1/users/me/trophyTitles',
-      );
+      expect(requests.single.url.path, '/api/trophy/v1/users/me/trophyTitles');
     });
 
     test('walks nextOffset until the library is complete', () async {

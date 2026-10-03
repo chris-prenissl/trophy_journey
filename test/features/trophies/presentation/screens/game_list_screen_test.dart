@@ -121,8 +121,9 @@ void main() {
             gameId,
             GetTrophiesUseCase(trophyRepository),
             store,
-            getPsnEarnedTrophyIds:
-                GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+            getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(
+              trophyRepository,
+            ),
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),
@@ -154,8 +155,9 @@ void main() {
             gameId,
             GetTrophiesUseCase(trophyRepository),
             store,
-            getPsnEarnedTrophyIds:
-                GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+            getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(
+              trophyRepository,
+            ),
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),

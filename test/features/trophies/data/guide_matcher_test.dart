@@ -16,8 +16,10 @@ GameModel game(String id, String title, {List<String> psnNames = const []}) =>
       psnNames: psnNames,
     );
 
-PsnTrophyTitleModel psnTitle(String name) =>
-    PsnTrophyTitleModel(npCommunicationId: 'NPWR00001_00', trophyTitleName: name);
+PsnTrophyTitleModel psnTitle(String name) => PsnTrophyTitleModel(
+  npCommunicationId: 'NPWR00001_00',
+  trophyTitleName: name,
+);
 
 TrophyModel guide(String id, String title) => TrophyModel(
   id: id,
@@ -50,8 +52,10 @@ void main() {
     test('spells out the single glyph numerals PSN uses', () {
       // Stripping these would collapse every entry onto `final-fantasy`.
       expect(slugify('FINAL FANTASY Ⅱ'), 'final-fantasy-ii');
-      expect(slugify('FINAL FANTASY Ⅻ THE ZODIAC AGE'),
-          'final-fantasy-xii-the-zodiac-age');
+      expect(
+        slugify('FINAL FANTASY Ⅻ THE ZODIAC AGE'),
+        'final-fantasy-xii-the-zodiac-age',
+      );
     });
 
     test('keeps the single glyph numerals apart from the first game', () {
@@ -61,7 +65,9 @@ void main() {
 
   group('guideForGame', () {
     test('matches on the bundled title', () {
-      final matcher = GuideMatcher([game('final-fantasy-ix', 'Final Fantasy IX')]);
+      final matcher = GuideMatcher([
+        game('final-fantasy-ix', 'Final Fantasy IX'),
+      ]);
 
       expect(
         matcher.guideForGame(psnTitle('FINAL FANTASY IX'))?.id,
@@ -101,7 +107,9 @@ void main() {
     });
 
     test('is null for a game the app ships no guide for', () {
-      final matcher = GuideMatcher([game('final-fantasy-ix', 'Final Fantasy IX')]);
+      final matcher = GuideMatcher([
+        game('final-fantasy-ix', 'Final Fantasy IX'),
+      ]);
 
       expect(matcher.guideForGame(psnTitle('LEGO® Batman™')), isNull);
     });
@@ -120,7 +128,9 @@ void main() {
     });
 
     test('is null when the app ships no guide for the trophy', () {
-      final guides = GuideMatcher.indexTrophies([guide('blitz-ace', 'Blitz Ace')]);
+      final guides = GuideMatcher.indexTrophies([
+        guide('blitz-ace', 'Blitz Ace'),
+      ]);
 
       expect(
         GuideMatcher.guideForTrophy(guides, definition('Unrelated')),

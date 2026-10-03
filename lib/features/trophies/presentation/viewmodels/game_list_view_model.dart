@@ -34,7 +34,7 @@ class GameListViewModel extends ChangeNotifier {
   bool _loading = true;
 
   bool get loading => _loading;
-  
+
   List<Game> get games => _games;
 
   List<Game> get visibleGames => _visibleGames ??= _computeVisible();
@@ -67,8 +67,7 @@ class GameListViewModel extends ChangeNotifier {
     return stored > reported ? stored : reported;
   }
 
-  double completionFor(Game game) =>
-      game.completion(achievedCountFor(game.id));
+  double completionFor(Game game) => game.completion(achievedCountFor(game.id));
 
   int _psnEarnedCountFor(String gameId) {
     for (final game in _games) {

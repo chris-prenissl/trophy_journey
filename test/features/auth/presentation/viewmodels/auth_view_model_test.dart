@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/load_stored_session_use_case.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/sign_in_with_authorization_code_use_case.dart';
+import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
+import 'package:trophy_journey/features/auth/domain/usecases/sign_in_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/sign_out_use_case.dart';
 import 'package:trophy_journey/features/auth/domain/usecases/watch_auth_session_use_case.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
@@ -18,9 +19,7 @@ void main() {
     viewModel = AuthViewModel(
       watchSession: WatchAuthSessionUseCase(repository),
       loadStoredSessionUseCase: LoadStoredSessionUseCase(repository),
-      signInWithAuthorizationCodeUseCase: SignInWithAuthorizationCodeUseCase(
-        repository,
-      ),
+      signInUseCase: SignInUseCase(repository),
       signOutUseCase: SignOutUseCase(repository),
     );
   });
@@ -55,11 +54,11 @@ void main() {
     });
   });
 
-  group('signInWithAuthorizationCode', () {
-    test('hands the code over and picks up the session', () async {
-      await viewModel.signInWithAuthorizationCode('v3.code');
+  group('signIn', () {
+    test('signs in and picks up the session', () async {
+      await viewModel.signIn();
 
-      expect(repository.signedInCodes, ['v3.code']);
+      expect(repository.signInCount, 1);
       expect(viewModel.session, repository.signInResult);
       expect(viewModel.loading, isFalse);
       expect(viewModel.error, isNull);
@@ -71,7 +70,7 @@ void main() {
       var notifications = 0;
       viewModel.addListener(() => notifications++);
 
-      final pending = viewModel.signInWithAuthorizationCode('v3.code');
+      final pending = viewModel.signIn();
       await pumpEventQueue();
 
       expect(viewModel.loading, isTrue);
@@ -89,19 +88,29 @@ void main() {
     test('surfaces the failure and stays signed out', () async {
       repository.signInError = StateError('invalid_grant');
 
-      await viewModel.signInWithAuthorizationCode('v3.code');
+      await viewModel.signIn();
 
       expect(viewModel.session, isNull);
       expect(viewModel.loading, isFalse);
       expect(viewModel.error, contains('invalid_grant'));
     });
 
+    test('stays quiet when the user cancels', () async {
+      repository.signInError = const SignInCancelledException();
+
+      await viewModel.signIn();
+
+      expect(viewModel.session, isNull);
+      expect(viewModel.loading, isFalse);
+      expect(viewModel.error, isNull);
+    });
+
     test('clears an earlier error when retried', () async {
       repository.signInError = StateError('invalid_grant');
-      await viewModel.signInWithAuthorizationCode('v3.code');
+      await viewModel.signIn();
 
       repository.signInError = null;
-      await viewModel.signInWithAuthorizationCode('v3.code');
+      await viewModel.signIn();
 
       expect(viewModel.error, isNull);
       expect(viewModel.session, isNotNull);
@@ -110,7 +119,7 @@ void main() {
 
   group('signOut', () {
     test('drops the session', () async {
-      await viewModel.signInWithAuthorizationCode('v3.code');
+      await viewModel.signIn();
 
       await viewModel.signOut();
 
@@ -121,7 +130,7 @@ void main() {
     });
 
     test('reports a sign out that failed', () async {
-      await viewModel.signInWithAuthorizationCode('v3.code');
+      await viewModel.signIn();
       repository.signOutError = StateError('keychain');
 
       await viewModel.signOut();
