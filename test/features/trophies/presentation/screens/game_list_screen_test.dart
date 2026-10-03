@@ -208,7 +208,6 @@ void main() {
   testWidgets('picks up PSN earned trophies after opening a game', (
     tester,
   ) async {
-    // The count only becomes known once the trophy list syncs with PSN.
     when(trophyRepository.getPsnEarnedTrophyIds('ffx'))
         .thenAnswer((_) async => {'t1'});
     await pumpApp(tester);

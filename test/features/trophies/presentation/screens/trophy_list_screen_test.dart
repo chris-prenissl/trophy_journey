@@ -218,9 +218,10 @@ void main() {
     await pumpScreen(tester);
 
     expect(find.byType(Checkbox), findsNothing);
-    // One earned, two still to go.
-    expect(find.byIcon(Icons.check_circle), findsOneWidget);
-    expect(find.byIcon(Icons.circle_outlined), findsNWidgets(2));
+    const earnedCount = 1;
+    const remainingCount = 2;
+    expect(find.byIcon(Icons.check_circle), findsNWidgets(earnedCount));
+    expect(find.byIcon(Icons.circle_outlined), findsNWidgets(remainingCount));
   });
 
   testWidgets('hides the journey button when the game has no journey', (
@@ -244,15 +245,17 @@ void main() {
     );
   });
 
-  testWidgets('opens the detail screen with the trophy guide', (tester) async {
-    await pumpScreen(tester);
+  testWidgets(
+    'opens the guide detail screen that only reflects PSN state and offers no toggle',
+    (tester) async {
+      await pumpScreen(tester);
 
-    await tester.tap(find.text('Ordinary'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Ordinary'));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(TrophyDetailScreen), findsOneWidget);
-    expect(find.text('guide text'), findsOneWidget);
-    // The detail screen only reflects PSN state, it never offers a toggle.
-    expect(find.byType(Switch), findsNothing);
-  });
+      expect(find.byType(TrophyDetailScreen), findsOneWidget);
+      expect(find.text('guide text'), findsOneWidget);
+      expect(find.byType(Switch), findsNothing);
+    },
+  );
 }

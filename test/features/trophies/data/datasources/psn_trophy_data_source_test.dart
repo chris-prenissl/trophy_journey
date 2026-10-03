@@ -87,7 +87,6 @@ void main() {
       final offsets = <String?>[];
       final client = MockClient((request) async {
         offsets.add(request.url.queryParameters['offset']);
-        // The first page points at a second one; the second ends the walk.
         return http.Response(
           jsonEncode({
             'trophyTitles': [

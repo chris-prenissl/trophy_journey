@@ -125,7 +125,7 @@ void main() {
   setUpAll(sqfliteFfiInit);
 
   group('getTrophies', () {
-    test('merges PSN trophies with the bundled guide', () async {
+    test('prefers the PSN title and description and layers the bundled guide on top', () async {
       final (:repository, :cache) = buildRepository((r) async => jsonFor(r));
       addTearDown(cache.close);
 
@@ -133,7 +133,6 @@ void main() {
 
       expect(trophies, hasLength(2));
       final completion = trophies.firstWhere((t) => t.title == 'Completion');
-      // Sony's title and description win; the bundled guide is layered on.
       expect(completion.description, 'Obtain all available trophies');
       expect(completion.guide, 'Earn every other trophy.');
       expect(completion.id, 'completion');
@@ -156,15 +155,13 @@ void main() {
     });
 
     test('falls back to the cached list when PSN is unreachable', () async {
-      // Prime the cache with a good response.
       final (repository: primed, :cache) = buildRepository(
         (r) async => jsonFor(r),
       );
       addTearDown(cache.close);
       await primed.getTrophies('final-fantasy-x-hd');
 
-      // A second repository sharing the cache, but offline for definitions.
-      final offline = TrophyRepositoryImpl(
+      final offlineForDefinitions = TrophyRepositoryImpl(
         gameRepository: GameRepositoryImpl(
           psnTrophyDataSource: PsnTrophyDataSource(
             client: MockClient((r) async => jsonFor(r)),
@@ -181,7 +178,9 @@ void main() {
         trophyAssetDataSource: TrophyAssetDataSource(bundle),
       );
 
-      final trophies = await offline.getTrophies('final-fantasy-x-hd');
+      final trophies = await offlineForDefinitions.getTrophies(
+        'final-fantasy-x-hd',
+      );
 
       expect(trophies, hasLength(2));
       expect(trophies.map((t) => t.title), contains('Completion'));

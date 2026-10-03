@@ -143,8 +143,7 @@ void main() {
     });
 
     test('serves the cached library when PSN cannot be reached', () async {
-      // Prime the cache from a good response.
-      await buildRepository(
+      final onlineRepositoryFillingCache = buildRepository(
         respondWith([
           title(
             'NPWR1',
@@ -153,7 +152,8 @@ void main() {
           ),
         ]),
         cache: cache,
-      ).getGames();
+      );
+      await onlineRepositoryFillingCache.getGames();
 
       final offline = buildRepository(
         (_) async => http.Response('down', 503),

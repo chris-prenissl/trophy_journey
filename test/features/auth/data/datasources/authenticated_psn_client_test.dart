@@ -116,8 +116,9 @@ void main() {
       final sent = <http.Request>[];
       final client = clientOver((request) async {
         sent.add(request);
-        // Only the call carrying the stale token is refused.
-        return request.headers['Authorization'] == 'Bearer the-token'
+        final carriesStaleToken =
+            request.headers['Authorization'] == 'Bearer the-token';
+        return carriesStaleToken
             ? http.Response('nope', 401)
             : http.Response('{"ok":true}', 200);
       });

@@ -112,8 +112,8 @@ void main() {
 
       expect(viewModel.loading, isFalse);
       expect(viewModel.session, isNotNull);
-      // Loading on, session in, loading off.
-      expect(notifications, 3);
+      const loadingOnSessionInLoadingOff = 3;
+      expect(notifications, loadingOnSessionInLoadingOff);
     });
 
     test('surfaces the failure and stays signed out', () async {

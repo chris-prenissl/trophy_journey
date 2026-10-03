@@ -49,8 +49,7 @@ void main() {
       expect(slugify('  What\'s Your Sign?  '), 'what-s-your-sign');
     });
 
-    test('spells out the single glyph numerals PSN uses', () {
-      // Stripping these would collapse every entry onto `final-fantasy`.
+    test('spells out single glyph numerals so entries do not collapse onto final-fantasy', () {
       expect(slugify('FINAL FANTASY Ⅱ'), 'final-fantasy-ii');
       expect(
         slugify('FINAL FANTASY Ⅻ THE ZODIAC AGE'),
