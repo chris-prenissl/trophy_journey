@@ -1,21 +1,18 @@
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/trophy.dart';
-import '../../domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
-import '../../domain/usecases/get_trophies_use_case.dart';
+import '../../domain/repositories/trophy_repository.dart';
 import '../state/trophy_progress_store.dart';
 
 class TrophyListViewModel(
   final String _gameId,
-  final GetTrophiesUseCase _getTrophies,
+  final TrophyRepository _trophyRepository,
   final TrophyProgressStore _progress, {
-  this._getPsnEarnedTrophyIds,
+  final bool syncWithPsn = false,
 }) extends ChangeNotifier {
   this {
     _progress.addListener(_onProgressChanged);
   }
-
-  final GetPsnEarnedTrophyIdsUseCase? _getPsnEarnedTrophyIds;
 
   List<Trophy> _trophies = const [];
   List<Trophy>? _visibleTrophies;
@@ -47,7 +44,7 @@ class TrophyListViewModel(
     _loading = true;
     _invalidate();
 
-    _trophies = await _getTrophies(_gameId);
+    _trophies = await _trophyRepository.getTrophies(_gameId);
     _loading = false;
     _invalidate();
 
@@ -55,11 +52,13 @@ class TrophyListViewModel(
   }
 
   Future<void> _syncPsnEarned() async {
-    final getEarned = _getPsnEarnedTrophyIds;
-    if (getEarned == null) return;
+    if (!syncWithPsn) return;
 
     try {
-      await _progress.applyEarned(_gameId, await getEarned(_gameId));
+      await _progress.applyEarned(
+        _gameId,
+        await _trophyRepository.getPsnEarnedTrophyIds(_gameId),
+      );
     } catch (e) {
       debugPrint(e.toString());
     }

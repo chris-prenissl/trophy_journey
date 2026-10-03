@@ -6,11 +6,8 @@ import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
 import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
@@ -34,14 +31,11 @@ void main() {
     progressRepository = MockTrophyProgressRepository();
     when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
-    store = TrophyProgressStore(
-      GetAllEarnedTrophyIdsUseCase(progressRepository),
-      ReplaceEarnedTrophiesUseCase(progressRepository),
-    );
+    store = TrophyProgressStore(progressRepository);
     dependencies = AppDependencies(
       authViewModel: MockAuthViewModel(),
       trophyProgressStore: store,
-      hasJourneyUseCase: HasJourneyUseCase(MockJourneyRepository()),
+      hasJourney: MockJourneyRepository().hasJourney,
       createGameListViewModel: MockGameListViewModel.new,
       createTrophyListViewModel: (_) => MockTrophyListViewModel(),
       createJourneyViewModel: (_) => MockJourneyViewModel(),
@@ -128,7 +122,7 @@ void main() {
     final other = AppDependencies(
       authViewModel: MockAuthViewModel(),
       trophyProgressStore: store,
-      hasJourneyUseCase: HasJourneyUseCase(MockJourneyRepository()),
+      hasJourney: MockJourneyRepository().hasJourney,
       createGameListViewModel: MockGameListViewModel.new,
       createTrophyListViewModel: (_) => MockTrophyListViewModel(),
       createJourneyViewModel: (_) => MockJourneyViewModel(),

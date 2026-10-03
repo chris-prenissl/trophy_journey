@@ -6,10 +6,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/auth/domain/entities/auth_session.dart';
 import 'package:trophy_journey/features/auth/domain/repositories/auth_repository.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/load_stored_session_use_case.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/sign_in_use_case.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/sign_out_use_case.dart';
-import 'package:trophy_journey/features/auth/domain/usecases/watch_auth_session_use_case.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 
 import 'auth_view_model_test.mocks.dart';
@@ -41,12 +37,7 @@ void main() {
     when(repository.loadStoredSession()).thenAnswer((_) async {});
     when(repository.signIn()).thenAnswer((_) async => session.value = signedIn);
     when(repository.signOut()).thenAnswer((_) async => session.value = null);
-    viewModel = AuthViewModel(
-      watchSession: WatchAuthSessionUseCase(repository),
-      loadStoredSessionUseCase: LoadStoredSessionUseCase(repository),
-      signInUseCase: SignInUseCase(repository),
-      signOutUseCase: SignOutUseCase(repository),
-    );
+    viewModel = AuthViewModel(authRepository: repository);
   });
 
   tearDown(() {

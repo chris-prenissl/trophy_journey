@@ -187,6 +187,26 @@ void main() {
     });
   });
 
+  group('getTrophies without a PSN game', () {
+    test(
+      'serves the bundled trophies when PSN does not list the game',
+      () async {
+        final (:repository, :cache) = buildRepository((request) async {
+          if (request.url.path.endsWith('/trophyTitles')) {
+            return http.Response(jsonEncode({'trophyTitles': <Object>[]}), 200);
+          }
+          return jsonFor(request);
+        });
+        addTearDown(cache.close);
+
+        final trophies = await repository.getTrophies('final-fantasy-x-hd');
+
+        expect(trophies.map((t) => t.id), ['completion']);
+        expect(trophies.single.guide, 'Earn every other trophy.');
+      },
+    );
+  });
+
   group('getPsnEarnedTrophyIds', () {
     test('maps earned PSN ids to the ids the app uses', () async {
       final (:repository, :cache) = buildRepository((r) async => jsonFor(r));
@@ -198,5 +218,26 @@ void main() {
 
       expect(earned, {'psn-1'});
     });
+
+    test(
+      'reports nothing earned when PSN fails and no earned ids are cached',
+      () async {
+        final (:repository, :cache) = buildRepository((request) async {
+          if (request.url.path.startsWith(
+            '/api/trophy/v1/users/me/npCommunicationIds',
+          )) {
+            return http.Response('down', 503);
+          }
+          return jsonFor(request);
+        });
+        addTearDown(cache.close);
+
+        final earned = await repository.getPsnEarnedTrophyIds(
+          'final-fantasy-x-hd',
+        );
+
+        expect(earned, isEmpty);
+      },
+    );
   });
 }

@@ -6,16 +6,11 @@ import 'package:trophy_journey/core/di/app_dependencies.dart';
 import 'package:trophy_journey/core/di/app_scope.dart';
 import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
 import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'package:trophy_journey/features/trophies/presentation/screens/trophy_detail_screen.dart';
 import 'package:trophy_journey/features/trophies/presentation/screens/trophy_list_screen.dart';
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
@@ -96,10 +91,7 @@ void main() {
         .thenAnswer((_) => Future.value());
     when(journeyRepository.hasJourney('ffx')).thenAnswer((_) async => false);
 
-    store = TrophyProgressStore(
-      GetAllEarnedTrophyIdsUseCase(progressRepository),
-      ReplaceEarnedTrophiesUseCase(progressRepository),
-    );
+    store = TrophyProgressStore(progressRepository);
   });
 
   tearDown(() => store.dispose());
@@ -111,15 +103,13 @@ void main() {
         dependencies: AppDependencies(
           authViewModel: authViewModel,
           trophyProgressStore: store,
-          hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
+          hasJourney: journeyRepository.hasJourney,
           createGameListViewModel: MockGameListViewModel.new,
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
             gameId,
-            GetTrophiesUseCase(trophyRepository),
+            trophyRepository,
             store,
-            getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(
-              trophyRepository,
-            ),
+            syncWithPsn: true,
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),
@@ -146,15 +136,13 @@ void main() {
         dependencies: AppDependencies(
           authViewModel: authViewModel,
           trophyProgressStore: store,
-          hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
+          hasJourney: journeyRepository.hasJourney,
           createGameListViewModel: MockGameListViewModel.new,
           createTrophyListViewModel: (gameId) => TrophyListViewModel(
             gameId,
-            GetTrophiesUseCase(trophyRepository),
+            trophyRepository,
             store,
-            getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(
-              trophyRepository,
-            ),
+            syncWithPsn: true,
           ),
           createJourneyViewModel: (_) => MockJourneyViewModel(),
         ),

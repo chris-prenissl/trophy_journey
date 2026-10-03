@@ -26,7 +26,7 @@ class _TrophyListScreenState extends State<TrophyListScreen> {
     final dependencies = AppScope.of(context);
     _viewModel = dependencies.createTrophyListViewModel(widget.game.id);
     _viewModel.load();
-    dependencies.hasJourneyUseCase(widget.game.id).then((hasJourney) {
+    dependencies.hasJourney(widget.game.id).then((hasJourney) {
       if (mounted && hasJourney) setState(() => _hasJourney = true);
     });
   }

@@ -4,10 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 
@@ -61,16 +57,9 @@ void main() {
         .thenAnswer((_) async => [first, missable, last]);
     when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
-    store = TrophyProgressStore(
-      GetAllEarnedTrophyIdsUseCase(progressRepository),
-      ReplaceEarnedTrophiesUseCase(progressRepository),
-    );
+    store = TrophyProgressStore(progressRepository);
     await store.load();
-    viewModel = TrophyListViewModel(
-      'ffx',
-      GetTrophiesUseCase(trophyRepository),
-      store,
-    );
+    viewModel = TrophyListViewModel('ffx', trophyRepository, store);
   });
 
   tearDown(() {
@@ -244,9 +233,9 @@ void main() {
           .thenAnswer((_) async => {'t1'});
       viewModel = TrophyListViewModel(
         'ffx',
-        GetTrophiesUseCase(trophyRepository),
+        trophyRepository,
         store,
-        getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+        syncWithPsn: true,
       );
 
       await viewModel.load();
@@ -261,9 +250,9 @@ void main() {
           .thenThrow(Exception('offline'));
       viewModel = TrophyListViewModel(
         'ffx',
-        GetTrophiesUseCase(trophyRepository),
+        trophyRepository,
         store,
-        getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+        syncWithPsn: true,
       );
 
       await viewModel.load();
@@ -293,11 +282,7 @@ void main() {
 
       expect(notifications, 0);
 
-      viewModel = TrophyListViewModel(
-        'ffx',
-        GetTrophiesUseCase(trophyRepository),
-        store,
-      );
+      viewModel = TrophyListViewModel('ffx', trophyRepository, store);
     });
   });
 }

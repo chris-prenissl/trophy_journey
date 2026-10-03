@@ -8,21 +8,12 @@ import 'package:trophy_journey/features/auth/presentation/viewmodels/auth_view_m
 import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_progress_repository.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/get_checked_task_ids_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/get_journey_bookmark_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/get_journey_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/has_journey_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/set_journey_bookmark_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/set_task_checked_use_case.dart';
 import 'package:trophy_journey/features/journey/presentation/screens/journey_screen.dart';
 import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'package:trophy_journey/features/journey/presentation/widgets/journey_step_card.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
@@ -100,10 +91,7 @@ void main() {
         .thenAnswer((_) => Future.value());
     when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
-    store = TrophyProgressStore(
-      GetAllEarnedTrophyIdsUseCase(progressRepository),
-      ReplaceEarnedTrophiesUseCase(progressRepository),
-    );
+    store = TrophyProgressStore(progressRepository);
   });
 
   tearDown(() => store.dispose());
@@ -112,17 +100,14 @@ void main() {
     dependencies: AppDependencies(
       authViewModel: authViewModel,
       trophyProgressStore: store,
-      hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
+      hasJourney: journeyRepository.hasJourney,
       createGameListViewModel: MockGameListViewModel.new,
       createTrophyListViewModel: (_) => MockTrophyListViewModel(),
       createJourneyViewModel: (gameId) => JourneyViewModel(
         gameId,
-        GetJourneyUseCase(journeyRepository),
-        GetTrophiesUseCase(trophyRepository),
-        GetCheckedTaskIdsUseCase(journeyProgressRepository),
-        SetTaskCheckedUseCase(journeyProgressRepository),
-        GetJourneyBookmarkUseCase(journeyProgressRepository),
-        SetJourneyBookmarkUseCase(journeyProgressRepository),
+        journeyRepository,
+        trophyRepository,
+        journeyProgressRepository,
       ),
     ),
     child: const MaterialApp(home: JourneyScreen(game: ffx)),

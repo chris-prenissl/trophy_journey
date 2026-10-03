@@ -4,15 +4,9 @@ import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/journey/domain/entities/journey.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_progress_repository.dart';
 import 'package:trophy_journey/features/journey/domain/repositories/journey_repository.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/get_checked_task_ids_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/get_journey_bookmark_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/get_journey_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/set_journey_bookmark_use_case.dart';
-import 'package:trophy_journey/features/journey/domain/usecases/set_task_checked_use_case.dart';
 import 'package:trophy_journey/features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
 
 import 'journey_view_model_test.mocks.dart';
 
@@ -81,12 +75,9 @@ void main() {
 
     viewModel = JourneyViewModel(
       'ffx',
-      GetJourneyUseCase(journeyRepository),
-      GetTrophiesUseCase(trophyRepository),
-      GetCheckedTaskIdsUseCase(progressRepository),
-      SetTaskCheckedUseCase(progressRepository),
-      GetJourneyBookmarkUseCase(progressRepository),
-      SetJourneyBookmarkUseCase(progressRepository),
+      journeyRepository,
+      trophyRepository,
+      progressRepository,
     );
   });
 

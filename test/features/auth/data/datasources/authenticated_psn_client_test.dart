@@ -26,6 +26,7 @@ AuthSessionModel storedSession({
 @GenerateNiceMocks([
   MockSpec<AuthLocalDataSource>(),
   MockSpec<PsnRemoteDataSource>(),
+  MockSpec<http.Client>(as: #MockInnerClient),
 ])
 void main() {
   late MockAuthLocalDataSource localDataSource;
@@ -168,5 +169,13 @@ void main() {
       expect(response.statusCode, 401);
       expect(calls, 2);
     });
+  });
+
+  test('closes the client it wraps', () {
+    final inner = MockInnerClient();
+
+    AuthenticatedPsnClient(innerClient: inner, psnTokenStore: tokens).close();
+
+    verify(inner.close()).called(1);
   });
 }

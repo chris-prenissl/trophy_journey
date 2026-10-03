@@ -5,9 +5,6 @@ import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/trophy.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_repository.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/trophy_list_view_model.dart';
 import 'package:trophy_journey/features/trophies/presentation/widgets/trophy_filter_chips.dart';
@@ -49,10 +46,7 @@ void main() {
     trophyRepository = MockTrophyRepository();
     progressRepository = MockTrophyProgressRepository();
     when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
-    store = TrophyProgressStore(
-      GetAllEarnedTrophyIdsUseCase(progressRepository),
-      ReplaceEarnedTrophiesUseCase(progressRepository),
-    );
+    store = TrophyProgressStore(progressRepository);
   });
 
   tearDown(() {
@@ -62,11 +56,7 @@ void main() {
 
   Future<void> pumpChips(WidgetTester tester, List<Trophy> trophies) async {
     when(trophyRepository.getTrophies('ffx')).thenAnswer((_) async => trophies);
-    viewModel = TrophyListViewModel(
-      'ffx',
-      GetTrophiesUseCase(trophyRepository),
-      store,
-    );
+    viewModel = TrophyListViewModel('ffx', trophyRepository, store);
     await viewModel.load();
     await tester.pumpWidget(
       MaterialApp(

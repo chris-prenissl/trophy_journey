@@ -1,22 +1,16 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../trophies/domain/entities/trophy.dart';
-import '../../../trophies/domain/usecases/get_trophies_use_case.dart';
+import '../../../trophies/domain/repositories/trophy_repository.dart';
 import '../../domain/entities/journey.dart';
-import '../../domain/usecases/get_checked_task_ids_use_case.dart';
-import '../../domain/usecases/get_journey_bookmark_use_case.dart';
-import '../../domain/usecases/get_journey_use_case.dart';
-import '../../domain/usecases/set_journey_bookmark_use_case.dart';
-import '../../domain/usecases/set_task_checked_use_case.dart';
+import '../../domain/repositories/journey_progress_repository.dart';
+import '../../domain/repositories/journey_repository.dart';
 
 class JourneyViewModel(
   final String _gameId,
-  final GetJourneyUseCase _getJourney,
-  final GetTrophiesUseCase _getTrophies,
-  final GetCheckedTaskIdsUseCase _getCheckedTaskIds,
-  final SetTaskCheckedUseCase _setTaskChecked,
-  final GetJourneyBookmarkUseCase _getJourneyBookmark,
-  final SetJourneyBookmarkUseCase _setJourneyBookmark,
+  final JourneyRepository _journeyRepository,
+  final TrophyRepository _trophyRepository,
+  final JourneyProgressRepository _journeyProgressRepository,
 ) extends ChangeNotifier {
   Journey? _journey;
   Map<String, Trophy> _trophyById = const {};
@@ -65,14 +59,16 @@ class JourneyViewModel(
     _loading = true;
     notifyListeners();
 
-    _journey = await _getJourney(_gameId);
+    _journey = await _journeyRepository.getJourney(_gameId);
 
-    final trophies = await _getTrophies(_gameId);
+    final trophies = await _trophyRepository.getTrophies(_gameId);
     _trophyById = Map.fromEntries(
       trophies.map((trophy) => MapEntry(trophy.id, trophy)),
     );
-    _checkedTaskIds = await _getCheckedTaskIds(_gameId);
-    _bookmarkedStepId = await _getJourneyBookmark(_gameId);
+    _checkedTaskIds = await _journeyProgressRepository.getCheckedTaskIds(
+      _gameId,
+    );
+    _bookmarkedStepId = await _journeyProgressRepository.getBookmark(_gameId);
     _loading = false;
 
     notifyListeners();
@@ -93,7 +89,11 @@ class JourneyViewModel(
     notifyListeners();
 
     try {
-      await _setTaskChecked(_gameId, taskId, checkedTaskIds);
+      await _journeyProgressRepository.setTaskChecked(
+        _gameId,
+        taskId,
+        checkedTaskIds,
+      );
     } catch (_) {
       _checkedTaskIds = previous;
 
@@ -108,7 +108,7 @@ class JourneyViewModel(
     notifyListeners();
 
     try {
-      await _setJourneyBookmark(_gameId, _bookmarkedStepId);
+      await _journeyProgressRepository.setBookmark(_gameId, _bookmarkedStepId);
     } catch (_) {
       _bookmarkedStepId = previous;
       notifyListeners();

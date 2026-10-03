@@ -22,11 +22,4 @@ class const AuthSessionModel({
     refreshToken: refreshToken,
     expiresAt: expiresAt,
   );
-
-  factory AuthSessionModel.fromEntity(AuthSession entity) => AuthSessionModel(
-    userId: entity.userId,
-    accessToken: entity.accessToken,
-    refreshToken: entity.refreshToken,
-    expiresAt: entity.expiresAt,
-  );
 }

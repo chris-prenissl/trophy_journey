@@ -13,22 +13,12 @@ import 'features/auth/data/datasources/psn_browser_auth_data_source_impl.dart';
 import 'features/auth/data/datasources/psn_remote_data_source_impl.dart';
 import 'features/auth/data/datasources/psn_token_store.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
-import 'features/auth/domain/usecases/load_stored_session_use_case.dart';
-import 'features/auth/domain/usecases/sign_in_use_case.dart';
-import 'features/auth/domain/usecases/sign_out_use_case.dart';
-import 'features/auth/domain/usecases/watch_auth_session_use_case.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'features/journey/data/datasources/journey_asset_data_source.dart';
 import 'features/journey/data/datasources/journey_local_data_source.dart';
 import 'features/journey/data/repositories/journey_progress_repository_impl.dart';
 import 'features/journey/data/repositories/journey_repository_impl.dart';
-import 'features/journey/domain/usecases/get_checked_task_ids_use_case.dart';
-import 'features/journey/domain/usecases/get_journey_bookmark_use_case.dart';
-import 'features/journey/domain/usecases/get_journey_use_case.dart';
-import 'features/journey/domain/usecases/has_journey_use_case.dart';
-import 'features/journey/domain/usecases/set_journey_bookmark_use_case.dart';
-import 'features/journey/domain/usecases/set_task_checked_use_case.dart';
 import 'features/journey/presentation/viewmodels/journey_view_model.dart';
 import 'features/trophies/data/datasources/game_asset_data_source.dart';
 import 'features/trophies/data/datasources/progress_local_data_source.dart';
@@ -38,11 +28,6 @@ import 'features/trophies/data/datasources/trophy_asset_data_source.dart';
 import 'features/trophies/data/repositories/game_repository_impl.dart';
 import 'features/trophies/data/repositories/trophy_progress_repository_impl.dart';
 import 'features/trophies/data/repositories/trophy_repository_impl.dart';
-import 'features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import 'features/trophies/domain/usecases/get_games_use_case.dart';
-import 'features/trophies/domain/usecases/get_psn_earned_trophy_ids_use_case.dart';
-import 'features/trophies/domain/usecases/get_trophies_use_case.dart';
-import 'features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'features/trophies/presentation/screens/game_list_screen.dart';
 import 'features/trophies/presentation/state/trophy_progress_store.dart';
 import 'features/trophies/presentation/viewmodels/game_list_view_model.dart';
@@ -70,12 +55,7 @@ void main() {
     tokenStore: tokenStore,
     browserAuthDataSource: browserAuthDataSource,
   );
-  final authViewModel = AuthViewModel(
-    watchSession: WatchAuthSessionUseCase(authRepository),
-    loadStoredSessionUseCase: LoadStoredSessionUseCase(authRepository),
-    signInUseCase: SignInUseCase(authRepository),
-    signOutUseCase: SignOutUseCase(authRepository),
-  );
+  final authViewModel = AuthViewModel(authRepository: authRepository);
 
   final psnTrophyDataSource = PsnTrophyDataSource(
     client: AuthenticatedPsnClient(
@@ -107,35 +87,28 @@ void main() {
     JourneyLocalDataSource(),
   );
 
-  final trophyProgressStore = TrophyProgressStore(
-    GetAllEarnedTrophyIdsUseCase(trophyProgressRepository),
-    ReplaceEarnedTrophiesUseCase(trophyProgressRepository),
-  )..load();
+  final trophyProgressStore = TrophyProgressStore(trophyProgressRepository)
+    ..load();
 
   runApp(
     TrophyJourneyApp(
       dependencies: AppDependencies(
         authViewModel: authViewModel,
         trophyProgressStore: trophyProgressStore,
-        hasJourneyUseCase: HasJourneyUseCase(journeyRepository),
-        createGameListViewModel: () => GameListViewModel(
-          GetGamesUseCase(gameRepository),
-          trophyProgressStore,
-        ),
+        hasJourney: journeyRepository.hasJourney,
+        createGameListViewModel: () =>
+            GameListViewModel(gameRepository, trophyProgressStore),
         createTrophyListViewModel: (gameId) => TrophyListViewModel(
           gameId,
-          GetTrophiesUseCase(trophyRepository),
+          trophyRepository,
           trophyProgressStore,
-          getPsnEarnedTrophyIds: GetPsnEarnedTrophyIdsUseCase(trophyRepository),
+          syncWithPsn: true,
         ),
         createJourneyViewModel: (gameId) => JourneyViewModel(
           gameId,
-          GetJourneyUseCase(journeyRepository),
-          GetTrophiesUseCase(trophyRepository),
-          GetCheckedTaskIdsUseCase(journeyProgressRepository),
-          SetTaskCheckedUseCase(journeyProgressRepository),
-          GetJourneyBookmarkUseCase(journeyProgressRepository),
-          SetJourneyBookmarkUseCase(journeyProgressRepository),
+          journeyRepository,
+          trophyRepository,
+          journeyProgressRepository,
         ),
       ),
     ),

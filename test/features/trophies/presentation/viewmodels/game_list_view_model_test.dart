@@ -4,9 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'package:trophy_journey/features/trophies/domain/entities/game.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/game_repository.dart';
 import 'package:trophy_journey/features/trophies/domain/repositories/trophy_progress_repository.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/get_games_use_case.dart';
-import 'package:trophy_journey/features/trophies/domain/usecases/replace_earned_trophies_use_case.dart';
 import 'package:trophy_journey/features/trophies/presentation/state/trophy_progress_store.dart';
 import 'package:trophy_journey/features/trophies/presentation/viewmodels/game_list_view_model.dart';
 
@@ -44,12 +41,9 @@ void main() {
     when(gameRepository.getGames()).thenAnswer((_) async => [ffx, ffvii]);
     when(progressRepository.getAllEarnedIds()).thenAnswer((_) async => {});
 
-    store = TrophyProgressStore(
-      GetAllEarnedTrophyIdsUseCase(progressRepository),
-      ReplaceEarnedTrophiesUseCase(progressRepository),
-    );
+    store = TrophyProgressStore(progressRepository);
     await store.load();
-    viewModel = GameListViewModel(GetGamesUseCase(gameRepository), store);
+    viewModel = GameListViewModel(gameRepository, store);
   });
 
   tearDown(() {
@@ -133,7 +127,7 @@ void main() {
 
       expect(notifications, 0);
 
-      viewModel = GameListViewModel(GetGamesUseCase(gameRepository), store);
+      viewModel = GameListViewModel(gameRepository, store);
     });
   });
 

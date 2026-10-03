@@ -1,12 +1,9 @@
 import 'package:flutter/foundation.dart';
 
-import '../../domain/usecases/get_all_earned_trophy_ids_use_case.dart';
-import '../../domain/usecases/replace_earned_trophies_use_case.dart';
+import '../../domain/repositories/trophy_progress_repository.dart';
 
-class TrophyProgressStore(
-  final GetAllEarnedTrophyIdsUseCase _getAllEarnedTrophyIds,
-  final ReplaceEarnedTrophiesUseCase _replaceEarnedTrophies,
-) extends ChangeNotifier {
+class TrophyProgressStore(final TrophyProgressRepository _repository)
+    extends ChangeNotifier {
   Map<String, Set<String>> _earnedByGame = const {};
   bool _loading = true;
 
@@ -24,13 +21,13 @@ class TrophyProgressStore(
       _earnedByGame.values.fold(0, (sum, ids) => sum + ids.length);
 
   Future<void> load() async {
-    _earnedByGame = await _getAllEarnedTrophyIds();
+    _earnedByGame = await _repository.getAllEarnedIds();
     _loading = false;
     notifyListeners();
   }
 
   Future<void> applyEarned(String gameId, Set<String> trophyIds) async {
-    await _replaceEarnedTrophies(gameId, trophyIds);
+    await _repository.replaceEarned(gameId, trophyIds);
 
     _earnedByGame = {..._earnedByGame, gameId: trophyIds};
     notifyListeners();

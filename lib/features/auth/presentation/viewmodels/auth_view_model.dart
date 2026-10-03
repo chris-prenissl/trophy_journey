@@ -2,22 +2,14 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/auth_session.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../../domain/usecases/load_stored_session_use_case.dart';
-import '../../domain/usecases/sign_in_use_case.dart';
-import '../../domain/usecases/sign_out_use_case.dart';
-import '../../domain/usecases/watch_auth_session_use_case.dart';
 
-class AuthViewModel({
-  required WatchAuthSessionUseCase watchSession,
-  required final LoadStoredSessionUseCase _loadStoredSessionUseCase,
-  required final SignInUseCase _signInUseCase,
-  required final SignOutUseCase _signOutUseCase,
-}) extends ChangeNotifier {
+class AuthViewModel({required final AuthRepository _authRepository})
+    extends ChangeNotifier {
   this {
     _authSession.addListener(notifyListeners);
   }
 
-  final ValueListenable<AuthSession?> _authSession = watchSession();
+  final ValueListenable<AuthSession?> _authSession = _authRepository.session;
   bool _loading = false;
   String? _error;
 
@@ -31,7 +23,7 @@ class AuthViewModel({
 
   Future<void> loadStoredSession() async {
     try {
-      await _loadStoredSessionUseCase();
+      await _authRepository.loadStoredSession();
     } catch (e) {
       _error = e.toString();
       notifyListeners();
@@ -44,7 +36,7 @@ class AuthViewModel({
     notifyListeners();
 
     try {
-      await _signInUseCase();
+      await _authRepository.signIn();
     } on SignInCancelledException {
       debugPrint('Sign in cancelled by the user');
     } catch (e, stackTrace) {
@@ -58,7 +50,7 @@ class AuthViewModel({
 
   Future<void> signOut() async {
     try {
-      await _signOutUseCase();
+      await _authRepository.signOut();
     } catch (e) {
       _error = e.toString();
       notifyListeners();

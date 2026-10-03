@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/game.dart';
-import '../../domain/usecases/get_games_use_case.dart';
+import '../../domain/repositories/game_repository.dart';
 import '../state/trophy_progress_store.dart';
 
 enum GameSort {
@@ -17,7 +17,7 @@ enum GameSort {
 enum GameStatusFilter { all, notStarted, inProgress, completed }
 
 class GameListViewModel(
-  final GetGamesUseCase _getGames,
+  final GameRepository _gameRepository,
   final TrophyProgressStore _progress,
 ) extends ChangeNotifier {
   this {
@@ -72,7 +72,7 @@ class GameListViewModel(
   }
 
   Future<void> load() async {
-    _games = await _getGames();
+    _games = await _gameRepository.getGames();
     _loading = false;
     _invalidate();
   }
